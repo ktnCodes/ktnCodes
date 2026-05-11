@@ -26,7 +26,7 @@ export function ExperienceSection() {
   }
 
   return (
-    <Section number="03" name="Experience" tone="light-50">
+    <Section number="04" name="Experience" tone="light-100">
       <h2 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-[1.1] mb-(--space-md)">
         Track record.
       </h2>

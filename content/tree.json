@@ -21,6 +21,7 @@
         { "slug": "soul", "label": "soul.md", "type": "context", "contentPath": "content/agentic-os/soul.md" },
         { "slug": "me", "label": "me.md", "type": "context", "contentPath": "content/agentic-os/me.md" },
         { "slug": "skills", "label": "skills.md", "type": "context", "contentPath": "content/agentic-os/skills.md" },
+        { "slug": "stack", "label": "stack.md", "type": "context", "contentPath": "content/agentic-os/stack.md" },
         { "slug": "paths", "label": "paths.json", "type": "context", "contentPath": "content/agentic-os/paths.md" }
       ]
     },

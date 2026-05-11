@@ -42,7 +42,7 @@ export function BeliefsSection() {
   const bgImage = beliefs.featured.bgImage;
 
   return (
-    <Section number="04" name="Beliefs" tone="light-100">
+    <Section number="05" name="Beliefs" tone="light-50">
       <div className="mb-(--space-lg)">
         <h2 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-[1.1] mb-2">
           What I work by.

@@ -7,6 +7,7 @@ import { MobileFinder } from '@/components/finder/MobileFinder';
 import { BrandBand } from '@/components/hero/BrandBand';
 import { MdxContent } from '@/components/posts/mdx-content';
 import { AboutSection } from '@/components/sections/AboutSection';
+import { TechStackSection } from '@/components/sections/TechStackSection';
 import { ExperienceSection } from '@/components/sections/ExperienceSection';
 import { BeliefsSection } from '@/components/sections/BeliefsSection';
 import { ContactSection } from '@/components/sections/ContactSection';
@@ -127,6 +128,7 @@ export default async function Home({
         </section>
       </div>
       <AboutSection />
+      <TechStackSection />
       <ExperienceSection />
       <BeliefsSection />
       <ContactSection

@@ -20,7 +20,7 @@ export function ContactSection({ email, github, linkedin }: ContactSectionProps)
   }
 
   return (
-    <Section number="05" name="Contact" tone="light-50">
+    <Section number="06" name="Contact" tone="light-100">
       <div className="text-center max-w-2xl mx-auto py-(--space-lg)">
         <h2 className="text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight mb-(--space-sm)">
           Let's talk.
