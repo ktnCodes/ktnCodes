@@ -129,6 +129,10 @@
     {
       "label": "What do you write about?",
       "tool": "getBlogPosts"
+    },
+    {
+      "label": "Can I see your resume?",
+      "tool": "getResume"
     }
   ]
 }

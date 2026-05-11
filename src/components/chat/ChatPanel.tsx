@@ -7,6 +7,7 @@ const PRESETS = [
   'Show me your projects',
   "What is this position-addressed thingy?",
   'Walk me through your AI workflow',
+  'Can I see your resume?',
 ];
 
 /**
