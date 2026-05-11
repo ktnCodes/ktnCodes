@@ -5,7 +5,7 @@ import { useChatContext } from './chat-context';
 
 const PRESETS = [
   'Show me your projects',
-  "What's the ICM thing?",
+  "What is this position-addressed thingy?",
   'Walk me through your AI workflow',
 ];
 
@@ -72,7 +72,7 @@ export function ChatPanel() {
       <div className="flex-1 min-h-0 overflow-y-auto px-(--space-md) py-(--space-md) flex flex-col gap-(--space-sm)">
         {messages.length === 0 ? (
           <AiBubble>
-            Hey, I&apos;m Kevin. Ask me anything about my work, my projects, or the ICM thing — or
+            Hey, I&apos;m Kevin. Ask me anything about my work, my projects, or position-addressed memory — or
             click any project in the Finder below and I&apos;ll walk you through it.
           </AiBubble>
         ) : (

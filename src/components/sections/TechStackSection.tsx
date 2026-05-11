@@ -16,8 +16,7 @@ export function TechStackSection() {
         What I work with.
       </h2>
       <p className="text-base text-muted mb-(--space-lg) max-w-2xl">
-        Languages and tools I reach for first. The full canonical list lives in{' '}
-        <code className="text-foreground/80">portfolio-config.json</code>; this is the visible cut.
+        Languages and tools I reach for first.
       </p>
       <div className="grid gap-(--space-md) md:grid-cols-2">
         {Object.entries(skills).map(([category, items]) => (
