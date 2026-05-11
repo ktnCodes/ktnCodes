@@ -1,0 +1,151 @@
+---
+title: "Research Report: Coding Interviews Are Completely Different Now (Here's Why)"
+date: 2026-04-05
+tags: ["research", "youtube", "interview-prep", "career"]
+summary: "Research report based on 'Coding interviews are completely different now (here's why)' by Marina Wyss - AI & Machine Learning."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/Do8VuokPbBc" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
+**Source:** [Coding interviews are completely different now (here's why)](https://youtu.be/Do8VuokPbBc) by Marina Wyss - AI & Machine Learning
+
+---
+## Executive Summary
+
+The technical interview landscape has not simply shifted — it has fractured. There is no longer a single dominant interview format, and candidates who prepare using only one playbook risk studying for an exam that their target company does not even give. Drawing on data from Coderpad's 2026 State of Tech Hiring report, the HackerRank Developer Survey, and a roundtable with roughly 20 hiring managers at the Pragmatic Summit, Marina Wyss argues that four distinct interview modes are now operating simultaneously across the industry — and that understanding which mode a company uses is itself the most important preparation step.
+
+The fracture was accelerated by AI. About a third of companies still ban AI entirely during interviews, while nearly half allow it in some form, and the rest decide case by case. This has produced radically different evaluation philosophies under the same "technical interview" label. Some companies are tightening proctoring to preserve traditional signals; others have moved to two-stage formats specifically designed to test AI fluency. A smaller but growing cohort evaluates candidates entirely through their GitHub history and project portfolios.
+
+Underneath the format diversity, hiring managers at the summit converged on the same underlying question regardless of which mode they used: can this person think clearly, direct their tools, and explain their decisions? The T-shaped engineer — deep in one area, capable across the full stack — was the archetype mentioned most frequently. Product thinking, comfort with ambiguity, and communication were cited as the differentiators that cross every format boundary.
+
+---
+## Key Takeaways
+
+- **The landscape is fractured, not shifted:** Company A may give you a LeetCode Hard with no AI; Company B may send a take-home and then grill you live on what you built; Company C may skip coding entirely and ask about your GitHub. These are fundamentally different exams.
+- **AI policy varies wildly:** ~33% of companies ban AI in interviews, ~48% allow it in some form, and the rest decide case by case — so "AI interview" is not a single thing to prepare for.
+- **AI-native interviews test oversight, not just output:** Companies like Meta that allow or require AI are specifically watching how you use it — prompting quality, code review instincts, whether you actually read what the model produced, and whether you catch bugs or security issues.
+- **Portfolio-based hiring is real:** Some hiring managers are no longer posting jobs; they headhunt directly from open-source commit history. Shallow tutorial projects and vibe-coded repos you can't explain will not cut it.
+- **T-shaped engineers are the target profile:** Specialization in one area plus working knowledge of the full stack is now the baseline expectation. Being exclusively frontend or backend is no longer considered sufficient.
+- **The single most underrated prep strategy is asking the recruiter:** With four possible formats in play, blind preparation is the least efficient approach. Most companies know what they're testing and will tell you if asked directly.
+- **Build real things with AI and understand every line:** This one habit covers the most ground across all four modes — it creates portfolio material, develops AI-native skills, exercises product thinking, and keeps your fundamentals engaged.
+
+---
+## Detailed Analysis
+
+### Mode A: The AI Arms Race (No AI Allowed)
+
+Some of the most prominent companies — Google, Amazon, and similar large-scale employers — remain firmly in the no-AI camp. Google has reportedly told candidates that using AI during interviews can result in disqualification. Amazon's online assessment logs browser activity, restricts copy-paste, and blocks anything behind a login, which rules out most AI tooling.
+
+The reasoning is that these companies still want to verify a core signal: can you write correct code from scratch under time pressure? According to Coderpad's 2026 report, 43% of technical assessments still include LeetCode-style algorithmic questions, so this format is not going away.
+
+However, even these companies acknowledge the model is under strain. Hiring managers at the summit described what they called an "AI arms race" that affects the entire funnel — AI-generated resumes submitted by bots, AI-screened on the company side, AI-assisted online assessments, and in one reported case, a candidate who passed remote interviews but a completely different person showed up on the first day. The response has been increasingly bizarre verification layers: Loom video submissions to prove identity, resumes submitted via API POST request as a basic competency filter, and heavier reliance on referrals to route around the broken application pipeline entirely.
+
+**What this means for prep:** If your target company is in this mode, traditional DSA prep still matters. Data structures, algorithms, and the ability to reason through problems without AI assistance have not changed. But even here, networking and referrals are gaining weight as a way to bypass the application funnel chaos.
+
+### Mode B: AI-Native Interviews
+
+At the opposite end, Meta has begun piloting AI-enabled coding interviews where candidates are given an AI assistant during the session. The reasoning is direct: if AI is part of the actual job, why evaluate candidates without it?
+
+The format that hiring managers described as likely to become widespread is a two-stage structure: a take-home assignment where the candidate is explicitly told to use AI, followed by a live pair programming session where they must explain, extend, and refactor what they built. The live stage is where the actual evaluation happens. Interviewers are specifically watching for:
+
+- **Prompting quality** — did the candidate give the AI clear, specific instructions?
+- **Spec-driven development** — did the candidate have a plan before generating?
+- **Code review instincts** — did they actually read the output critically?
+- **Testing strategy** — did they verify the AI's work?
+- **Debugging** — can they trace and fix issues in AI-generated code?
+- **The patience to read everything** — multiple hiring managers at the summit independently cited this as a differentiator. In a world where AI can generate a thousand lines in seconds, slowing down to actually read and understand the output is the rare skill.
+
+The message from this mode is unambiguous: "AI-native" does not mean letting AI do the work while you watch. It means directing, verifying, catching mistakes, and explaining what is happening. Candidates who accept AI output uncritically without understanding it are visible and disqualifying.
+
+### Mode C: GitHub as Interview
+
+Some companies have moved away from coding tests entirely. Instead of evaluating live performance, they ask deep, specific questions about your actual projects: Why did you choose this architecture? What would you do differently? What trade-offs did you make?
+
+One hiring manager at the summit mentioned that he no longer posts job listings at all — he identifies candidates by reviewing commits on open-source repositories and headhunts directly. This changes the preparation calculus entirely: your portfolio is your interview prep.
+
+The caveat is that this mode is particularly unforgiving about shallowness. Tutorial copy-projects are not useful. Vibe-coded repositories the candidate cannot explain are worse than useless because they signal exactly the thing this mode is designed to filter out. What these companies want to see is real decisions, documented trade-offs, and thoughtful commit history that demonstrates engineering judgment over time.
+
+### Mode D: ML and Data Science (Fundamentals Still Required)
+
+For machine learning and data science roles, the landscape has shifted less than for general software engineering. Despite the broader trend toward practical and AI-enabled formats, candidates in this space still frequently encounter requests to implement algorithms from scratch — logistic regression, k-means clustering, and similar classical ML building blocks.
+
+The rationale is specific to the domain: ML roles genuinely require understanding what is happening under the hood. The probabilistic nature of these systems, the ways they fail in production, and the ability to debug model behavior all demand a foundational grasp of the mathematics and mechanics that tools abstract away. Classical ML fundamentals cannot be skipped for this track, even as the rest of the software engineering interview world evolves.
+
+### What Hiring Managers Actually Want
+
+Across all four modes, the Pragmatic Summit roundtable produced surprising agreement on underlying qualities. The T-shaped engineer profile came up repeatedly: deep expertise in one domain combined with working competence across the full stack. The expectation that someone would only do frontend or only do backend is no longer considered reasonable by hiring managers who participated.
+
+Three cross-format differentiators were consistently cited:
+
+1. **Product thinking** — Not just can you build it, but do you understand why? Can you reason about user needs? Can you push back on a spec that does not make sense? Most candidates do not practice this at all.
+2. **Comfort with ambiguity** — Especially relevant for AI-adjacent roles where system outputs are probabilistic and failures are weird. The candidates who operate calmly in that environment perform better on the job.
+3. **Communication** — Can you explain trade-offs? Can you articulate why you made a decision? This shows up in every interview mode without exception. Strong thinking that cannot be communicated clearly does not pass.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/Do8VuokPbBc&t=0s) | Introduction — Why grinding LeetCode may be the wrong prep |
+| [0:44](https://youtu.be/Do8VuokPbBc&t=44s) | Why the interview landscape is fractured, not just shifted |
+| [1:13](https://youtu.be/Do8VuokPbBc&t=73s) | Mode A: AI arms race — companies banning AI (Google, Amazon) |
+| [4:05](https://youtu.be/Do8VuokPbBc&t=245s) | The chaos on the hiring side: bot resumes, identity fraud, verification workarounds |
+| [5:10](https://youtu.be/Do8VuokPbBc&t=310s) | Mode B: AI-native interviews — Meta's two-stage take-home + live extension format |
+| [5:54](https://youtu.be/Do8VuokPbBc&t=354s) | What AI-native companies are actually evaluating (prompting, code review, patience to read) |
+| [6:41](https://youtu.be/Do8VuokPbBc&t=401s) | Mode C: GitHub as interview — portfolio-based hiring, headhunting from open-source commits |
+| [7:40](https://youtu.be/Do8VuokPbBc&t=460s) | Mode D: ML/Data Science — classical fundamentals still required |
+| [8:09](https://youtu.be/Do8VuokPbBc&t=489s) | What hiring managers agree on: T-shaped engineers, product thinking, communication |
+| [9:44](https://youtu.be/Do8VuokPbBc&t=584s) | The underrated strategy: just ask the recruiter |
+| [10:41](https://youtu.be/Do8VuokPbBc&t=641s) | How to frame the recruiter question |
+| [11:13](https://youtu.be/Do8VuokPbBc&t=673s) | How to prepare when you don't have an interview lined up yet |
+| [12:04](https://youtu.be/Do8VuokPbBc&t=724s) | Conclusion — know which game you're playing |
+
+---
+## Prep Checklist
+
+Use this list to structure your interview preparation based on what you know about your target companies.
+
+### Step 1 — Identify the format (before anything else)
+- [ ] Research your target company's known interview format (Glassdoor, Blind, LinkedIn posts from recent candidates)
+- [ ] When you get a recruiter call, ask: *"I want to come as prepared as possible — since there are so many different interview formats right now, could you give me any guidance on what to prioritize for this role?"*
+- [ ] Clarify: Is AI allowed? What type of coding round? Is there a take-home? Will there be a live extension session?
+
+### Step 2 — Build real projects with AI (covers the most ground)
+- [ ] Pick a project you genuinely care about and build it end-to-end using AI tools
+- [ ] Read and understand every line the AI generates — do not accept output uncritically
+- [ ] Practice catching bugs, security issues, and bad patterns in AI-generated code
+- [ ] Make meaningful, well-described commits throughout the build
+- [ ] Be ready to explain: Why this architecture? What trade-offs did you make? What would you do differently?
+
+### Step 3 — Sharpen AI-native skills
+- [ ] Practice writing clear, specific prompts for coding tasks
+- [ ] Develop a personal testing strategy for AI-generated code (unit tests, manual spot-checks, edge cases)
+- [ ] Practice refactoring and extending AI-produced code in a live setting
+- [ ] Get comfortable explaining AI output as if you wrote it yourself
+
+### Step 4 — Keep a DSA baseline
+- [ ] Stay sharp enough that a LeetCode Medium does not ruin your day
+- [ ] Review core data structures: arrays, hash maps, trees, graphs, heaps
+- [ ] Review common patterns: sliding window, two pointers, BFS/DFS, dynamic programming basics
+- [ ] No need to grind 5 hours/day — consistent, moderate practice is enough unless targeting Mode A companies specifically
+
+### Step 5 — Develop format-proof skills
+- [ ] Practice product thinking: for every feature you build, articulate the user problem it solves
+- [ ] Practice talking through trade-offs out loud (system design, architecture choices, library selections)
+- [ ] Record yourself explaining a technical decision and review it — can you follow your own reasoning?
+- [ ] Work on staying calm and structured when requirements are vague or change mid-problem
+
+### Step 6 — ML/Data Science track only
+- [ ] Be able to implement logistic regression, k-means clustering, and other classical ML algorithms from scratch
+- [ ] Understand the math behind gradient descent, regularization, and evaluation metrics
+- [ ] Practice explaining model behavior and failure modes, not just how to call a library
+
+---
+## Sources & Further Reading
+
+- [Coderpad 2026 State of Tech Hiring Report](https://coderpad.io) — cited for AI policy breakdown (~33% ban, ~48% allow) and assessment format statistics
+- [HackerRank Developer Survey](https://hackerrank.com) — cited for the finding that 78% of developers say algorithmic assessments don't reflect real-world work, and 56% consider them irrelevant to their jobs
+- [HubSpot AI Coding Showdown Guide](https://clickhubspot.com/e40bf5) — free guide comparing Codex vs. Claude Code with a decision framework and 10 example prompts by use case (linked in original video description)
+- The Pragmatic Summit — referenced as the source for hiring manager roundtable insights throughout the video

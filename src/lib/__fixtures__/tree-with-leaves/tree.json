@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "slug": "a",
+      "label": "A/",
+      "leaves": [
+        { "slug": "blog", "label": "blog (44 posts)", "type": "link", "href": "/posts" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "folders": [
+    {
+      "slug": "_root",
+      "label": "Workspace/",
+      "contextMd": "content/contexts/_root-context.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/_root-context.md" },
+        { "slug": "agents", "label": "AGENTS.md", "type": "context", "contentPath": "content/contexts/_root-agents.md" },
+        { "slug": "claude", "label": "CLAUDE.md", "type": "context", "contentPath": "content/contexts/_root-claude.md" },
+        { "slug": "copilot", "label": "copilot-instructions.md", "type": "context", "contentPath": "content/contexts/_root-copilot.md" },
+        { "slug": "readme", "label": "README.md", "type": "context", "contentPath": "content/contexts/_root-readme.md" }
+      ]
+    },
+    {
+      "slug": "agentic-os",
+      "label": "00-agentic-OS/",
+      "contextMd": "content/contexts/agentic-os.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/agentic-os.md" },
+        { "slug": "soul", "label": "soul.md", "type": "context", "contentPath": "content/agentic-os/soul.md" },
+        { "slug": "me", "label": "me.md", "type": "context", "contentPath": "content/agentic-os/me.md" },
+        { "slug": "skills", "label": "skills.md", "type": "context", "contentPath": "content/agentic-os/skills.md" },
+        { "slug": "paths", "label": "paths.json", "type": "context", "contentPath": "content/agentic-os/paths.md" }
+      ]
+    },
+    {
+      "slug": "shipped",
+      "label": "10-shipped/",
+      "contextMd": "content/contexts/shipped.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/shipped.md" }
+      ]
+    },
+    {
+      "slug": "inflight",
+      "label": "20-inflight/",
+      "contextMd": "content/contexts/inflight.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/inflight.md" }
+      ]
+    },
+    {
+      "slug": "spikes",
+      "label": "30-spikes/",
+      "contextMd": "content/contexts/spikes.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/spikes.md" }
+      ]
+    },
+    {
+      "slug": "planned",
+      "label": "40-planned/",
+      "contextMd": "content/contexts/planned.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/planned.md" }
+      ]
+    },
+    {
+      "slug": "portfolio-site",
+      "label": "50-portfolio-site/",
+      "contextMd": "content/contexts/portfolio-site.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/portfolio-site.md" },
+        { "slug": "blog", "label": "blog (44 posts)", "type": "link", "href": "/posts" }
+      ]
+    },
+    {
+      "slug": "knowledge-vault",
+      "label": "60-knowledge-vault/",
+      "contextMd": "content/contexts/knowledge-vault.md",
+      "leaves": [
+        { "slug": "context", "label": "CONTEXT.md", "type": "context", "contentPath": "content/contexts/knowledge-vault.md" },
+        { "slug": "10-wiki", "label": "10-wiki", "type": "link", "href": "/tags/wiki" }
+      ]
+    }
+  ]
+}

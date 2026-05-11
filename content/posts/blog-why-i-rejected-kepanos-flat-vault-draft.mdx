@@ -1,0 +1,103 @@
+---
+title: "Why I Rejected Kepano's Flat Vault"
+date: 2026-05-06
+draft: true
+tags: ["obsidian", "knowledge-management", "ai", "agentic-engineering", "icm"]
+summary: "The CEO of Obsidian runs a flat vault with one folder. I run ten numbered folders. Both are right. Here is what changes when an LLM is your primary reader."
+ShowToc: true
+---
+
+The CEO of Obsidian, Stephan Ango (Kepano), runs a famously minimal vault. Almost every note lives in the root. Three reserved folders handle attachments, templates, and daily notes. A single `categories:` frontmatter property does the work of folder hierarchy, surfaced through Obsidian Bases as a queryable table.
+
+It is a beautiful system. I do not use it.
+
+My vault has ten numbered top-level folders, from `00-agentic-OS/` to `99-archive/`. They sort in a strict order. They route every read like a routing table. And the difference between his system and mine comes down to one question: who is your primary reader?
+
+## The system Kepano built
+
+Karlos's video walkthrough rebuilds the whole vault on camera. The first move is destructive. Take all your notes out of any `notes/` folder. Drop them in the vault root. Delete the folder.
+
+If your reaction is "how do I keep things organized then," you have the right reaction. The answer is the `categories:` property. A meeting note gets `categories: meetings`. A journal entry gets `categories: journal`. An evergreen idea gets `categories: evergreen`. Bases (Obsidian's smart-table feature) auto-collect every note with a given category into a sortable, filterable table.
+
+The daily writing rhythm:
+
+1. Hit a hotkey to create a unique note for any thought, journal entry, meeting, or quote.
+2. Inside the note, link the first mention of every entity (people, places, movies, quotes) with `[[wikilinks]]`.
+3. Do not re-link subsequent mentions.
+4. Optionally drill into a quote later, apply a quote template, write deeper thoughts.
+
+Three reserved folders earn their keep. Everything else is in root, organized by property, surfaced by Base.
+
+The graph that emerges is dense. The retrieval is fast. The serendipity is real. There is a reason Kepano can publish the system as a template and have thousands of people adopt it.
+
+## The system I built
+
+My vault is the opposite shape. Every top-level folder is numbered. The order is information.
+
+```
+00-agentic-OS/         (LLM identity + auto-load config)
+10-wiki/               (compiled knowledge, query layer)
+20-work/               (employer domain)
+30-personal/           (career, learning, portfolio)
+40-raw/                (ingestion entry)
+50-research-library/   (curated buffer)
+60-skills/             (tooling)
+70-daily/              (session notes by date)
+80-visualization/      (assets)
+90-copilot/            (placement TBD)
+99-archive/            (legacy)
+```
+
+When an LLM session starts, the harness walks the cascade in order. It reads `00-agentic-OS/` first, where my identity files live with `auto_inject: true` frontmatter. It hits `10-wiki/` (compiled answers) before `40-raw/` (sources). The numbers are not aesthetic. They are routing.
+
+I did not start here. I started with unprefixed folders like `wiki/`, `_work/`, `_personal/`, `_archive/`. The underscore was a hack to force sort order. It worked for a human, but the LLM cascade was incidental, not designed. So in early May 2026 I migrated the whole vault, one phase per git commit, and put the numbers in front. The hack became the signal.
+
+## The honest tradeoff table
+
+Both systems are right. They optimize for different readers.
+
+| Axis | My vault (numbered ICM) | Kepano's vault (flat) |
+|---|---|---|
+| Folder structure | 10 numbered top-level folders | Flat root + 3 utility folders |
+| Daily notes | Date-folder per day, work + personal split | Single daily note per day |
+| Categories | Implicit via folder placement (also LLM routing signal) | Explicit `categories:` frontmatter |
+| Linking discipline | Wiki articles link aggressively; raw captures often do not | First-mention link in every note |
+| Aggregation | LLM compiles wiki articles | Bases auto-aggregate by property |
+| Optimized for | LLM consumption + cascade routing | Human serendipity + graph density |
+
+The tradeoff is not "cleaner versus messier" or "modern versus old-fashioned." It is "graph density versus cascade order." Kepano's vault wins on graph metrics. Mine wins on routing predictability when the reader is a non-deterministic agent that needs to find the right answer in the smallest number of file reads.
+
+## What I borrow without breaking the cascade
+
+The right move is not to pick a side. It is to steal the parts of Kepano's system that do not interfere with the LLM routing.
+
+Four things I am borrowing:
+
+1. **Add a `categories:` property to daily notes.** Tag work-daily as `categories: [work, daily]` and personal-daily as `categories: [personal, daily]`. Build a Base in `70-daily/` that renders a sortable table. Removes the need to remember which date folder a note lives in.
+2. **Promote first-mention linking as a daily-note discipline.** It is already de facto for project names. Extend to people, tools, bug IDs. The graph gets denser. My existing `wiki-connect` skill can backfill.
+3. **One Base file per active project.** Inside `10-wiki/projects/`, a Base filtered on `project: <slug>` would show every wiki article, raw note, and harvest note touching that project, eliminating manual MOC maintenance.
+4. **Borrow the unique-note-per-insight cadence.** My daily notes lump multiple insights into one file. A Kepano-style flat root of timestamped insight notes would be friendlier for downstream wiki compilation, because each note is already atomic.
+
+## What I am NOT borrowing, and why
+
+I am not collapsing the numbered top-level folders.
+
+Here is the reason. When my LLM session reads CLAUDE.md at the workspace root, then the vault CLAUDE.md, then the cascade of CONTEXT.md files inside each section, the order it visits files is itself information. Identity loads first. Routing config loads next. The compiled answer layer (`10-wiki/`) is hit before the raw source layer (`40-raw/`). When the model has limited context budget and needs to find the right file quickly, the cascade is the difference between a one-shot retrieval and a recursive scan.
+
+Kepano's flat vault is optimized for a human author with infinite time to feed structure manually. My numbered vault is optimized for a non-human reader that walks the file system in deterministic order and runs out of attention if it has to scan too far.
+
+If I collapsed to a single flat root with a `categories:` property, I would be asking the LLM to query a property index every time it wanted to find anything. The Bases plugin handles that beautifully for a human in the Obsidian UI. The LLM does not get the Bases UI. It gets the raw filesystem. The filesystem order has to be the routing signal.
+
+The CEO-of-Obsidian authority does not override the cascade-walking constraint of an LLM-first vault. Both systems are correct for their reader.
+
+## Key Takeaways
+
+- A vault is a routing system. The right shape depends on whether the primary reader is a human walking by hand or an LLM walking by code.
+- Kepano's flat vault optimizes for human serendipity through dense graphs and property-driven Bases. It is excellent at what it does.
+- A numbered-folder ICM optimizes for LLM cascade walks. The folder names become routing signals before any frontmatter is read.
+- Steal `categories:` properties for daily notes and project Bases. Steal first-mention linking discipline. Steal the atomic-insight cadence.
+- Do NOT collapse the top-level folder structure when the LLM is your primary reader. The order of the cascade is information.
+
+---
+
+*If you are mid-decision on your own vault, the question to start with is who reads it most. If you read it more than your AI does, Kepano's pattern probably wins. If your AI sessions read it more than you do, the cascade has to be designed before the graph is.*

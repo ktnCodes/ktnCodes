@@ -1,0 +1,98 @@
+---
+title: "Research Report: Claude Code Works Better When You Do This"
+date: 2026-04-05
+tags: ["research", "youtube", "claude-code", "ai-workflow"]
+summary: "Research report based on 'Claude Code Works Better When You Do This' by Eric Tech."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/D5bRTv6GhXk" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [Claude Code Works Better When You Do This](https://youtu.be/D5bRTv6GhXk) by Eric Tech
+
+---
+## Executive Summary
+
+A senior AI software engineer — formerly at Amazon and Microsoft, now building his own startup (bookzero.ai) entirely with Claude Code — shares seven concrete tips for improving Claude Code accuracy. The central diagnosis is that accuracy degrades as the context window fills: the first 20% of a session is reliable, but past 40–60% bugs and hallucinations compound. Every tip in the video flows from this root problem.
+
+The first four tips address context at the architecture level — monitoring it, offloading it to sub agents, coordinating those agents with a framework called Superpowers, and enabling inter-agent communication through Agent Teams. The final three tips treat context as a resource to be managed externally — fetching fresh library documentation on-demand via Context7, externalizing research into a persistent NotebookLM knowledge base, and preferring CLI skills over MCP servers to reduce upfront token load. Together, they form a layered workflow: protect the window, parallelize with agents, and pull information in only when needed.
+
+The video is practical and demo-heavy, walking through setup and real project usage for each tip. It is aimed at developers who are already using Claude Code and want to push past the hallucination ceiling that appears on larger or longer-running tasks.
+
+---
+## Key Takeaways
+
+- **Monitor context consumption:** Claude Code's accuracy degrades significantly past 40–60% of the context window — track it visually with a status line and use `/clear` to reset before accuracy collapses.
+- **Delegate to sub agents:** Each sub agent gets its own fresh context window, enabling parallel work and fewer hallucinations by scoping tasks tightly.
+- **Use Superpowers for structured agent workflows:** The Superpowers plugin wraps sub agents in a full TDD lifecycle — spec → plan → to-do list → implement → refactor — reducing the cognitive overhead of orchestration.
+- **Enable Agent Teams for cross-agent communication:** Agent Teams add a shared communication channel between workers (front end, back end, database), allowing agents to coordinate rather than work in isolation.
+- **Context7 for up-to-date library docs:** Without live documentation, LLMs hallucinate APIs or use outdated patterns. Context7 injects version-specific docs from the source directly into prompts.
+- **NotebookLM as an on-demand knowledge base:** Storing project research in NotebookLM and querying it only when needed keeps the initial context window lean while keeping knowledge persistent across sessions.
+- **Prefer CLI skills over MCP servers:** CLI skills load context only when a relevant task is running, while MCP servers dump their full schema at session start — CLI is more token-efficient and costs less.
+
+---
+## Detailed Analysis
+
+### The Core Problem: Context Window Degradation
+
+The video's organizing insight is that Claude Code's accuracy is not flat — it is a function of how full the context window is. According to the presenter, the first ~20% of a conversation produces high-quality output. Between 40–60%, accuracy drops noticeably. By 80%, the model is likely to produce bugs and hallucinations that require manual intervention and rollback.
+
+This is consistent with how large language models work: as the context fills, the signal-to-noise ratio drops, and the model's ability to maintain coherent long-range reasoning degrades. The practical consequence is that most developers who run long Claude Code sessions are unknowingly working in degraded mode for a significant portion of their time.
+
+The fix, at the simplest level, is to watch the context window like a gauge on a dashboard and restart it before it gets too full. The presenter demonstrates setting up a custom status line in Claude Code's terminal that shows a progress bar (or hash bar, emoji meter, etc.) reflecting current context consumption. When the bar hits ~50%, the recommendation is to use `/clear` to reset the conversation, then continue.
+
+### Sub Agents and the Superpowers Framework
+
+Simply clearing and restarting is wasteful if you're in the middle of complex work. Sub agents are the structural solution: instead of one long conversation with a single agent, an orchestrator dispatches scoped tasks to multiple agents, each starting with a clean context. Tasks like API development, testing, and code review can run in parallel, each in isolation.
+
+The Superpowers plugin takes this further by providing a full agentic framework. It generates a spec from a high-level description, breaks the spec into an implementation plan with phases and sub-tasks, and follows a TDD loop: write expectations first, implement app logic, refactor until tests pass, repeat. This turns sub-agent orchestration from a manual judgment call into a structured process. The presenter uses Superpowers as his primary workflow tool for building bookzero.ai.
+
+Agent Teams extend the sub-agent model by adding a shared communication channel between workers. Before Agent Teams, sub agents were siloed — a front-end agent and a back-end agent couldn't coordinate. With Agent Teams, they can pass messages to each other, which is valuable for tasks where one agent's output directly informs another's work.
+
+### Context7: Live Documentation in the Loop
+
+Even a well-managed context window suffers if the model is working from stale training data. Libraries evolve, APIs change, and Claude's training cutoff means it will sometimes generate code against an API version that no longer exists. Context7 solves this by integrating version-specific, source-fetched documentation directly into the prompt via an MCP server or CLI skill.
+
+The setup flow is simple: create an account at contextseven.com, get an API key, run the provided command to install the tool, and configure it for Claude Code. When running a review or implementation pass, the presenter adds an explicit instruction to the prompt telling Claude to use Context7 to fetch up-to-date documentation and fact-check the code against the current library specs. This is particularly useful during final review phases to catch subtle API mismatches before they ship.
+
+### NotebookLM as an External Knowledge Base
+
+The knowledge base tip addresses a different context-inflation problem: project documentation. On real projects, developers accumulate research — YouTube transcripts, Google Drive files, PRDs, browser notes, coding best practices. Naively, these get loaded into the initial context at the start of each Claude Code session, consuming budget before any coding has started.
+
+The pattern the presenter recommends is to store all research sources in NotebookLM (Google's free notebook tool that accepts multiple source types and provides grounded, source-attributable answers). Then, in the CLAUDE.md system prompt, instruct Claude to query NotebookLM for answers rather than relying on in-context documents. Claude Code fetches only the relevant information when it needs it, rather than preloading everything.
+
+This has two compounding benefits: the initial context starts smaller, and the knowledge persists across sessions and across multiple sub agents — a single NotebookLM notebook can serve as the grounded source of truth for an entire project.
+
+### CLI Skills vs. MCP Servers
+
+The final tip addresses a token-efficiency tradeoff that has become an emerging trend in the Claude Code community. MCP servers, when loaded, inject their full data schema into the context window at session start — this is convenient for discovery but expensive in tokens. CLI skills, by contrast, are loaded lazily: they only add their usage instructions to the context when Claude is actively performing a task that requires them.
+
+The presenter cites a comparison he ran with Playwright: the CLI version consumed significantly fewer tokens and produced more accurate results than the MCP version. He also references a Google Trends signal showing CLI overtaking MCP in developer search interest, attributing it to this same token-efficiency advantage. The recommendation is not to avoid MCP entirely, but to be deliberate — use CLI skills for tools where you want on-demand loading, and use Context7's CLI+skills setup rather than pure MCP when available.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/D5bRTv6GhXk&t=0s) | Introduction — 7 tips overview, presenter credentials |
+| [0:35](https://youtu.be/D5bRTv6GhXk&t=35s) | Community/school promotion |
+| [1:18](https://youtu.be/D5bRTv6GhXk&t=78s) | Tip 1: Context management — accuracy degradation curve, status line setup |
+| [2:34](https://youtu.be/D5bRTv6GhXk&t=154s) | Demo: /clear to reset context, customizing the status bar |
+| [4:12](https://youtu.be/D5bRTv6GhXk&t=252s) | Tip 2: Sub agents — fresh context per agent, parallel task execution |
+| [5:12](https://youtu.be/D5bRTv6GhXk&t=312s) | Tip 3: Superpowers plugin — spec generation, TDD workflow, sub-agent orchestration |
+| [6:41](https://youtu.be/D5bRTv6GhXk&t=401s) | Tip 4: Agent Teams — shared communication channel between sub agents |
+| [7:23](https://youtu.be/D5bRTv6GhXk&t=443s) | Recap of tips 1–4 |
+| [7:53](https://youtu.be/D5bRTv6GhXk&t=473s) | Tip 5: Context7 — live, version-specific library documentation |
+| [8:30](https://youtu.be/D5bRTv6GhXk&t=510s) | Demo: Context7 setup and usage in review workflow |
+| [10:05](https://youtu.be/D5bRTv6GhXk&t=605s) | Tip 6: NotebookLM as knowledge base — externalizing research from context |
+| [11:35](https://youtu.be/D5bRTv6GhXk&t=695s) | Workflow walkthrough: research → NotebookLM → CLAUDE.md → on-demand fetch |
+| [12:49](https://youtu.be/D5bRTv6GhXk&t=769s) | Tip 7: CLI over MCP — token efficiency, lazy loading of skills |
+| [14:26](https://youtu.be/D5bRTv6GhXk&t=866s) | Conclusion and summary |
+
+---
+## Sources & Further Reading
+
+- [Context7](https://contextseven.com) — live documentation tool for LLMs, provides version-specific library docs via MCP or CLI
+- [NotebookLM](https://notebooklm.google.com) — Google's free tool for building grounded knowledge bases from multiple source types
+- **Superpowers** — Claude Code plugin/framework for agentic TDD workflows and sub-agent orchestration (referenced in video, check Eric Tech's channel for setup guide)
+- Eric Tech's YouTube channel — playlists referenced in video: sub agents deep dive, Agent Teams walkthrough, Playwright CLI vs. MCP comparison, NotebookLM + Claude Code integration

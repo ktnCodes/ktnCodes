@@ -1,0 +1,121 @@
+---
+title: "Research Report: The 7 Levels of Building ELITE Websites with Claude Code"
+date: 2026-04-10
+tags: ["research", "youtube", "claude-code", "frontend-design"]
+summary: "Research report based on 'The 7 Levels of Building ELITE Websites with Claude Code' by Chase AI."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/1PXFAFMgdns" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [The 7 Levels of Building ELITE Websites with Claude Code](https://youtu.be/1PXFAFMgdns) by Chase AI
+
+---
+## Executive Summary
+
+"Claude Code sucks at front-end design — and it's your fault." That's the opening line, and it sets the frame for the entire video. Chase argues that the generic, AI-slop output most people get from Claude Code isn't a capability ceiling — it's a communication gap. The AI doesn't have taste, but more precisely, *most users can't articulate their taste*, because they lack the design vocabulary and visual references to give Claude Code meaningful direction. The video's solution is a seven-level progression framework that builds those skills incrementally: from raw text prompts, to design skills and visual references, to deconstructing professional source code, to custom AI assets, to visual editor tools, to — eventually — 3D WebGL experiences that are currently beyond most people's reach.
+
+The case study threaded throughout is "Argus," a fictional SaaS social media intelligence app, shown progressing through each level. Each level demonstrates a concrete improvement, a ceiling it hits, and a trap to avoid. The result is less a tutorial and more a developer growth roadmap — one that applies to anyone using any AI coding tool, not just Claude Code.
+
+The central insight is that frontend design is a visual medium being mediated through text, and every translation step loses fidelity. The levels are essentially different strategies for reducing that translation loss: better prompts, reference images, actual source code, custom-made assets, and finally visual editor tools that let you design and then hand the output back to Claude.
+
+---
+## Key Takeaways
+
+- **"AI has no taste" is a misdiagnosis:** The real problem is that users can't articulate their taste — they lack the design vocabulary and visual references to give Claude Code useful direction. The framework is largely about building that vocabulary.
+- **Level 3 (screenshots) gets you ~50% there:** Giving Claude Code visual references from Awwwards, Dribbble, or godly.website is a major unlock — but there's inherent translation loss converting a visual image to code. Screenshots alone have a hard ceiling.
+- **Level 4 (cloning source code) is the most educational step:** Grabbing actual HTML/CSS/JS from websites you admire and feeding it to Claude Code teaches you *how* effects are achieved at a code level. You can ask Claude to explain techniques and build a mental model of what's possible.
+- **Custom AI art and video backgrounds are Level 5's biggest wins:** MidJourney for hero images, Kling/Veo for 15-second looping video backgrounds (with a still image fallback for mobile) are the tools that create original character vs. a cloned template.
+- **Visual design tools (Stitch, Pencil.dev) bridge the visual-to-code gap:** At Level 6, you stop fighting the text-interface constraint and use dedicated visual tools for ideation, then bring screenshots back to Claude Code.
+- **The site teardown skill eliminates the "web fetch summarization" problem:** Claude Code's built-in web fetch uses a smaller model that summarizes CSS/JS files rather than passing them fully. A custom skill forces it to grab the complete files, which is what you actually need to clone a site properly.
+- **Level 7 (3D/WebGL) exists to show you what's possible, not what's achievable today:** The framework is honest: custom shaders, WebGL, and video-game-quality web experiences are still the domain of professional design teams. It's a north star, not a near-term target.
+
+---
+## Detailed Analysis
+
+### Level 1 — Just You and a Prompt
+
+The starting point is the most common state: user opens Claude Code, types a vague brief ("create a landing page for my social media intelligence app"), and gets something generic. Plan mode helps slightly — it forces you to think about goals, tech stack, and visual style — but even with plan mode the output defaults to AI slop: purple gradients, flat cards, nothing memorable.
+
+Chase's diagnosis: this is not a Claude Code problem. It's a user communication problem. If you don't know what good looks like, you can't explain it to the model. The skills to start building at Level 1 are: writing descriptive prompts (not just feature lists), learning what frameworks exist and when to use them (Next.js, Astro, plain HTML), and starting to develop a basic design vocabulary by exposing yourself to good work. Plan mode is the on-ramp — use it to start asking questions rather than accepting defaults.
+
+### Level 2 — Design Education via Skills
+
+The Level 2 unlock is importing specialized design skills that inject Claude Code with expert context it wouldn't otherwise have. The primary example is **UIUX Pro Max** — an open-source GitHub repo with 52,000 stars that contains a library of prompt checklists covering color theory, typography, spacing, layout, and a catalog of AI slop patterns to avoid. Installing the skill (via `/plugin marketplace install`) or pasting the URL into Claude Code and asking it to install the skill gives every subsequent design request a layer of professional guidance.
+
+The result is a clear improvement over Level 1: better color choices, proper button hover states, more intentional spacing. But Level 2 still produces something that's visibly AI-generated. The skill improves execution on a generic template — it doesn't escape the template. The ceiling here is that you're still operating entirely in text, and text can only go so far in describing visual outcomes.
+
+### Level 3 — Visual Director (Screenshots as References)
+
+Level 3 is the first major paradigm shift: stop describing what you want and start *showing* it. Reference websites — Awwwards, godly.website, Pinterest, Dribbble — provide a curated pool of professional frontend design to screenshot and feed directly to Claude Code. Instead of trying to articulate a dark gradient background with animated particles in text, you take a screenshot of a site that does it and say "match this."
+
+The benefits are twofold. First, Claude Code can mimic a visual reference more accurately than it can interpret a text description of that reference. Second, browsing reference sites is itself an education — the more professional work you see, the faster your design vocabulary grows, and the more precisely you can communicate what you like and dislike.
+
+The ceiling at Level 3 is still translation loss: screenshot → code interpretation is imperfect, and iterating by taking more screenshots and re-prompting is tedious and rarely converges on exactly what you want. Chase shows the result: ~50% of the way to the reference design, which is real progress but not professional quality. The trap is to stay here, treating "screenshot and re-prompt" as the final method.
+
+### Level 4 — The Cloner (Source Code Teardown)
+
+Level 4 is where the education becomes systematic. Instead of showing Claude Code what a site looks like, you show it how the site was built. The method: `Ctrl+U` in the browser to view page source and copy the full HTML; then use the **site teardown skill** to instruct Claude Code to pull the linked CSS and JavaScript files in their entirety (not the summarized version that the default web fetch returns via a smaller model).
+
+Armed with the actual source code, Claude Code can now explain in technical terms how specific effects are achieved: what CSS property creates that parallax background, how the glassmorphism blur is implemented, what library drives the scroll animations. This turns the cloning process into an active learning session. Every question you ask about a technique becomes another tool in your mental model.
+
+Chase is explicit that this is not plagiarism — the goal is to use the cloned structure as a learning scaffold and template base, then build something original on top of it. The analog he uses: learning any skill by watching and mimicking professionals, then developing your own style over time. The trap at Level 4 is the "clone ceiling" — copying without understanding. If you can't explain why the techniques work, you can't adapt them, and anyone could follow the same steps with no differentiation.
+
+### Level 5 — Custom Components and AI Assets
+
+Level 5 is where the work stops looking like someone else's template. Two sources of originality are introduced:
+
+**Component libraries** like 21st.dev, CodePen, and Monaé provide pre-built UI components (buttons, carousels, scroll areas, navigation) with copy-paste prompts. Rather than asking Claude Code to invent a button style, you find one you like on 21st.dev, copy its prompt, and bring it in. The components can then be modified to your specification.
+
+**Custom AI assets** are the higher-leverage path. Chase demonstrates using MidJourney (v7) to generate a hero background image for Argus — a surreal, concept-art piece that ties into the app's "Argus: see what's next" tagline. The prompt was deliberately vague ("a background image for a website called Argus, tagline 'see what's next'") and produced multiple usable options. The image was then converted to a looping video background using Kling 3.0 or Veo 3.1, with a still image fallback served to mobile users for performance reasons. The rule of thumb for video backgrounds: ~15 seconds, subtle motion, with ideally a looping start and end frame. Typography is a parallel unlock — Google Fonts provides hundreds of free options that Claude Code can reference by name.
+
+The detail at Level 5 is cumulative: loading animations that add perceived weight, scroll progress bars, counter animations that ramp up from zero, animated text highlights. None of these are individually dramatic, but together they signal a site that was *crafted*, not generated.
+
+### Level 6 — Visual Editors and Creative Expression
+
+The fundamental tension in Claude Code frontend work is that it lives in a text terminal while design is a visual medium. Level 6 addresses this by bringing in visual design tools: **Google Stitch** (free, AI-powered, runs in the browser), **paper.design**, **Figma**, and **Pencil.dev** (which integrates directly with Cursor/VS Code for real-time visual editing alongside code).
+
+The workflow Chase demonstrates: take screenshots of the current website, load them into Stitch, prompt it for redesign ideas, use right-click → variants to explore color scheme and layout alternatives, then screenshot the Stitch output and bring it back to Claude Code. Stitch becomes an ideation tool — it generates mockups Claude Code can then implement.
+
+At Level 6, Claude Code's web search capability also becomes useful for design best practices. Rather than making all decisions yourself, you can ask Claude to search for best practices around a specific technique (like glassmorphism cards) and generate options to evaluate. You stay in the driver's seat — deciding what to keep, what to discard — but the search expands the option space beyond what you'd come up with alone.
+
+Chase frames Level 6 as where the creative expression actually happens. The first five levels are building fundamentals and gathering raw material. Here, you start making genuine creative decisions that reflect your aesthetic, and the output becomes yours rather than a synthesis of references.
+
+### Level 7 — The Frontier (3D/WebGL)
+
+Level 7 is explicitly placed out of reach for most people today. Custom WebGL, shader programming, and 3D experiences that resemble video games represent the work of professional design teams, not solo Claude Code users. Chase references Awwwards' "Site of the Day" and "Site of the Month" categories as places to see what this looks like — and the "igloo website" specifically as an example that he found too impressive to not include.
+
+The honest framing: this level exists to show where the ceiling of frontend design currently is and where AI might take things in a few years, not as a practical target. If you know how to achieve Level 7 with AI today, Chase says you should be the one making the tutorials.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/1PXFAFMgdns&t=0s) | Introduction: Claude Code sucks at frontend design, and it's your fault |
+| [0:52](https://youtu.be/1PXFAFMgdns&t=52s) | Level 1: Just you and a prompt — plan mode, generic output, design vocabulary gap |
+| [4:24](https://youtu.be/1PXFAFMgdns&t=264s) | Level 2: Design education — UIUX Pro Max skill (52k GitHub stars), installing skills |
+| [7:36](https://youtu.be/1PXFAFMgdns&t=456s) | Level 3: Visual director — screenshots from Awwwards, godly, Pinterest, Dribbble |
+| [11:59](https://youtu.be/1PXFAFMgdns&t=719s) | Level 4: The Cloner — HTML source (Ctrl+U), site teardown skill for CSS/JS, deconstructing effects |
+| [19:59](https://youtu.be/1PXFAFMgdns&t=1199s) | Level 5: Custom components and assets — 21st.dev, MidJourney, AI video backgrounds (Kling/Veo), Google Fonts |
+| [27:49](https://youtu.be/1PXFAFMgdns&t=1669s) | Level 6: Outside tools and tinkering — Stitch, Pencil.dev, glassmorphism, creative expression |
+| [34:37](https://youtu.be/1PXFAFMgdns&t=2077s) | Level 7: The frontier — 3D/WebGL, custom shaders, currently beyond reach |
+| [36:22](https://youtu.be/1PXFAFMgdns&t=2182s) | Closing — progression summary, the translation problem, design vocabulary as the real skill |
+
+---
+## Sources & Further Reading
+
+- **[UIUX Pro Max skill](https://github.com)** — open-source GitHub repo, 52,000 stars; install via `/plugin marketplace` in Claude Code or paste URL and ask Claude to install
+- **[Chase AI free community (Skool)](https://www.skool.com/chase-ai)** — includes the site teardown skill and other resources referenced in the video
+- **[Chase AI Plus](https://www.skool.com/chase-ai)** — paid community with the Claude Code Masterclass
+- **[Awwwards](https://www.awwwards.com)** — curated, rated frontend design work; "Site of the Day/Month" for Level 7 examples
+- **[godly.website](https://godly.website)** — infinite scroll frontend design inspiration feed
+- **[Dribbble](https://dribbble.com)** — design portfolio platform; search "SaaS landing page" for targeted inspiration
+- **[21st.dev](https://21st.dev)** — component library with copy-paste prompts for buttons, carousels, navigation, scroll areas, and more
+- **[CodePen](https://codepen.io)** — interactive frontend code examples; useful for finding and adapting components
+- **[Google Stitch](https://stitch.withgoogle.com)** — free, AI-powered visual UI design tool from Google Labs; useful for mockup ideation
+- **[Pencil.dev](https://pencil.dev)** — visual frontend editor with Cursor/VS Code integration for real-time design editing
+- **[Google Fonts](https://fonts.google.com)** — free font library; all fonts are referenceable by Claude Code by name
+- **[MidJourney](https://midjourney.com)** — AI image generation; recommended for concept art-style hero backgrounds (v7 referenced)
+- **[Kling](https://kling.kuaishou.com)** / **Veo 3.1** — AI video generation tools for converting still images to looping background videos
+- **OpenHands** — used as the reference site for Level 3–4 cloning demonstration throughout the video

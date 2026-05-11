@@ -1,0 +1,415 @@
+---
+title: "Project: Building This Site From HTML Portfolio to Hugo Engineering Notebook"
+date: 2026-03-04
+tags: ["meta", "hugo", "agentic-engineering", "github-pages"]
+summary: "A full walkthrough of how I rebuilt my static HTML portfolio into a Hugo-powered engineering notebook, including setup commands and how to keep writing."
+showToc: true
+---
+
+## Why I Rebuilt It
+
+My old site was a static HTML portfolio built on the [HTML5 UP Hyperspace](https://html5up.net/hyperspace) template — a few pages showcasing college projects and a PDF resume. It looked fine, but it was a dead end. Adding content meant editing raw HTML. There was no way to blog, organize by topic, or search.
+
+What I really wanted was an **engineering notebook** — a place to collect knowledge, document what I'm learning, and write about the things I'm building. The inspiration was [pbrazeale.github.io](https://pbrazeale.github.io) — an engineer who maintains a public notebook of weekly logs, technical deep-dives, and learning notes.
+
+The focus of this notebook:
+
+- **Agentic engineering** — building with AI agents, prompt engineering, and AI-assisted development workflows
+- **Technical notes** — things I learn and want to remember
+- **Project write-ups** — documenting what I build and why
+
+The tool I used to plan and execute the migration: Claude Code, running as an agentic engineering assistant. Fitting, given that agentic engineering is one of the main topics I want to write about here.
+
+---
+
+## Tech Stack
+
+| Layer | Tool |
+|-------|------|
+| Static site generator | [Hugo](https://gohugo.io/) |
+| Theme | [PaperMod](https://github.com/adityatelange/hugo-PaperMod) |
+| Hosting | GitHub Pages |
+| Deployment | GitHub Actions |
+| Content format | Markdown |
+
+### Why Hugo?
+
+- **Fast**: Builds hundreds of pages in under a second
+- **No runtime**: Outputs pure static HTML — no Node, no server
+- **Markdown-first**: Write posts as `.md` files, Hugo handles the rest
+- **Active ecosystem**: Large theme library, good docs, frequent releases
+
+### Why PaperMod?
+
+- Built-in search (JSON index, no external service)
+- Dark/light mode toggle
+- Table of contents on posts
+- Reading time estimates
+- Code copy buttons
+- Archive and tag pages out of the box
+
+---
+
+## Prerequisites
+
+- [Git](https://git-scm.com/)
+- A GitHub account with a `<username>.github.io` repository
+- Hugo extended edition (see install below)
+
+---
+
+## Setup: Fresh Install
+
+### 1. Install Hugo (Windows)
+
+```bash
+winget install Hugo.Hugo.Extended
+```
+
+Restart your terminal, then verify:
+
+```bash
+hugo version
+# hugo v0.157.0+extended ...
+```
+
+> **Mac/Linux**: Use `brew install hugo` or see the [Hugo install docs](https://gohugo.io/installation/).
+
+### 2. Initialize the Hugo site
+
+If you're working in an existing git repo (like a GitHub Pages repo), use `--force` to initialize Hugo without needing an empty directory:
+
+```bash
+hugo new site . --force
+```
+
+This creates the following structure:
+
+```
+.
+├── archetypes/       # Templates for new content
+├── content/          # Your markdown posts and pages
+├── data/             # Optional data files
+├── hugo.toml         # Site configuration
+├── i18n/             # Internationalization (optional)
+├── layouts/          # Custom layout overrides
+├── static/           # Static files (images, fonts, etc.)
+└── themes/           # Installed themes
+```
+
+### 3. Add the PaperMod theme
+
+Add PaperMod as a git submodule so it can be tracked and updated independently:
+
+```bash
+git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
+```
+
+### 4. Configure `hugo.toml`
+
+Replace the default config with your own. Here's the config used for this site:
+
+```toml
+baseURL = "https://ktncodes.github.io/"
+languageCode = "en-us"
+title = "ktnCodes"
+theme = "PaperMod"
+paginate = 10
+
+[params]
+  author = "Kevin Nguyen"
+  description = "Engineering notebook — agentic engineering, embedded systems, and software development"
+  env = "production"
+  defaultTheme = "auto"         # Follows OS dark/light preference
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = false
+
+  [params.homeInfoParams]
+    Title = "ktnCodes"
+    Content = "Engineering notebook on agentic engineering, embedded systems, and building things."
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/ktnCodes"
+
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/itskevtrinh/"
+
+  [[params.socialIcons]]
+    name = "rss"
+    url = "/index.xml"
+
+[menu]
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 10
+
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 20
+
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 30
+
+  [[menu.main]]
+    identifier = "archives"
+    name = "Archives"
+    url = "/archives/"
+    weight = 40
+
+  [[menu.main]]
+    identifier = "search"
+    name = "Search"
+    url = "/search/"
+    weight = 50
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]   # JSON is required for the search feature
+```
+
+### 5. Create required PaperMod pages
+
+PaperMod's Archives and Search features require dedicated content files:
+
+**`content/archives.md`**
+```markdown
+---
+title: "Archives"
+layout: "archives"
+url: "/archives/"
+summary: "archives"
+---
+```
+
+**`content/search.md`**
+```markdown
+---
+title: "Search"
+layout: "search"
+url: "/search/"
+summary: "search"
+placeholder: "Search posts..."
+---
+```
+
+### 6. Create a `.gitignore`
+
+```
+# Hugo build output
+public/
+resources/
+.hugo_build.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vs/
+.vscode/
+.idea/
+```
+
+### 7. Set up GitHub Actions for deployment
+
+Create `.github/workflows/hugo.yaml`:
+
+```yaml
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.157.0
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive   # Required to pull in PaperMod theme
+          fetch-depth: 0
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Hugo
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+### 8. Enable GitHub Actions in repo settings
+
+In your GitHub repository:
+
+1. Go to **Settings** → **Pages**
+2. Under **Source**, select **GitHub Actions** (not "Deploy from a branch")
+3. Save
+
+This is the step people most commonly forget. Without it, the workflow runs but nothing deploys.
+
+---
+
+## How to Use It: Day-to-Day Workflow
+
+### Writing a new post
+
+```bash
+hugo new posts/my-post-title.md
+```
+
+This creates a new file at `content/posts/my-post-title.md` using your archetype template. Edit it with your content:
+
+```markdown
+---
+title: "My Post Title"
+date: 2026-03-14T00:00:00Z
+draft: true
+tags: ["agentic-engineering", "notes"]
+summary: "One sentence description for the post list."
+ShowToc: true
+---
+
+Your content here.
+```
+
+When you're ready to publish, set `draft: false`.
+
+### Preview locally
+
+```bash
+hugo server -D
+```
+
+The `-D` flag includes draft posts. Open `http://localhost:1313` in your browser. The server hot-reloads on file changes — no refresh needed.
+
+### Build the site (optional, CI does this automatically)
+
+```bash
+hugo --gc --minify
+```
+
+Output goes to `public/`. Don't commit this folder — GitHub Actions builds it fresh on every push.
+
+### Publish
+
+```bash
+git add .
+git commit -m "Add post: my post title"
+git push origin main
+```
+
+GitHub Actions picks up the push, builds the site, and deploys it to `https://ktncodes.github.io/`. Takes about 30-60 seconds.
+
+### Update the PaperMod theme
+
+```bash
+git submodule update --remote themes/PaperMod
+git commit -m "Update PaperMod theme"
+git push
+```
+
+---
+
+## Content Organization
+
+Posts live in `content/posts/`. Tags are the primary way to organize content — there are no categories. Any tag you add to a post's front matter automatically gets a tag page at `/tags/<tag-name>/`.
+
+Useful tags to start with:
+
+| Tag | Use for |
+|-----|---------|
+| `agentic-engineering` | Posts about AI agents, Claude, agentic workflows |
+| `notes` | Short knowledge captures |
+| `meta` | Posts about the site itself |
+| `portfolio` | Legacy project write-ups |
+| `embedded-systems` | Hardware and low-level work |
+
+---
+
+## Final Structure
+
+```
+ktncodes.github.io/
+├── .github/
+│   └── workflows/
+│       └── hugo.yaml         # Auto-deploy on push to main
+├── archetypes/
+│   └── default.md            # Template for new posts
+├── content/
+│   ├── about.md
+│   ├── archives.md
+│   ├── search.md
+│   └── posts/
+│       ├── hello-world.md
+│       ├── building-this-site.md
+│       └── ...
+├── themes/
+│   └── PaperMod/             # Git submodule
+├── .gitignore
+└── hugo.toml
+```
+
+---
+
+## Resources
+
+- [Hugo Documentation](https://gohugo.io/documentation/)
+- [PaperMod Wiki](https://github.com/adityatelange/hugo-PaperMod/wiki)
+- [GitHub Pages with Hugo (official guide)](https://gohugo.io/hosting-and-deployment/hosting-on-github/)

@@ -1,0 +1,49 @@
+---
+title: "Project: ICM Template"
+date: 2026-03-29
+tags: ["portfolio", "ai-agents", "workflow", "open-source"]
+summary: "Released an open-source template that uses folder structure as AI agent architecture — model-agnostic, zero dependencies, and grounded in a published research paper."
+showToc: false
+---
+
+## Overview
+
+The longer an AI workflow runs, the worse it tends to get. Context windows bloat with prior outputs, agents drift from original specifications, and the sheer number of tokens involved pushes important information toward the "lost in the middle" zone where LLMs perform measurably worse. Most teams respond by writing bigger prompts or adopting heavy orchestration frameworks — both of which make the problem harder to debug and lock you into a specific model.
+
+ICM (Interpretable Context Methodology) takes the opposite approach: use folder structure as the architecture. Each stage of a workflow is a folder. Each folder has a contract file (`CONTEXT.md`) that defines exactly what comes in, what gets produced, and where it goes next. Every output is a plain text file a human can read, edit, or re-run. The filesystem becomes the orchestration layer, with zero dependencies and no model lock-in.
+
+The template was co-developed and published as a research paper alongside Jake Van Clief and David McDermott (Eduba / University of Edinburgh), connecting the methodology to prior work in Unix pipeline design, Parnas's information hiding principle, and multi-pass compiler architecture.
+
+## How It Works
+
+The template implements a **5-layer context hierarchy**:
+
+| Layer | File | Purpose |
+|-------|------|---------|
+| 0 | `IDENTITY.md` | Workspace map — "where am I?" (~800 tokens) |
+| 1 | Root `CONTEXT.md` | Task routing — "where do I go?" (~300 tokens) |
+| 2 | Stage `CONTEXT.md` | Stage contract — "what do I do?" (200–500 tokens) |
+| 3 | `_config/` + `references/` | Stable configuration — voice, conventions, glossary |
+| 4 | `output/` | Working artifacts — changes every run |
+
+Each stage contract specifies its inputs, numbered process steps, and outputs. Human review gates sit between every stage, which means you can inspect, edit, and reshape artifacts before the next stage runs. The U-shaped intervention pattern holds in practice: heavy human editing at the first and last stages, lighter in the middle where the AI generally stays on track.
+
+## Key Features
+
+- **Model-agnostic**: a single `sync_identity.py` tool auto-generates `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md` from the same `IDENTITY.md` source
+- **Zero dependencies**: all Python tooling uses only the standard library
+- **Interactive setup wizard** (`setup.py`) scaffolds a new workspace with custom stages, voice guide, and conventions
+- **Stage scaffolding tool** (`new_stage.py`) creates new stage folders with pre-filled contracts
+- **Validate/lint tool** (`validate.py`) checks for missing contracts, broken references, and naming violations
+- **3 complete example pipelines**: YouTube transcript → blog post, job description → resume + cover letter, PR diff → code review
+
+## What I Learned
+
+- The **"lost in the middle" problem** (Liu et al.) is more actionable than it first appears — keeping per-stage context at 2–8k tokens (vs. 30–50k in monolithic prompts) is achievable with folder structure alone, no prompt tricks required
+- Human editing follows a **U-shaped distribution**: heavy at the input and output stages, light in the middle — worth designing for explicitly rather than aiming for full automation
+- Writing a **methodology paper** before the template forced a level of design clarity that retrospective documentation never would — the architecture decisions are much more principled as a result
+- **Model adapters from a single source** (IDENTITY.md → all tool config files) eliminates config drift when working across multiple AI tools on the same project
+
+## Tech Stack
+
+Python (stdlib only), Markdown, Claude Code — also compatible with Cursor, GitHub Copilot, and Windsurf

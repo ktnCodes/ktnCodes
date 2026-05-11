@@ -1,0 +1,26 @@
+{
+  "featured": {
+    "icon": "📍",
+    "tag": "POSITION OVER NAMES",
+    "headline": "Folder structure is the API.",
+    "body": "Position-addressed memory beats named imports. Names rot when you rename things; positions don't. The whole site is built on this idea — your folder paths ARE your routing, your taxonomy, your contract. ICM makes this explicit.",
+    "bgImage": "/beliefs/moon.jpg"
+  },
+  "supporting": [
+    {
+      "icon": "📝",
+      "tag": "DOCUMENT THE WHY",
+      "body": "Code shows what. The why goes in CLAUDE.md, the wiki, the commit body. Future-you needs both."
+    },
+    {
+      "icon": "🚀",
+      "tag": "SHIP BEFORE POLISH",
+      "body": "Vertical slices ship. Horizontal slices die in PR review. Cut through every layer first, optimize after."
+    },
+    {
+      "icon": "🤖",
+      "tag": "MAKE AI USEFUL",
+      "body": "An AI tool that ships your work matters more than one that demos well. Workflow over wow."
+    }
+  ]
+}

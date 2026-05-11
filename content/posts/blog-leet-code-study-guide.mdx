@@ -1,0 +1,336 @@
+---
+title: "Starting LeetCode from Zero"
+date: 2026-03-15
+tags: ["learning", "interview", "c++", "leetcode", "dsa"]
+summary: "A zero-to-hero LeetCode study guide for working engineers — free resources, a 12-week roadmap, and tips for using AI to accelerate interview prep."
+showToc: true
+---
+
+## Why This Guide Exists
+
+I'm an embedded software engineer with 4+ years of production C++ experience. I write real-time systems, debug deep system threading crashes, and ship firmware that runs on heavy equipment. And I have never solved a LeetCode problem.
+
+Understanding that this gap between "professional engineer" and "interview-ready engineer" is more common than people admit. You can be productive at work for years without ever touching a sliding window or implementing a trie. But when it's time to interview, the expectation is that you can solve algorithmic puzzles under time pressure — a completely different skill from writing production code.
+
+This guide is my study plan, written as I learn. It's not coming from someone who already solved 500 problems. It's coming from someone who just started, figured out the best free resources, and built a structured roadmap to follow.
+
+If you're a working engineer who writes code daily but hasn't touched algorithms since college, this is for you.
+
+Huge credit to [this video — "How to Start LeetCode from ZERO"](https://www.youtube.com/watch?v=G5_Q2_yRFsY) for kicking things off and giving me a solid starting framework.
+
+---
+
+## Taking Stock: What You Already Know
+
+If you write production code daily, you are not starting from zero. You already have:
+
+- **Solid language skills** — variables, loops, conditionals, functions, classes, I/O
+- **Debugging ability** — you can read stack traces, step through code, and reason about state
+- **Code structure** — you understand modularity, interfaces, and how systems fit together
+- **Tooling fluency** — Git, build systems, IDEs, terminal
+
+What's probably **rusty** (it's been a few years since college):
+
+- Big-O notation and complexity analysis
+- Recursion beyond simple cases
+- Tree and graph traversals
+- Dynamic programming
+- Sorting algorithm internals
+
+What's genuinely **new**:
+
+- Solving problems under a 30-45 minute time constraint
+- Recognizing which algorithmic pattern applies to a problem on sight
+- Optimizing a brute-force solution into something efficient on the fly
+
+### Language Choice
+
+Stick with the language you're most comfortable with. For me, that's C++. But be aware that most online resources (NeetCode, LeetCode discussions, YouTube tutorials) lean heavily toward Python. You don't need to switch languages, but being able to read Python solutions will save you time.
+
+Here's the same problem (Two Sum) in both languages to show the difference:
+
+```cpp
+// C++ - Two Sum
+vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> map;
+    for (int i = 0; i < nums.size(); i++) {
+        int complement = target - nums[i];
+        if (map.count(complement)) return {map[complement], i};
+        map[nums[i]] = i;
+    }
+    return {};
+}
+```
+
+```python
+# Python - Two Sum
+def twoSum(nums, target):
+    seen = {}
+    for i, n in enumerate(nums):
+        if target - n in seen:
+            return [seen[target - n], i]
+        seen[n] = i
+```
+
+Python is more concise, but C++ is perfectly fine for interviews. The important thing is fluency, not brevity.
+
+---
+
+## The Free Resource Stack
+
+You don't need to spend money. Everything you need is free.
+
+| Resource | What It Is | Link |
+|----------|-----------|------|
+| **NeetCode 150** | Curated 150 problems organized by pattern/topic | [neetcode.io/practice](https://neetcode.io/practice) |
+| **NeetCode YouTube** | Free video explanations for every NeetCode problem | [youtube.com/@NeetCode](https://www.youtube.com/@NeetCode) |
+| **NeetCode Roadmap** | Visual roadmap showing topic dependencies | [neetcode.io/roadmap](https://neetcode.io/roadmap) |
+| **LeetCode (free tier)** | The problem platform itself — free tier is sufficient | [leetcode.com](https://leetcode.com) |
+| **Blind 75** | The original curated 75 problems (subset of NeetCode 150) | [LeetCode Discuss thread](https://leetcode.com/discuss/general-discussion/460599) |
+| **Tech Interview Handbook** | Open-source guide covering the full interview process | [techinterviewhandbook.org](https://www.techinterviewhandbook.org) |
+| **Big-O Cheat Sheet** | Quick reference for time/space complexity | [bigocheatsheet.com](https://www.bigocheatsheet.com) |
+| **Striver's A2Z DSA Sheet** | Alternative comprehensive problem list | [takeuforward.org](https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2) |
+
+> **Pick one problem list and one explanation source. Stick with them.** The NeetCode 150 + NeetCode YouTube is the combination I'm using. Resist the urge to collect more resources — that's procrastination disguised as preparation.
+
+LeetCode Premium is NOT required. The free tier gives you access to all problem descriptions and submissions. Premium just adds company-tagged questions and some editorial solutions.
+
+---
+
+## Core Data Structures You Need to Know
+
+Every interview problem maps to one or more of these. Here they are with their C++ STL equivalents:
+
+| Data Structure | C++ STL | When You Use It |
+|----------------|---------|-----------------|
+| Array / Vector | `std::vector` | Almost everything — the default container |
+| Hash Map | `std::unordered_map` | O(1) lookups, counting, two-sum pattern |
+| Hash Set | `std::unordered_set` | Deduplication, membership checks |
+| Stack | `std::stack` | Parentheses matching, monotonic stack, DFS |
+| Queue | `std::queue` | BFS, level-order traversal |
+| Deque | `std::deque` | Sliding window max/min |
+| Priority Queue (Heap) | `std::priority_queue` | Top-K problems, merge K sorted, scheduling |
+| Linked List | Custom `ListNode*` | Pointer manipulation problems |
+| Binary Tree | Custom `TreeNode*` | Recursive tree traversal problems |
+| Graph | `vector<vector<int>>` | BFS/DFS traversal, shortest path |
+| Trie | Custom implementation | Prefix matching, autocomplete |
+
+As a C++ engineer, you already use half of these daily. The interview twist is knowing *when* to reach for each one based on the problem constraints.
+
+---
+
+## The 15 Patterns That Solve Most Problems
+
+These are the recurring algorithmic patterns, ordered roughly from easiest to hardest. Each one unlocks a category of problems:
+
+1. **Two Pointers** — Walk inward from both ends of a sorted array. *Example: Valid Palindrome.*
+2. **Hash Map / Frequency Count** — Trade space for time with O(1) lookups. *Example: Two Sum.*
+3. **Sliding Window** — Expand/shrink a window over a sequence. *Example: Best Time to Buy and Sell Stock.*
+4. **Binary Search** — Eliminate half the search space each step. *Example: Search in Rotated Sorted Array.*
+5. **Stack** — Last-in-first-out for nested or matching structures. *Example: Valid Parentheses.*
+6. **Linked List Manipulation** — Pointer rewiring: reverse, merge, detect cycle. *Example: Reverse Linked List.*
+7. **Tree DFS (Recursion)** — Base case + recurse left/right. *Example: Maximum Depth of Binary Tree.*
+8. **Tree BFS (Level-Order)** — Queue-based layer-by-layer traversal. *Example: Binary Tree Level Order Traversal.*
+9. **Backtracking** — Build candidates, prune, undo. *Example: Subsets.*
+10. **Graph DFS/BFS** — Traversal with a visited set on adjacency lists. *Example: Number of Islands.*
+11. **Heap / Priority Queue** — Efficient access to min/max element. *Example: Kth Largest Element in an Array.*
+12. **Greedy** — Local optimal choice leads to global optimal. *Example: Jump Game.*
+13. **Dynamic Programming (1D)** — Cache overlapping subproblems in a single array. *Example: Climbing Stairs.*
+14. **Dynamic Programming (2D)** — Grid or two-sequence DP table. *Example: Longest Common Subsequence.*
+15. **Intervals** — Sort by start time, merge or check overlaps. *Example: Merge Intervals.*
+
+You don't need to memorize solutions. You need to recognize which pattern applies. That recognition comes from repetition — solving enough problems in each category until the pattern clicks.
+
+---
+
+## The 12-Week Study Roadmap
+
+This follows the NeetCode 150 topic order. The goal is 1-2 problems per day, capping at 45-60 minutes per problem.
+
+### Phase 1: Foundations (Weeks 1–4)
+
+| Week | Topic | # Problems | Goal |
+|------|-------|:----------:|------|
+| 1 | Arrays & Hashing | ~9 | Get comfortable with the platform. Learn hash map patterns. |
+| 2 | Two Pointers + Sliding Window | ~7 | Master pointer-based traversal on sorted/sequential data. |
+| 3 | Stack + Binary Search | ~14 | Stack mechanics and the binary search template. |
+| 4 | Linked List | ~6 | Pointer manipulation — reverse, merge, cycle detection. |
+
+### Phase 2: Trees & Graphs (Weeks 5–8)
+
+| Week | Topic | # Problems | Goal |
+|------|-------|:----------:|------|
+| 5 | Trees (basics) | ~8 | Recursive DFS, BFS, tree properties. |
+| 6 | Trees (advanced) + Tries | ~7 | BST operations, serialization, prefix trees. |
+| 7 | Graphs (BFS/DFS) | ~6 | Adjacency list traversal, connected components. |
+| 8 | Graphs (advanced) + Heap | ~7 | Topological sort, Dijkstra, priority queue patterns. |
+
+### Phase 3: Advanced Patterns (Weeks 9–12)
+
+| Week | Topic | # Problems | Goal |
+|------|-------|:----------:|------|
+| 9 | Backtracking | ~5 | Permutations, combinations, constraint satisfaction. |
+| 10 | Dynamic Programming (1D) | ~10 | Build DP intuition — climbing stairs to word break. |
+| 11 | DP (2D) + Greedy | ~8 | Grid DP, interval scheduling, greedy proofs. |
+| 12 | Intervals + Bit Manipulation + Review | ~10 | Fill gaps, revisit weak areas, do timed practice. |
+
+> **The Rule of Three:** If you can't solve a problem in 20 minutes, look at the *approach* (not the code). Try to implement it yourself. If you still can't, study the full solution. Come back in 3 days and solve it again from scratch. If you can do it cleanly, you've learned it.
+
+### Daily Structure
+
+- **Weekdays:** 1-2 problems from the current week's topic (45-60 min max per problem)
+- **Weekends:** Re-solve 2-3 problems from earlier in the week without looking at solutions
+- **End of each phase:** Spend a day doing mixed problems from all topics covered so far
+
+---
+
+## How to Actually Solve a Problem
+
+A repeatable 8-step process for approaching any problem:
+
+1. **Read the problem twice.** Understand inputs, outputs, constraints, and edge cases. Pay attention to constraints — they hint at the expected time complexity.
+2. **Work through examples by hand.** Trace through the provided examples on paper or a whiteboard. Add your own edge cases.
+3. **Identify the pattern.** Which of the 15 patterns does this look like? What data structure fits the constraints?
+4. **Start with brute force.** Write the naive O(n²) or O(2ⁿ) solution first. Make sure it's correct before optimizing.
+5. **Optimize.** Can you use a hash map to avoid a nested loop? Can you sort first? Would a two-pointer approach work?
+6. **Code it.** Write clean code with descriptive variable names. This isn't competitive programming — readability matters.
+7. **Test mentally.** Walk through your code with the examples before hitting submit. Trace the variables.
+8. **Analyze complexity.** State the time and space complexity. Know why it's that complexity.
+
+> In a real interview, steps 1-3 should be done **out loud** with your interviewer. They want to see your thought process, not just your code. Silence is the enemy — talk through your reasoning even when you're unsure.
+
+---
+
+## Using AI to Accelerate Your Learning
+
+AI tools like Claude, ChatGPT, and Copilot can dramatically speed up your learning — if used correctly. Used poorly, they become a crutch that prevents you from building real problem-solving muscle.
+
+### What AI Is Good For
+
+- **Explaining concepts:** *"Explain the sliding window pattern with a visual step-by-step example."*
+- **Reviewing your solution:** Paste your code and ask *"What is the time complexity? Can this be optimized?"*
+- **Generating test cases:** *"Give me 5 edge cases for this two-sum problem, including cases with negative numbers and duplicates."*
+- **Explaining someone else's solution:** Paste a NeetCode solution you don't understand and ask for a line-by-line walkthrough.
+- **Drilling patterns:** *"Give me 3 easy problems that use the two-pointer pattern."*
+- **Mock interview practice:** *"Act as a technical interviewer. Give me a medium-difficulty array problem and evaluate my approach as I work through it."*
+- **Translating solutions:** *"Convert this Python solution to C++14 and explain any differences in how the STL handles this compared to Python built-ins."*
+
+### What AI Is Bad For (Anti-Patterns)
+
+- **Don't ask for the solution before trying.** This short-circuits the entire learning process. The struggle is where the learning happens.
+- **Turn off Copilot autocomplete while solving.** The muscle memory of writing algorithms from scratch is part of the skill you're building.
+- **Don't blindly trust AI output.** AI solutions sometimes have subtle bugs, use suboptimal approaches, or miss edge cases. Always verify.
+
+### Recommended Workflow
+
+1. Attempt the problem on your own for 20-30 minutes.
+2. If stuck, ask AI for a **hint about the approach** (not the code).
+3. If still stuck after the hint, watch the NeetCode video explanation.
+4. After solving, ask AI to **review your code** for improvements.
+5. If the optimal solution differs from yours, ask AI to **explain the difference**.
+
+Here's an example of a good AI prompt:
+
+```text
+I'm working on LeetCode #3 (Longest Substring Without Repeating Characters).
+I tried using a brute force O(n²) approach checking all substrings.
+Can you hint at a more efficient approach without giving me the full solution?
+I'm using C++.
+```
+
+And a good follow-up after solving:
+
+```text
+Here's my solution for LeetCode #3 in C++:
+[paste your code]
+
+1. What is the time and space complexity?
+2. Are there any edge cases I'm not handling?
+3. Is there a cleaner way to write this?
+```
+
+---
+
+## C++ Tips for LeetCode
+
+LeetCode C++ is a different world from embedded production C++. Here are the key differences:
+
+**Embrace the STL.** In embedded work, you might avoid STL containers for memory predictability. On LeetCode, use them aggressively — `unordered_map`, `unordered_set`, `priority_queue`, `sort()`, `accumulate()`, `min_element()`.
+
+**Useful shortcuts:**
+
+- `auto` for iterator types — keeps code readable
+- Lambda functions for custom comparators in `sort()` and `priority_queue`
+- `string::substr()`, `string::find()`, `s[i]` direct character access — strings are mutable in C++ (unlike Java/Python immutable strings)
+- `__builtin_popcount(n)` for counting set bits
+- Structured bindings: `auto [key, value] = *it;` for cleaner map iteration
+
+**Common gotcha:** `unordered_map::operator[]` **inserts a default value** if the key doesn't exist. Use `.count()` or `.find()` to check existence without side effects.
+
+**LeetCode template:**
+
+```cpp
+#include <bits/stdc++.h>  // includes everything — LeetCode only
+using namespace std;       // also LeetCode only
+```
+
+> Yes, `#include <bits/stdc++.h>` and `using namespace std` are things you would never do in production embedded code. On LeetCode, everyone does it. Context matters.
+
+**Priority queue gotcha:** `std::priority_queue` is a **max-heap** by default. For a min-heap:
+
+```cpp
+priority_queue<int, vector<int>, greater<int>> minHeap;
+```
+
+---
+
+## Common Mistakes to Avoid
+
+These are the pitfalls that waste weeks of study time:
+
+- **Doing problems randomly.** Follow a structured topic order (NeetCode roadmap). Random grinding builds no pattern recognition — you're just memorizing individual solutions.
+- **Spending 3 hours on one problem.** Cap at 45-60 minutes. If you can't solve it, learn from the solution and move on. Come back in a few days.
+- **Only doing Easy problems.** Easys build syntax comfort but not interview readiness. Most interviews are Medium difficulty. Move to Mediums as soon as you can solve Easys in ~15 minutes.
+- **Not reviewing.** Solving a problem once teaches you very little. Spaced repetition — re-solving after 3 days, then 7 days — is where learning actually happens.
+- **Comparing yourself to others.** People who "solved 500 problems" often solved 50 problems 10 times each. Quality and repetition beat raw quantity.
+- **Ignoring time/space complexity.** Every solution should have a stated Big-O. Interviewers will ask. If you can't explain the complexity, you don't fully understand the solution.
+- **Writing clever code.** Clean, readable code with descriptive variable names beats clever one-liners in interviews. `left` and `right` are better than `i` and `j`.
+
+---
+
+## When You're Ready: Mock Interviews
+
+Solving problems alone in an IDE is fundamentally different from solving them while explaining your thought process to another person. You need to practice the performance aspect, not just the problem-solving.
+
+**Free mock interview options:**
+
+- [**Pramp**](https://www.pramp.com/) — Free peer-to-peer mock interviews. You interview someone, then they interview you. Great for building comfort with the format.
+- **Practice with a friend** — Trade interviewer/interviewee roles. Even if your friend isn't technical, explaining your approach out loud is valuable practice.
+- **AI mock interviews** — Ask Claude or ChatGPT to act as a technical interviewer. It won't replicate the social pressure, but it will force you to articulate your thought process.
+
+**Interview day basics:**
+
+- Think out loud — silence makes interviewers nervous
+- Clarify constraints and edge cases before writing code
+- Start with the brute force approach, then optimize
+- Test your solution with the provided examples before saying you're done
+- Discuss trade-offs (time vs. space, readability vs. performance)
+
+---
+
+## Resources
+
+All the free resources mentioned in this guide, in one place:
+
+- [NeetCode 150](https://neetcode.io/practice) — Primary problem list
+- [NeetCode YouTube](https://www.youtube.com/@NeetCode) — Video explanations
+- [NeetCode Roadmap](https://neetcode.io/roadmap) — Visual topic dependency map
+- [LeetCode](https://leetcode.com) — The problem platform
+- [Blind 75](https://leetcode.com/discuss/general-discussion/460599) — The original curated list
+- [Tech Interview Handbook](https://www.techinterviewhandbook.org) — Full interview process guide
+- [Big-O Cheat Sheet](https://www.bigocheatsheet.com) — Complexity quick reference
+- [Striver's A2Z DSA Sheet](https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2) — Alternative problem list
+- [How to Start LeetCode from ZERO (YouTube)](https://www.youtube.com/watch?v=G5_Q2_yRFsY) — The video that inspired this guide
+- [C++ Reference](https://en.cppreference.com/) — STL documentation
+- [VisuAlgo](https://visualgo.net/) — Visualize data structures and algorithms
+- [Pramp](https://www.pramp.com/) — Free peer-to-peer mock interviews

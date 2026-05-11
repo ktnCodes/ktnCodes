@@ -1,0 +1,134 @@
+{
+  "personal": {
+    "name": "Kevin Trinh Nguyen",
+    "title": "Software Engineer — Embedded Systems & AI/Agentic Engineering",
+    "email": "",
+    "location": "Austin, TX",
+    "bio": "Software Engineer with 4+ years building production embedded systems and AI-powered developer tools at John Deere. Architected an AI-integrated knowledge system with custom agents, specialized SKILLS, Hooks, and Python tooling, then drove team-wide agentic tooling adoption from zero to general use. Experience in deep C++ systems debugging across 100+ production defects with end-to-end feature delivery. Bridged embedded systems engineering and agentic AI with hands-on experience in agent orchestration, Model Context Protocol integration, Spec Precision and Context architecture workflows.",
+    "avatar": "/avatar.png"
+  },
+  "education": {
+    "degree": "B.S. Computer Engineering",
+    "institution": "Iowa State University",
+    "graduationDate": "December 2022",
+    "highlights": [
+      "Vietnamese Student Association — Student Advisor",
+      "Multicultural Vision Program Scholar",
+      "FIRST Robotics Alumni"
+    ]
+  },
+  "experience": [
+    {
+      "company": "John Deere",
+      "position": "Embedded Software Engineer — AutoPath",
+      "link": "https://www.deere.com/en/technology-products/precision-ag-technology/guidance/autopath/",
+      "linkLabel": "AutoPath",
+      "location": "Austin, TX",
+      "duration": "June 2024 – Present",
+      "description": "Primarily focused on developing features for AutoPath. Responsibilities include design, developing, and testing supported AutoPath product lines such as Boundaries, Rows, Zones, Pro, and more to ensure high quality. Some side projects that I led for the team are applying and implementing refactoring on the most modified service class in the AutoPath codebase; Used AI to automate the process with a refactor tool combining Python scripting and agentic tooling across a 7-layer pipeline following company SDK and best practices from a book called Working Effectively with Legacy Code by Michael Feathers. Built a documentation system serving as the team’s and LLM’s living PRD, onboarding hub, AI-consumable knowledge base and covering 4 product Boundary, Rows, Zones, PRO. 30+ vehicle models, and 26 features. Created 6 specialized AI skills and scripts for automated test generation, requirement extraction, test coverage analysis, test-to-requirement mapping, refactoring with safety nets, and LLM architecture diagramming. Drove GitHub Copilot adoption across the team from 0% to daily interaction through multiple presentations on agentic engineering Demos, CLI workflows, prompting techniques, and AI-assisted refactoring.",
+      "technologies": ["C++14", "Qt5", "Embedded Linux", "Google Test", "CMake", "Python", "MkDocs"],
+      "highlights": ["6 AI skills built", "4 product lines documented", "0% → daily Copilot adoption"],
+      "impact_tag": "EMBEDDED + AGENTIC"
+    },
+    {
+      "company": "John Deere",
+      "position": "QA/QI Software Engineer — Guidance QI",
+      "location": "Austin, TX",
+      "duration": "February 2023 – June 2024",
+      "description": "Deep-debug specialist resolving 38 major and 60+ minor defects across Gen4OS 4060 & 4600 displays. Diagnosed SIGSEGV/SIGABRT crashes and threading defects (race conditions, deadlocks, priority inversion) using GDB, valgrind, and ASAN. Executed SiL (Software-in-the-Loop) and on-vehicle verification testing with tractors and combines; used Pumba (Java-based vehicle simulator with HTTP REST API) to drive automated system-level tests without physical hardware. Debugged vehicle defects using CAN data analysis tooling — ATPerformanceTool for live CAN bus monitoring and CAN Sniff for log-based vehicle signal analysis with MATLAB Simulink visualization. Received one of six Guidance Department Star Award for resolving the team's most complex escalated defects, standing in as team lead during manager absence, and delivering senior-level technical updates directly to department leadership.",
+      "technologies": ["C++", "Qt", "GDB", "Valgrind", "ASAN", "Google Test", "Froglogic Squish", "CAN Protocol", "MATLAB Simulink", "Pumba"],
+      "highlights": ["38 major defects resolved", "60+ minor defects", "Dept. Star Award"],
+      "impact_tag": "DEEP-DEBUG SPECIALIST"
+    },
+    {
+      "company": "John Deere",
+      "position": "Part-Time Software Engineer — Guidance QI",
+      "location": "Ames, IA",
+      "duration": "July 2021 – December 2022",
+      "description": "Conducted embedded software testing while enrolled full-time at Iowa State. Resolved 24 confirmed defects using Google Test and Froglogic Squish. Refactored AutoTrac PieState logic into an independent component. Self-taught C++ and Qt through Udemy courses within 6 months of joining.",
+      "technologies": ["C++", "CMake", "Qt", "CAN Protocol", "Ubuntu Linux"],
+      "highlights": ["24 confirmed defects", "self-taught C++ in 6 months"],
+      "impact_tag": "FIRST EMBEDDED REPS"
+    },
+    {
+      "company": "Hinckley Medical",
+      "position": "Front-End Developer",
+      "location": "Ames, IA",
+      "duration": "January 2022 – December 2022",
+      "description": "For my Senior Design Project, I decided to team up and work with a startup that needed custom built inventory site. Within this 5 man student led team, I Led front-end development for an internal inventory and shipment tracking web app for a medical device startup, replacing manual Excel workflows with a full-stack React application.",
+      "technologies": ["React", "JavaScript", "CSS", "AWS Amplify", "AWS DataStore", "AWS S3"],
+      "highlights": ["5-person student team", "replaced manual Excel workflows"],
+      "impact_tag": "FRONTEND LEAD"
+    },
+    {
+      "company": "ISU Endpoint Technologies",
+      "position": "IT Technical Assistant",
+      "location": "Ames, IA",
+      "duration": "February 2020 – July 2021",
+      "description": "Primary Apple technician deploying Jamf Pro and writing custom Python scripts for device management. Administered software licenses, performed equipment installations, OS imaging, and hardware/software troubleshooting for staff workstations and portable devices. Coordinated with full-time IT staff remotely for advanced troubleshooting. Led new part-time technicians on help desk tasks including hardware/software installations, macOS system administration, and inventory management and deliveries.",
+      "technologies": ["Python", "Jamf Pro", "macOS", "Windows", "Help Desk"],
+      "highlights": ["led part-time technicians", "macOS + Windows support"],
+      "impact_tag": "FOUNDATION"
+    }
+  ],
+  "skills": {
+    "languages": ["C++14", "C", "Python", "JavaScript", "TypeScript", "Java", "SQL"],
+    "ai_agentic": ["Agent Instruction Authoring", "MCP Integration", "Prompt Engineering", "LLM-Assisted Workflows", "Claude Code", "GitHub Copilot", "ICM Methodology", "Vercel AI SDK", "FastMCP", "SBERT", "Obsidian/PKM"],
+    "embedded_systems": ["Gen4OS", "Embedded Linux", "CAN Protocol", "Qt5", "CMake", "JDX Build System", "MATLAB Simulink", "Pumba (Vehicle Simulator)"],
+    "web_cloud": ["React", "Next.js", "Tailwind CSS", "Node.js", "AWS", "Hugo"],
+    "debugging_testing": ["GDB", "Valgrind", "ASAN", "Google Test/Mock", "Froglogic Squish", "SiL/HiL Testing", "cppcheck", "clang-static-analyzer", "TDD"],
+    "devops_tools": ["Git", "GitHub Actions", "Jenkins", "Docker", "MkDocs", "Ubuntu Linux"]
+  },
+  "social": {
+    "github": "https://github.com/ktnCodes",
+    "linkedin": "https://www.linkedin.com/in/itskevtrinh/"
+  },
+  "personality": {
+    "traits": ["Systematic", "Curious", "Builder-mindset", "Direct communicator"],
+    "interests": ["AI/Agentic Engineering", "Embedded Systems", "Developer Tooling", "Open Source", "Gaming (TFT)"],
+    "workingStyle": "Evidence-based and methodical. Prefers deep investigation over quick patches. Documents everything."
+  },
+  "chatbot": {
+    "name": "Kevin",
+    "personality": "Professional and friendly, like talking in a job interview. Enthusiastic about AI and embedded systems work. Direct, clear, no filler.",
+    "tone": "First person, conversational but professional",
+    "topics": ["work experience", "projects", "skills", "education", "blog posts", "AI/agentic engineering", "embedded systems", "personal hobbies", "gaming", "cats"]
+  },
+  "personal_life": {
+    "cats": [
+      {
+        "name": "Buttercup",
+        "description": "A hazelnut domestic longhair with big green cartoon eyes. Total diva — not a cuddle cat at all, but she shows affection on her own terms."
+      },
+      {
+        "name": "Winnie",
+        "description": "Buttercup's daughter, a black domestic shorthair we adopted together in 2024. Very long and athletic, always hungry, easily startled but surprisingly chill around people."
+      }
+    ],
+    "relationship": "I have an amazing girlfriend.",
+    "hobbies": ["pickleball (casual)", "watching NBA and diving into basketball history and stats"],
+    "gaming": {
+      "competitive": ["TFT — hit Master rank", "Double Up TFT — hit Master rank"],
+      "casual": ["League of Legends", "Valorant", "Marvel Rivals", "Overwatch", "Baldur's Gate 3", "Expedition 33"]
+    },
+    "off_limits": ["relationship details beyond the basics", "political or religious views", "salary or financial information", "family members or home address"]
+  },
+  "presetQuestions": [
+    {
+      "label": "Tell me about yourself",
+      "tool": "getPresentation"
+    },
+    {
+      "label": "What have you built?",
+      "tool": "getProjects"
+    },
+    {
+      "label": "What's your tech stack?",
+      "tool": "getSkills"
+    },
+    {
+      "label": "What do you write about?",
+      "tool": "getBlogPosts"
+    }
+  ]
+}

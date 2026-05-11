@@ -1,0 +1,135 @@
+---
+title: "Research Report: How AI Agents & Claude Skills Work (Clearly Explained)"
+date: 2026-04-08
+tags: ["research", "youtube", "ai-agents", "claude-code"]
+summary: "Research report based on 'How AI agents & Claude skills work (Clearly Explained)' by Greg Isenberg."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/S_oN3vlzpMw" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [How AI agents & Claude skills work (Clearly Explained)](https://youtu.be/S_oN3vlzpMw) by Greg Isenberg (feat. Ras Mic)
+
+---
+## Executive Summary
+
+Greg Isenberg sits down with developer and AI practitioner Ras Mic to debunk some of the most common myths around AI agents — specifically around how context windows work, why most people set up their agents wrong, and why skills (not CLAUDE.md files) are the real productivity lever.
+
+The central argument is deceptively simple: the models are already good. The bottleneck is context — what you put in, how much of it you're burning per turn, and whether you've given the agent any actual signal about *your* specific workflow. Most people compensate for vague prompting with bloated configuration files, when what they actually need is to teach the agent their workflow through lived experience first, then codify it.
+
+The second half of the conversation zooms out to a broader philosophy of building agent systems: start with one agent, build skills iteratively through real use, let failures improve the skill files, and only add sub-agents once you have proven workflows. Scaling for what *looks* cool — 15 sub-agents, 30 pre-downloaded skills — is almost always less productive than building up a single, well-trained system from scratch.
+
+---
+## Key Takeaways
+
+- **Models are already good enough:** The bottleneck is no longer model capability — Opus and GPT are both excellent. The variable that determines output quality is the context you provide.
+- **95% of people don't need a CLAUDE.md / agent.md file:** These add tokens to *every* conversation turn. Use them only for truly proprietary, company-specific information that must always be present.
+- **Skills use progressive disclosure:** Only the skill's name and description are loaded into context. The full skill document is only fetched when the agent determines it's relevant — saving hundreds to thousands of tokens per session.
+- **Build skills through the workflow, not before it:** The correct sequence is: identify the workflow → do it step-by-step with the agent conversationally → verify success → *then* ask the agent to generate the skill file. Jumping straight to skill creation produces brittle, incomplete instructions.
+- **Don't download other people's skills:** Skills encode *your* context of a successful run. External skills lack that signal and introduce security risk. Build your own.
+- **Recursive skill refinement is the system:** When the agent fails using a skill, treat it as a gift. Identify the error, feed it back, let the agent fix it, then tell it to update the skill file so it doesn't happen again.
+- **Scale for productivity, not aesthetics:** Start with one agent. Build skills. Add sub-agents only when a well-defined workflow justifies one. Filling your system with impressive-looking pieces before earning them produces noise, not output.
+
+---
+## Detailed Analysis
+
+### Context Windows: What's Actually Inside
+
+Ras Mic opens by laying out what fills a context window in a typical coding agent session. There are five layers: the provider's system prompt (baked in, like Claude Code's), any agent.md or CLAUDE.md files you've created, skill files (partially — more on this below), the tool definitions the agent can call, and the actual user conversation including code and codebase reads.
+
+This total can easily start at 20,000 tokens and grow towardhttps://www.youtube.com/watch?v=S_oN3vlzpMw&t=1994s the 250,000-token limit as a session continues. When it hits the limit, agents like Claude Code or OpenAI Codex perform automatic compaction. The key insight: every token counts, and most of the tokens people are spending are on information the model already knows.
+
+Ras Mic's example is pointed — telling a coding agent "this codebase uses React" when the codebase is already in context is the equivalent of reminding an experienced podcaster to bring a microphone. The model can read the files. Don't narrate what it can already observe.
+
+### Skills vs. Agent.md: The Token Math
+
+The clearest mechanical distinction in the video is how skills load differently from agent.md files.
+
+An agent.md file is inserted into context on *every turn* of the conversation. If your CLAUDE.md is 1,000 lines (roughly 7,000 tokens), you are spending 7,000 tokens per turn, unconditionally. Over a long session, this eats context window fast — and as the window fills, model performance degrades.
+
+Skills work differently. When you create a skill file, only its name and description are added to the context index — perhaps 50–100 tokens. The full skill body is only fetched when the agent determines it's needed. Ras Mic demonstrates this with a real example: his `code-structure` skill is 116 lines and 944 tokens. As an agent.md file, it would cost 944 tokens per turn. As a skill, it costs 53 tokens (name + description) unless actually needed.
+
+The practical implication: if something only applies to certain tasks, it should be a skill. The agent.md threshold should be reserved for information that must be present at every single turn — proprietary company methodologies, hard-coded conventions with no obvious default. Ras Mic estimates 95% of people don't actually have that need.
+
+### The Right Way to Build a Skill
+
+The most actionable part of the conversation is the breakdown of how to build skills correctly. The wrong approach — and Ras Mic explicitly calls it out — is:
+
+1. Identify a workflow you want to automate
+2. Write (or prompt) a skill file
+3. Install it
+
+This skips the step that makes skills actually work: teaching the agent the workflow *through conversational iteration before there's a skill file at all*.
+
+The correct sequence Ras Mic uses:
+
+1. **Identify the workflow** — e.g., evaluating incoming sponsor emails for his YouTube channel
+2. **Do it with the agent step by step** — tell it: check Twitter, check YouTube, check Trustpilot, check funding. If two of these fail, auto-reject. Walk through each criterion conversationally.
+3. **Verify a successful run** — the agent executes the full workflow correctly at least once, ideally several times, in-context
+4. **Ask the agent to review what it did and generate the skill** — it now has actual successful-run context to encode, rather than hypothetical instructions
+
+The reason this matters is that LLMs are token predictors, not thinkers. When given vague English instructions ("research this sponsor and tell me if they're legit"), the model pattern-matches to a response that looks correct — not one that *is* correct for your specific criteria. It will say every sponsor looks fine because "fine" is the statistically probable response to "research and evaluate." You have to give it the structure before it can apply the structure.
+
+This is the same onboarding logic that applies to a new employee: you don't hand them a job description and say good luck. You show them what a completed task looks like, walk through it together, then codify the process.
+
+### Recursive Skill Refinement
+
+Skills are not write-once artifacts. Ras Mic describes a loop he calls recursive skill building:
+
+- Deploy the skill
+- Let the agent run it in production
+- When it fails (and it will), ask the agent *why* it failed
+- Feed the failure back: "You got a 500 error here — here's why. Fix it."
+- The agent fixes it in-context
+- Tell it to update the skill file so the fix persists
+
+He gives a concrete benchmark: his YouTube analytics report skill — which pulls from 8 data sources including Notion, YouTube Analytics, Twitter, and Dub — took five iteration loops to get right. It now runs flawlessly and takes 10 minutes to complete unattended. Zero prompting needed. That's the end state worth building toward.
+
+The key mental shift is treating skill failures as useful signals rather than frustrations. Failures surface gaps in the skill file. Every gap you close makes the system more reliable.
+
+### Sub-Agents: Earn the Complexity First
+
+Ras Mic pushes back against the instinct to spin up multi-agent architectures immediately. His rule of thumb: sub-agents should emerge from earned complexity, not be installed upfront.
+
+His own system started as a single agent handling everything — sponsor emails, content scheduling, analytics. Only once he had proven, skill-backed workflows did he introduce sub-agents — one for marketing, one for business, one for personal. Now he has five total, each with skills and real context behind them.
+
+The comparison he draws is instructive: starting a company with 10 employees on day one when you've never managed anyone. The complexity outstrips your ability to direct it. The same failure mode applies to multi-agent AI systems. Pre-built tools like Paperclip are impressive, but Ras Mic argues you'd be more productive building an equivalent system yourself over two to three weeks — because that system would reflect *your* actual workflows.
+
+### On Context Window Performance
+
+One practical note Ras Mic makes: model performance degrades as the context window fills. The sweet spot is roughly 10–70% utilization. As you approach 90–100%, reasoning quality drops — analogous to trying to cram a year of coursework the night before an exam. You can't hold it all at once.
+
+This reinforces the "less is more" philosophy: every token you don't burn on redundant context is a token left for reasoning. Keeping skills out of context until needed, avoiding unnecessary agent.md content, and keeping conversation turns focused all contribute to a higher-performing, longer-lasting session.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/S_oN3vlzpMw&t=0s) | Introduction — Ras Mic's goal: share how to get better output from agents |
+| [0:42](https://youtu.be/S_oN3vlzpMw&t=42s) | The models are already good — context and harness are the bottleneck |
+| [1:26](https://youtu.be/S_oN3vlzpMw&t=86s) | How context windows work — what fills them up |
+| [2:03](https://youtu.be/S_oN3vlzpMw&t=123s) | Agent.md / CLAUDE.md files — 95% of people don't need them |
+| [3:25](https://youtu.be/S_oN3vlzpMw&t=205s) | Skills and progressive disclosure — only name + description in context |
+| [6:07](https://youtu.be/S_oN3vlzpMw&t=367s) | Complete context window anatomy — system prompt, skills, tools, codebase |
+| [7:35](https://youtu.be/S_oN3vlzpMw&t=455s) | Real example: sponsor email evaluation agent |
+| [8:24](https://youtu.be/S_oN3vlzpMw&t=504s) | The wrong way to build a skill — jumping straight to skill creation |
+| [9:17](https://youtu.be/S_oN3vlzpMw&t=557s) | The right methodology — teach through workflow first, then generate skill |
+| [11:49](https://youtu.be/S_oN3vlzpMw&t=709s) | Identify → Teach → Create — the three-step skill development loop |
+| [12:40](https://youtu.be/S_oN3vlzpMw&t=760s) | Don't download other people's skills — security risk + wrong context |
+| [14:06](https://youtu.be/S_oN3vlzpMw&t=846s) | Scale for productivity, not aesthetics — the real cost of premature complexity |
+| [19:07](https://youtu.be/S_oN3vlzpMw&t=1147s) | Coding context — templates are having a renaissance as agent foundations |
+| [20:47](https://youtu.be/S_oN3vlzpMw&t=1247s) | Recursive skill building — iterate → fail → fix → update the skill file |
+| [25:47](https://youtu.be/S_oN3vlzpMw&t=1547s) | Sub-agent scaling — earn sub-agents through earned workflows |
+| [27:01](https://youtu.be/S_oN3vlzpMw&t=1621s) | Harness + context > model choice — the benchmark that proves it |
+| [30:12](https://youtu.be/S_oN3vlzpMw&t=1812s) | Context window degradation — stay between 10–70% for best performance |
+| [32:00](https://youtu.be/S_oN3vlzpMw&t=1920s) | Summary — less is more; encode what's unique to you in skills |
+| [33:03](https://youtu.be/S_oN3vlzpMw&t=1983s) | Closing thoughts |
+
+---
+## Sources & Further Reading
+
+- [OpenAI Tokenizer](https://platform.openai.com/tokenizer) — mentioned for counting token costs of skill files vs. agent.md files
+- Paperclip — a multi-agent productivity tool discussed as an example of "scaling for cool vs. scaling for productivity" (no direct link provided)
+- Claude Code leaked system prompt — referenced as an example of how provider system prompts guide agent behavior
+- No academic papers or external reading lists were referenced in this video.

@@ -1,0 +1,7 @@
+{
+  "folders": [
+    { "slug": "a", "label": "A/" },
+    { "slug": "b", "label": "B/" },
+    { "slug": "c", "label": "C/" }
+  ]
+}

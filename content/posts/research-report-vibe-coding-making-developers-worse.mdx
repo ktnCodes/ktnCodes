@@ -1,0 +1,85 @@
+---
+title: "Research Report: Vibe Coding Is Making Developers Worse"
+date: 2026-03-29
+tags: ["research", "youtube", "vibe-coding", "developer-skills"]
+summary: "Research report based on 'Vibe Coding Is Making Developers Worse. Anthropic Research Paper' by devsplate."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/wFQeWgijf1o" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [Vibe Coding Is Making Developers Worse. Anthropic Research Paper](https://www.youtube.com/watch?v=wFQeWgijf1o) by devsplate
+
+---
+## Executive Summary
+
+Vibe coding — using AI to generate code without deeply understanding what it produces — feels like a productivity shortcut but may be systematically eroding the foundational skills that make developers effective. Two research studies reveal the core problem: experienced engineers using AI are 19% *slower* on real-world codebases, and developers who learned a new library with AI scored 50% on subsequent tests compared to 67% for developers who learned without it. The sharpest gap was in debugging — the exact skill required when AI-generated code inevitably goes wrong.
+
+The deeper issue is that AI bypasses computational thinking: the ability to decompose problems, reason about abstractions, and design systems that hold together under pressure. Janette Wing articulated this in her 2006 article on computational thinking — computer science is not computer programming, it is a *way of thinking*. Vibe coding produces people who can prompt like engineers without being able to think like them. When the roof leaks, they have no idea where the pipes are.
+
+The path forward is not to stop using AI — it is to use it differently. Treating AI as a tutor rather than a code generator, using structured learning prompts, insisting on understanding what AI produces, and specializing deeply enough in a domain to design the systems that govern how AI operates within it. Stripe's engineering model — where agents called "minions" operate under a blueprint engine that explicitly separates what requires creativity from what requires determinism — illustrates what that looks like at scale. The developers who thrive are not the ones who prompt best. They are the ones who understand their domain so thoroughly that they can build AI systems that operate correctly within it.
+
+---
+## Key Takeaways
+
+- **Experienced developers are 19% slower with AI on real-world codebases.** The assumed productivity gain from AI reversed when engineers spent time prompting, waiting, and reviewing output they didn't fully understand.
+- **AI impairs learning.** In an Anthropic-partnered study, Python developers using AI to learn a new library finished faster but scored 50% on follow-up tests. Those who learned without AI scored 67%. The biggest gap: debugging questions.
+- **Vibe coding skips computational thinking.** Janette Wing's 2006 framework — abstraction, decomposition, invariance, separation of concerns — is what engineers need to build systems that hold. AI generates code without teaching any of it.
+- **Use AI as a tutor, not a code generator.** The fisherman's prompt (by Dizzler) is a structured learning approach: specify your level, your topic, and your objective, then force the AI to use concrete examples, real-world use cases, and check for understanding before moving on.
+- **Specialization beats prompting.** You cannot outprompt a problem you don't understand. The developers who build the best AI systems are domain experts first — they understand their domain well enough to design the guardrails and structure that make agents reliable.
+- **Stripe's agentic engineering model is the benchmark.** 1,300 pull requests per week. A blueprint engine that mixes deterministic code with agentic loops. A tool shed managing hundreds of internal tools. Isolated dev environments for agents mirroring human engineers. This is what serious agentic engineering looks like, not vibe coding.
+
+---
+## Detailed Analysis
+https://youtu.be/EJyuu6zlQCg?si=yEfJwd7W9gqQpyEo
+### The Research Case Against Vibe Coding
+
+Two studies challenge the productivity narrative around AI-assisted coding in ways that should recalibrate how developers think about their tools.
+
+The first study examined experienced programmers working on real-world codebases — exactly the scenario where AI is supposed to show its most dramatic benefits. The result was the opposite: developers were 19% *slower* with AI. The cause was not AI giving bad output. It was the overhead of prompting, waiting, and then staring at generated code they didn't fully trust or understand. Senior engineers, in particular, are productive because they can hold a mental model of a system and reason through it quickly. AI interrupts that mental model without replacing it.
+
+The second study, conducted by Anthropic in partnership with researchers, is more precise about what is being lost. Python developers were split into two groups and given a new library to learn. The AI group finished the initial task about two minutes faster. But when both groups were subsequently tested, the AI group scored around 50% and the no-AI group scored 67%. The widest gap appeared in debugging questions — the ability to diagnose why something is wrong, which is the skill most needed when AI-generated code breaks in production. The developers who used AI learned to use the tool. The developers who didn't learned to understand the material.
+
+### Computational Thinking: What Vibe Coding Bypasses
+
+In 2006, computer scientist Janette Wing wrote an article that the video treats as the intellectual anchor of its argument. Her claim was that computer science is not computer programming — it is a way of thinking. Computational thinking means abstraction, decomposition, invariance, and separation of concerns. It means knowing how to break a large, messy problem into pieces that a machine or a human can handle.
+
+Vibe coding bypasses all of this. You describe what you want, the AI builds it, and if it works, you ship it. The problem is that you never develop the mental model that lets you modify, debug, or extend it. When the roof leaks, you don't know where the pipes are. You learn to prompt like an engineer. You do not learn to think like one.
+
+This is not a new concern. It maps directly onto prior debates about calculators in math education or GPS navigation and spatial reasoning. The concern in every case is the same: offloading cognitive work to a tool does not automatically preserve the underlying skill. It has to be deliberately maintained.
+
+### Using AI as a Tutor Instead of a Code Generator
+
+The video's practical prescription is a reframing: stop treating AI as a code generator and start treating it as a tutor. The difference is what you are trying to get out of the interaction. From a code generator, you want working output. From a tutor, you want to build the mental models that Wing described.
+
+The specific tool offered is the fisherman's prompt, attributed to creator Dizzler. The structure is: "I am a [your level] professional and I want to learn [topic] so I can achieve [objective]. Follow the rules below to generate a comprehensive yet concise mini-course for rapid learning." The rules force the AI to use concrete examples and real-world use cases, and to ask for feedback before moving on. The goal is not to have the AI write code — it is to use the AI interaction to build foundational understanding. The author also recommends prompting for explanations at a senior engineer level, explicitly asking for the *why* behind code decisions, not just the how.
+
+### Domain Specialization as the Sustainable Edge
+
+The video uses Stripe's engineering practices as its model for what serious agentic development looks like. Stripe engineers ship 1,300 pull requests per week on a codebase with millions of lines and a mostly homegrown stack that processes over a trillion dollars annually. They are not vibe coding. They have built what the video calls "agentic engineering."
+
+The specifics: Stripe built a blueprint engine that mixes deterministic code with agentic loops, built because engineers understood precisely which parts of financial processing require creativity and which require predictability. They built a tool shed to manage hundreds of internal tools because agents without good tool management choke on context. They gave agents isolated development environments that mirror the human engineer's environment.
+
+The throughline is domain depth. Stripe engineers can build this infrastructure because they understand their domain — payments, compliance, reliability — well enough to specify exactly where AI autonomy is appropriate and where it is not. You cannot design those guardrails without that knowledge. Specialization is not a consolation prize for people who can't master everything. It is the prerequisite for building AI systems that actually work.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://www.youtube.com/watch?v=wFQeWgijf1o&t=0s) | Introduction: the vibe coding trap — shipping features without understanding them |
+| [0:32](https://www.youtube.com/watch?v=wFQeWgijf1o&t=32s) | Study 1: experienced programmers 19% slower with AI on real codebases |
+| [1:01](https://www.youtube.com/watch?v=wFQeWgijf1o&t=61s) | Study 2: Anthropic learning study — 50% vs. 67% test scores, debugging gap |
+| [1:43](https://www.youtube.com/watch?v=wFQeWgijf1o&t=103s) | Janette Wing's computational thinking framework (2006) |
+| [2:28](https://www.youtube.com/watch?v=wFQeWgijf1o&t=148s) | The fisherman's prompt: using AI as a tutor |
+| [3:12](https://www.youtube.com/watch?v=wFQeWgijf1o&t=192s) | Stripe's agentic engineering model: blueprint engine, tool shed, isolated dev boxes |
+| [4:24](https://www.youtube.com/watch?v=wFQeWgijf1o&t=264s) | Practical takeaways: stop vibe coding, specialize, own your domain |
+
+---
+## Sources & Further Reading
+
+- **Anthropic / researcher learning study:** Python developers learning a new library with and without AI. AI group: 2 minutes faster, 50% test score. No-AI group: 67% test score. Largest gap in debugging questions.
+- **Study on experienced programmers and AI:** Developers working on real-world codebases were 19% slower with AI due to prompting and output review overhead.
+- **Janette Wing — "Computational Thinking" (2006):** Foundational article arguing that computer science is a way of thinking (abstraction, decomposition, invariance, separation of concerns), not programming per se.
+- **The fisherman's prompt (Dizzler):** Structured learning prompt template referenced for using AI as a tutor rather than a code generator.
+- **Stripe engineering practices:** Blueprint engine, tool shed, isolated agent dev environments. Referenced as a benchmark for serious agentic engineering.

@@ -1,0 +1,78 @@
+---
+title: "Project: Arkive"
+date: 2026-04-10
+tags: ["portfolio", "cpp", "qt", "desktop", "llm", "embedded"]
+summary: "Building a privacy-first C++ desktop app that turns your personal data — photos, iMessages, Snapchat exports — into a local wiki you can actually chat with."
+showToc: false
+---
+
+## Overview
+
+Your most personal data is scattered across a dozen apps, and none of them talk to each other. You want to remember what restaurant you talked about with a friend three months ago — so you scroll through iMessages. You want to know where you were when you took that photo from 2022 — so you dig through your camera roll. You want to find that conversation where someone gave you a book recommendation — so you check three apps and come up empty.
+
+The data is there. There's just no way to query across it.
+
+The idea for Arkive came from my own setup. I use Obsidian as a personal knowledge base — influenced by Andrej Karpathy's approach to building a long-term, local-first second brain. It works really well for notes, research, and work documentation. But it only captures what you actively write down. Your photos, your iMessages, your Snapchat memories — all the passive data that actually makes up most of your life — lives outside of it. Arkive is an attempt to close that gap: bring the passive data into the same local, queryable structure.
+
+The obvious solutions all have the same problem: they're cloud-first. Limitless, Rewind, Apple Intelligence, Notion AI — they all require sending your most personal data to a server you don't control, behind a subscription, with a privacy policy that can change. For photos and iMessages, that's a hard no for me.
+
+Arkive is my answer to that: a local-first C++ desktop application that ingests your personal data, compiles it into a structured wiki on your machine, and lets you query it with a chat interface backed by a locally-running LLM. Nothing leaves your device unless you explicitly opt in.
+
+## What It Does
+
+Arkive ingests from three sources at MVP:
+
+- **Photos** — reads EXIF metadata (date, GPS coordinates, camera model), reverse-geocodes GPS to place names via OpenStreetMap Nominatim (cached locally in SQLite), and groups photos into day/location wiki entries
+- **iMessages** — parses `chat.db` from an iTunes backup using Qt's SQLite support, extracting conversations per person with timestamps and message content
+- **Snapchat exports** — processes the JSON data export (`chat_history.json`, `memories_history.json`, `friends.json`) into conversation threads and memory entries
+
+All raw ingested entries get compiled by an LLM into higher-order wiki articles: person profiles, event summaries, place histories, topic clusters. The wiki is plain Obsidian-compatible markdown stored at `~/.arkive/vault/` — files you own and can open in any editor.
+
+The chat interface lets you ask questions across all of it: "What did I talk about with [person] last month?" or "Where was I in March?" — and the LLM answers from your wiki, not from its training data.
+
+## Architecture
+
+The project is structured across five phases:
+
+| Phase | Goal | Status |
+|-------|------|--------|
+| 0 | Environment setup — Qt 6.8.3, CMake/Ninja, MinGW, blank window builds | ✅ Complete |
+| 1 | Project scaffold — VaultManager, MarkdownParser, FileTreeModel, QML shell | ✅ Complete |
+| 2 | Data ingestion engines — photos (EXIF), iMessages (chat.db), Snapchat (JSON) | 🔄 In Progress |
+| 3 | Wiki compilation + LLM integration — llama.cpp local + Claude/OpenAI cloud | Planned |
+| 4 | Chat interface — context-aware query engine, streaming responses, SQLite history | Planned |
+| 5 | Skills + automation panel — one-click compile, lint, auto-hooks | Planned |
+
+Phase 1 delivered 8 C++ subsystems with clean separation between concerns: `VaultManager` handles all vault filesystem ops, `MarkdownParser` parses sections and backlinks, `IndexManager` auto-generates `_index.md` per section, `ExifReader` extracts JPEG EXIF data, `GeocodeCache` reverse-geocodes GPS with a SQLite-backed cache, `PhotoIngestor` coordinates the photo import pipeline, `FileTreeModel` exposes the vault directory tree to QML via `QAbstractItemModel`, and `ArticleModel` handles single-article data binding.
+
+Phase 2 is currently building the three ingestion engines in parallel — photo, iMessage, and Snapchat — each with its own deduplication logic and ingestion log.
+
+## Why C++ and Qt Instead of Python + Electron
+
+The goal was to build a real desktop application — not a web app wrapped in a browser window. For that, I wanted a framework and language I already knew well rather than learning a new stack mid-project. I spend most of my day in C++ and Qt5 at John Deere, so C++17 and Qt 6 were the natural choice. A few things came out of that decision:
+
+- Qt's `QAbstractItemModel` is a genuinely good pattern for reactive data binding. The model/view separation between C++ business logic and QML UI is clean in a way that React state management often isn't.
+- CMake + Ninja at this project scale feels appropriately sized. No bundler complexity, no Node toolchain, just a build system that does exactly what you tell it.
+- Testing with Google Test on a C++ application gives you actual isolation. 92 unit tests cover every core module. Running them takes under a second.
+
+The tradeoff is velocity — Electron apps ship faster. But the desktop version is intentionally the first iteration, not the final product. The goal is to validate the concept — prove the ingestion pipeline, the wiki compilation, and the chat interface actually work the way I think they will. If it does, the next iteration is a mobile app. Qt supports cross-platform deployment to iOS and Android from the same codebase, so the architecture decisions made now carry forward.
+
+## LLM Strategy
+
+The LLM integration (Phase 3) is designed as a swappable interface with two backends behind a common `LlmClient` API:
+
+- **Local (default)** — llama.cpp running a quantized model (Llama 3 8B or Mistral 7B in Q4_K_M, ~4–5GB) entirely on-device. No API key, no latency from network calls, privacy preserved.
+- **Cloud (opt-in)** — HTTP calls to Claude or OpenAI via Qt's `QNetworkAccessManager`. API key stored in `QSettings` (OS keychain). Noticeably higher quality output for compilation tasks.
+
+The user controls which backend runs and can toggle per-session. The context-aware query engine uses TF-IDF for relevance ranking — no vector database needed at wiki scale.
+
+## What I've Learned So Far
+
+- **`QAbstractItemModel` is worth learning properly.** The beginIndex/endInsertRows dance for notifying views of structural changes is not intuitive at first, but once it clicks the pattern is very clean for tree structures like a vault directory.
+- **EXIF parsing is messier than the spec suggests.** GPS coordinates come in degree/minute/second rational format split across multiple tags. The parsing code for converting to decimal degrees is more involved than I expected.
+- **SQLite through Qt's `QSqlDatabase`** is genuinely ergonomic. Parameterized queries, transactions, and connection pooling all work well for the geocode cache use case.
+- **Designing for privacy first changes the architecture decisions.** Every feature has to answer "what happens if the user turns off cloud?" before it gets implemented.
+
+## Tech Stack
+
+C++17, Qt 6.8.3, QML, CMake, Ninja, MinGW, Google Test, SQLite (via Qt SQL), llama.cpp (Phase 3), Claude/OpenAI API (opt-in)

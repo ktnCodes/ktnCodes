@@ -1,0 +1,151 @@
+---
+title: "Research Report: Full Guide - Build Your Own AI Second Brain with Claude Code"
+date: 2026-04-05
+tags: ["research", "youtube", "ai-agents", "claude-code"]
+summary: "Research report based on 'Full Guide - Build Your Own AI Second Brain with Claude Code' by Cole Medin."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/1FiER-40zng" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
+**Source:** [Full Guide - Build Your Own AI Second Brain with Claude Code](https://youtu.be/1FiER-40zng) by Cole Medin
+
+---
+
+## Executive Summary
+
+Cole Medin presents a complete architecture for building a personal AI second brain on top of Claude Code and Obsidian, developed over three months of daily use. The core thesis is not just "how to build a second brain" but **why you should build your own** rather than deploying an off-the-shelf solution like OpenClaw. His argument centers on a security framework called the "lethal trifecta" — the combination of private data access, untrusted content ingestion, and an exfiltration vector — which he argues is unavoidable in any useful second brain and demands that you understand and control every layer of the system yourself.
+
+The architecture Cole describes is deceptively simple: markdown files for memory, Claude Code skills for capabilities, hooks for persistence, and a Claude Agent SDK heartbeat for proactive action. There are no vector databases, no complex orchestration frameworks, and no separate AI platforms — just composable patterns layered intentionally over time. The result is a system that compounds: each conversation makes the next one smarter, and each new integration makes the agent more capable.
+
+The video concludes with a practical starter path — a GitHub-hosted PRD template and a `/create-second-brain-prd` skill — that produces a phased implementation plan tailored to your specific use case, so you build incrementally rather than trying to one-shot a full second brain.
+
+---
+
+## Key Takeaways
+
+- **Build your own, don't just run OpenClaw:** Off-the-shelf solutions expose you to the "lethal trifecta" (private data + untrusted input + exfiltration vector) without giving you visibility or control over those risks.
+- **Memory is the core:** The `soul.md` / `user.md` / `memory.md` trio — auto-loaded at session start via a hook — is what makes every skill and interaction personalized rather than generic.
+- **Hooks are the connective tissue:** Session-start, pre-compact, and session-end hooks ensure that nothing learned in a conversation is lost; a daily cron job then distills raw logs into durable memory.
+- **Skills over MCP servers:** Cole uses `.claude/skills` for virtually everything — no additional MCP infrastructure needed — which keeps the system auditable and easy to extend.
+- **Zero-trust permissions by default:** Read-only access for integrations, write access added deliberately (e.g., create Gmail drafts but never send; manage Asana tasks only in specific projects).
+- **The heartbeat enables proactivity:** A scheduled Agent SDK process gathers API context, runs Claude Code programmatically, and pushes Slack notifications — this is where the bulk of the time savings comes from.
+- **Build in phases, not all at once:** A PRD-driven phased approach (memory foundation → hooks → RAG → integrations → heartbeat) lets you have something useful immediately while avoiding context collapse in your coding agent.
+
+---
+
+## Detailed Analysis
+
+### Why Build Your Own: The Lethal Trifecta
+
+Cole opens by addressing the obvious objection: why invest the effort when OpenClaw already exists? His answer is rooted in a security model he calls the "lethal trifecta" — three conditions that, when all present simultaneously, make an AI agent highly vulnerable to prompt injection and data exfiltration:
+
+1. **Private data access** — email, calendar, task management. Any useful second brain will have this.
+2. **Untrusted content ingestion** — incoming emails, web pages, external documents. Also unavoidable if the brain is to be useful.
+3. **Exfiltration vector** — the ability to send messages, post to APIs, create drafts. Required for the agent to act on your behalf.
+
+Cole acknowledges that OpenClaw has improved its prompt injection defenses, but argues the deeper problem is opacity: you're running a large, complex codebase you didn't write and don't fully understand. You don't know exactly what permissions you've granted or how the trifecta is playing out in your specific installation. Building your own means you define every permission explicitly, add capabilities incrementally, and always know the blast radius of what you've given the agent.
+
+Crucially, he doesn't dismiss OpenClaw — he points Claude Code at its GitHub repo to mine architectural inspiration (the `soul.md` / `user.md` pattern, the heartbeat concept) without running it directly.
+
+### Memory Architecture: The Foundation
+
+The memory layer borrows directly from OpenClaw's design. Three files, always loaded into Claude Code's context via a session-start hook:
+
+- **`soul.md`** — the agent's personality, communication style, and behavioral constraints
+- **`user.md`** — a living profile of the user: preferences, work patterns, communication style, goals
+- **`memory.md`** — a curated, concise record of key decisions, lessons learned, and important facts
+
+These files are stored in Obsidian so the user can read, audit, and correct them at any time. Obsidian serves as the canvas — a visual interface for the knowledge base that the agent is continuously building. The graph view becomes a map of the brain's growth.
+
+Every conversation contributes to a **daily log file**. When a session ends (or is about to be compacted), a hook saves the full conversation to that day's log. A daily cron job then runs the Claude Agent SDK to perform a **reflection pass**: it reads the raw log, extracts what's worth keeping permanently, and promotes it to `memory.md`. This promotion-based approach prevents `memory.md` from bloating while ensuring signal survives across sessions.
+
+### RAG Over Daily Logs
+
+For information that didn't make the cut for `memory.md` but may still be relevant later, Cole indexes all daily logs into a **SQLite database**. The agent can query this when needed — essentially a searchable journal of every conversation Cole has had with his second brain. This closes the gap between "always in context" and "retrievable on demand," giving the system two memory tiers without requiring a dedicated vector database.
+
+### Skills as Capabilities
+
+Cole's `.claude/skills` directory is extensive — covering Excalidraw diagram generation, YouTube script writing, PowerPoint creation, email triage, and more. The key insight is that skills are powered by the memory layer: a generic "write a YouTube script" skill becomes a personalized one when it has access to `user.md` (tone of voice, audience, past examples) and `memory.md` (content calendar decisions, previous scripts). The memory layer is the multiplier that makes every skill feel custom-built.
+
+He explicitly avoids MCP servers for his second brain capabilities, preferring skills for their simplicity and auditability. This aligns with the "simple composable patterns" principle he cites for agent design.
+
+### Direct Integrations and the Python API Layer
+
+For external services (Gmail, Asana, Circle, Slack), Cole built a **Python API layer** that acts as a controlled gateway. The agent never calls these APIs directly — it goes through Python wrappers that enforce permission boundaries at the code level:
+
+- Gmail: create drafts ✅, send emails ❌
+- Slack: read messages ✅, post messages ❌ (except heartbeat notifications)
+- Asana: manage tasks, but only in specific designated projects
+- Google Calendar: read events ✅, create/modify ❌
+
+This granular control is the practical implementation of the zero-trust philosophy. He notes that because all integrations follow a common pattern, the agent can scaffold new ones by referencing existing examples — the second brain can extend itself.
+
+### The Heartbeat: Proactive Intelligence
+
+The heartbeat is the component Cole credits with saving the most time. It runs on a cron schedule via the Claude Agent SDK, not triggered by user input:
+
+1. A deterministic context-gathering phase calls all integrated APIs (inbox, calendar, task list, etc.)
+2. That context, plus a pre-configured prompt, is sent programmatically into Claude Code
+3. Claude reasons about what needs attention: draft replies, handle PRs, flag upcoming events
+4. A Slack notification is sent summarizing what it did and what it found, keeping Cole in the loop
+
+The result is that Cole's second brain is already working before he opens a conversation — it has reviewed his morning, drafted responses, and surfaced the day's priorities. He can then reply in a Slack thread to continue any of those threads.
+
+---
+
+## vs. Your Current Setup
+
+| Component | Cole's Second Brain | Your Current Setup |
+|---|---|---|
+| **Platform** | Claude Code + Obsidian | Claude Code + Obsidian ✅ |
+| **Memory files** | `soul.md`, `user.md`, `memory.md` | ❌ Not configured |
+| **Session-start hook** | Auto-loads memory files into context | ❌ No hooks in `settings.json` |
+| **Pre-compact / end hook** | Saves conversation to daily log | ❌ No hooks configured |
+| **Daily logs** | One file per day since day 1 | Minimal (1 daily note: 2026-03-26) |
+| **Daily reflection cron** | Agent SDK promotes logs → memory | ❌ Not implemented |
+| **RAG** | SQLite index over all daily logs | ❌ Not implemented |
+| **Skills** | Broad second-brain skills (diagrams, scripts, email, etc.) | Task-specific skills (yt-report, prd-to-tasks, tdd, write-prd, grill-me, improve-architecture) |
+| **External integrations** | Python API layer (Gmail, Asana, Slack, Circle) | MCP servers (Gmail, Calendar, Figma, YouTube transcript) |
+| **Permission model** | Zero-trust Python wrappers, granular per-service | MCP server defaults (less granular control) |
+| **Heartbeat** | Cron + Agent SDK, proactive Slack alerts | ❌ Not implemented |
+| **Chat interface** | Slack (accessible 24/7, remote) | Claude Code CLI only |
+| **Obsidian ↔ Claude integration** | Agent-managed vault, files evolve automatically | Manual / unconnected |
+| **CLAUDE.md routing** | N/A (monorepo second brain) | ✅ Multi-workspace routing system |
+| **Context at session start** | Memory auto-loaded via hook | Relies on CLAUDE.md + manual context |
+
+**Summary:** You have the right foundation — both Obsidian and Claude Code are in place, and your skills directory shows you've already been thinking in the right direction. The main gap is the **connective tissue**: no hooks means conversations don't persist, no memory files means each session starts cold, and no heartbeat means the system is purely reactive. The highest-leverage next steps would be: (1) set up a session-start hook to load memory context, (2) create `soul.md` / `user.md` / `memory.md` in your Obsidian vault, and (3) add a pre-compact/session-end hook to log conversations to daily notes — this alone would get you ~60% of Cole's system before touching the cron, RAG, or heartbeat layers.
+
+---
+
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/1FiER-40zng&t=0s) | Introduction — what the second brain does and why it matters |
+| [2:29](https://youtu.be/1FiER-40zng&t=149s) | Agenda overview for the video |
+| [3:21](https://youtu.be/1FiER-40zng&t=201s) | The Lethal Trifecta — security argument for building your own |
+| [5:56](https://youtu.be/1FiER-40zng&t=356s) | Why OpenClaw falls short (and what to take from it) |
+| [8:59](https://youtu.be/1FiER-40zng&t=539s) | Architecture overview — high-level component walkthrough |
+| [9:42](https://youtu.be/1FiER-40zng&t=582s) | Memory layer — `soul.md`, `user.md`, `memory.md` |
+| [11:16](https://youtu.be/1FiER-40zng&t=676s) | Hooks — session start, pre-compact, session end |
+| [11:53](https://youtu.be/1FiER-40zng&t=713s) | Daily reflection cron (Claude Agent SDK) |
+| [12:59](https://youtu.be/1FiER-40zng&t=779s) | RAG over daily logs (SQLite) |
+| [13:42](https://youtu.be/1FiER-40zng&t=822s) | Skills directory — capabilities overview |
+| [15:16](https://youtu.be/1FiER-40zng&t=916s) | Direct integrations and Python API layer |
+| [17:18](https://youtu.be/1FiER-40zng&t=1038s) | Heartbeat — proactive agent via Agent SDK |
+| [19:02](https://youtu.be/1FiER-40zng&t=1142s) | Starter template and PRD skill introduction |
+| [20:43](https://youtu.be/1FiER-40zng&t=1243s) | Live demo — filling out requirements and running `/create-second-brain-prd` |
+| [22:53](https://youtu.be/1FiER-40zng&t=1373s) | Reviewing the generated PRD and phased build approach |
+| [24:08](https://youtu.be/1FiER-40zng&t=1448s) | How to execute phases — kicking off builds from the PRD |
+
+---
+
+## Sources & Further Reading
+
+- [Cole Medin's GitHub repo](https://github.com/coleam00) — starter template, PRD skill, and architecture diagram referenced in the video (linked in YouTube description)
+- **OpenClaw** — open-source AI second brain that Cole used as architectural inspiration (soul.md / user.md pattern, heartbeat concept); referenced extensively as a comparison point
+- **Obsidian** — markdown-based knowledge management app used as the canvas/vault for the second brain
+- **Claude Agent SDK** — used for the daily reflection cron job and heartbeat (programmatic Claude Code invocation)
+- **Dynamis community** — Cole's AI community where he ran a 4-hour live workshop building the second brain from scratch (referenced at [9:05](https://youtu.be/1FiER-40zng&t=545s))

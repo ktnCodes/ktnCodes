@@ -1,0 +1,105 @@
+---
+title: "Research Report: AI Agents Can Now Build Their Own UI in Real Time (Personalized to You)"
+date: 2026-04-10
+tags: ["research", "youtube", "ai-agents", "generative-ui"]
+summary: "Research report based on 'AI Agents Can Now Build Their Own UI in Real Time (Personalized to You)' by Cole Medin."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/MD8VQzvMVek" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [AI Agents Can Now Build Their Own UI in Real Time (Personalized to You)](https://youtu.be/MD8VQzvMVek) by Cole Medin
+
+---
+## Executive Summary
+
+Most agentic applications today have one job: decide what information to display and fill it into a pre-built layout. Generative UI flips this. Instead of hardwiring the interface and letting the agent populate it, generative UI gives the agent control over the layout and component selection itself — deciding not just *what* to show, but *how* to present it. Cole Medin's video introduces the concept, lays out a practical three-tier taxonomy (static, declarative, open-ended), and demonstrates a working implementation: a research dashboard that converts any AI-generated markdown document into a custom, visually rich, dynamically structured interface.
+
+The demo is built on a four-layer stack — Pydantic AI as the backend agent, Google's A2UI protocol as the component specification standard, AGUI as the agent-to-frontend streaming protocol, and CopilotKit as the frontend rendering framework. Together, these tools reduce what would otherwise be hundreds of lines of custom integration code to a composable, protocol-driven pipeline. Cole argues this pattern is not a novelty — it is the direction that mainstream software is heading, with major platforms like Amazon and Google eventually serving entirely different interface layouts per user based on behavior and interests.
+
+The most immediately practical takeaway is the concept of a "component contract" between the agent and the frontend: the agent's system prompt defines which components it can select and how to format them following A2UI; the frontend maps those specifications to actual React components. This contract is the architectural backbone that makes personalized, dynamically generated interfaces possible at scale.
+
+---
+## Key Takeaways
+
+- **Generative UI gives agents control over layout, not just content:** Rather than filling in a fixed template, the agent selects components, determines layout, and provides all display parameters — creating a truly personalized interface per request.
+- **Declarative generative UI is the practical sweet spot:** The three-tier spectrum runs from static (agent picks data only) to open-ended (agent generates raw HTML/CSS on the fly). Declarative — where the agent picks from a pre-built component library — balances agent flexibility with developer control over security and performance.
+- **A2UI is Google's emerging standard for component specification:** When the agent selects a component, it emits a structured JSON specifying the component name, ID, children (for layout), and props (the actual data to display). A2UI is the schema that defines this contract.
+- **AGUI + CopilotKit handles the real-time agent-to-frontend pipeline:** AGUI provides a standard event protocol for streaming agent state to the frontend (progress updates, component selections, completions). CopilotKit renders everything and integrates directly with both AGUI and Pydantic AI, eliminating custom plumbing.
+- **The component contract is the architectural key:** The backend defines a component library in the system prompt; the frontend maintains matching React components. When the agent selects a component, the frontend knows exactly what to render. This shared schema is what makes the whole system work.
+- **"Markdown fatigue" is a real problem generative UI solves:** As AI second brain research workflows generate walls of text, dynamically structured visual dashboards dramatically reduce the cognitive load of extracting insights — and adapt to the specific content on each pass.
+- **This is the direction software is heading:** The same personalization logic that will eventually serve different Amazon or Google layouts to different users is just a scaled-up version of this agent-selects-components pattern.
+
+---
+## Detailed Analysis
+
+### What Generative UI Actually Means
+
+Cole opens with a live demo: a personalized research dashboard generated on the fly from a markdown document his AI second brain produced. Nothing is preconfigured — the agent chose the layout, picked the components, and set all the display values from scratch. Each run produces a different dashboard because the agent adapts to the specific content it receives.
+
+The simplest definition: generative UI is giving agents the ability to decide the layout and components for the frontend. In most agentic applications today, this decision is still the developer's — the interface is fixed and the agent populates it. Generative UI removes that constraint. The agent becomes an active participant in the presentation layer, not just the data layer.
+
+### The Three-Tier Spectrum
+
+Cole introduces a taxonomy of generative UI types that clarifies what "agent control" actually means in practice:
+
+**Static generative UI** is the most common form seen across the web today. The agent decides which information to surface — the current temperature in New York, the top three results — but the layout and components are entirely pre-determined. The agent is filling a form, not designing one.
+
+**Open-ended generative UI** sits at the opposite extreme. The agent generates raw HTML, CSS, and JSX on the fly, with complete freedom over the entire interface. Maximum flexibility, but maximum risk: rendering arbitrary agent-generated code raises serious security and performance concerns. Cole explicitly says he would not feel comfortable deploying this for production users.
+
+**Declarative generative UI** is the middle option Cole advocates for. The developer builds a component library — a fixed set of React components the agent is allowed to use. The agent picks from this library, arranges components into a layout, and fills in the props (the actual data each component displays). The interface is dynamic and personalized, but it operates within bounds the developer defines through the component library and system prompt. Cole frames this as following Google's A2UI specification.
+
+### The Tech Stack in Detail
+
+The four tools Cole uses are each solving a specific integration problem:
+
+**Pydantic AI** runs in the backend as the orchestrating agent. It receives the input (a research markdown document), classifies the document type to determine the optimal layout, then iterates through a component selection process — emitting structured JSON for each component it wants to render.
+
+**A2UI (Google)** is the protocol that defines the schema for those JSON emissions. Each component selection specifies: a component name (so the frontend knows what to render), an ID, a children array (defining parent-child layout relationships), and props (the actual text, numbers, and data the component will display). A2UI standardizes this contract so the agent and frontend speak the same language.
+
+**AGUI** handles the real-time streaming connection between the backend agent and the frontend. It provides a standard event system — the agent emits events as it progresses (started, classified document, selected components, complete), and the frontend listens and updates accordingly. This is why the demo shows a progress percentage climbing in real time. Cole notes that with AGUI you could also stream individual components as they're selected, watching the dashboard build live, though his implementation waits and displays everything at once.
+
+**CopilotKit** is the frontend framework that consumes AGUI events and renders the actual React components. It has direct integrations with both AGUI and Pydantic AI, handling the binding between the agent's component specifications and the rendered UI. Cole estimates this stack saves hundreds to thousands of lines of custom integration code compared to wiring everything manually.
+
+### The Component Contract Architecture
+
+The most architecturally important section of the video is Cole's explanation of the "contract" between backend and frontend. It has two matching sides:
+
+On the **backend**, the agent's system prompt contains: (1) a list of all available components and when to use each, (2) the A2UI specification for how to format component selections as JSON, and (3) guidance on defining props — what data values each component expects. The system prompt is where the developer defines the boundaries of the agent's creative freedom.
+
+On the **frontend**, every component in the library has a corresponding React component file. These files define the JSX that renders when the agent selects that component, along with the props schema — the exact set of data values the component expects. CopilotKit maps the agent's A2UI JSON to these React components automatically.
+
+The contract is the shared schema. As long as both sides agree on what components exist and what their props look like, the agent can mix and match components freely to build any layout it chooses. Adding a new component means defining it in the system prompt and creating a matching React file — no other wiring required.
+
+### Use Case: The Second Brain Research Dashboard
+
+Cole's motivation is candid: he was suffering from "markdown fatigue." Using his AI second brain for extensive research produces mountains of well-structured markdown, but reading through it is still cognitively demanding. He built this generative UI application to address that directly — instead of reading a wall of text, he pastes the research document in and receives a custom dashboard that extracts key insights, surfaces key numbers, and structures information visually for faster consumption.
+
+The appeal is the adaptation. A dashboard for a research document about AI agent architectures looks different from one about market trends — because the agent is choosing components and layouts appropriate to each content type, not applying a one-size-fits-all template. Cole can further tune this by adjusting the system prompt — if the generated dashboard doesn't surface what he wants to know, he refines the agent's guidance and rerun.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/MD8VQzvMVek&t=0s) | Live demo: personalized research dashboard generated from AI second brain output |
+| [1:50](https://youtu.be/MD8VQzvMVek&t=110s) | Tech stack overview: Pydantic AI, A2UI, AGUI, CopilotKit, React |
+| [3:28](https://youtu.be/MD8VQzvMVek&t=208s) | Generative UI defined at a higher level — use cases (chat apps, co-creator workspaces, e-commerce) |
+| [5:00](https://youtu.be/MD8VQzvMVek&t=300s) | Three-tier spectrum: static vs. declarative vs. open-ended generative UI |
+| [7:35](https://youtu.be/MD8VQzvMVek&t=455s) | Tech stack deep dive — how each layer communicates |
+| [8:16](https://youtu.be/MD8VQzvMVek&t=496s) | Use case motivation: markdown fatigue and the second brain research dashboard |
+| [10:00](https://youtu.be/MD8VQzvMVek&t=600s) | A2UI protocol: how the agent emits structured JSON for component selection |
+| [11:00](https://youtu.be/MD8VQzvMVek&t=660s) | AGUI streaming protocol: real-time sync between agent and frontend |
+| [12:00](https://youtu.be/MD8VQzvMVek&t=720s) | Code walkthrough: the component contract (system prompt + component list, React component files) |
+| [14:09](https://youtu.be/MD8VQzvMVek&t=849s) | Dashboard result demo — live generated output |
+| [14:51](https://youtu.be/MD8VQzvMVek&t=891s) | Closing, GitHub repo, upcoming generative UI content |
+
+---
+## Sources & Further Reading
+
+- **[GitHub repo — Cole Medin's generative UI starter template](https://github.com/coleam00)** — linked in video description; a starting point for building on top of this architecture
+- **[A2UI — Google's Agent-to-UI protocol](https://a2ui.dev)** — the specification for how agents define components and layouts; used as the backend-to-frontend component schema
+- **[AGUI protocol](https://agui.dev)** — the event streaming standard for real-time agent-to-frontend communication; connects Pydantic AI backend to CopilotKit frontend
+- **[CopilotKit](https://copilotkit.ai)** — the frontend framework used to render components and integrate with AGUI and Pydantic AI
+- **[Pydantic AI](https://ai.pydantic.dev)** — the Python agent framework used as the backend orchestrator for component selection and layout decisions
+- **OpenClaw (formerly Claudebot)** — referenced as the subject of Cole's second brain research; the demo dashboard was generated from research documents about OpenClaw

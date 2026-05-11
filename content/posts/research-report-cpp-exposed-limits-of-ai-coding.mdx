@@ -1,0 +1,132 @@
+---
+title: "Research Report: C++ Exposed the Limits of AI Coding"
+date: 2026-05-08
+tags: ["research", "youtube", "cpp", "ai", "memory-safety", "static-analysis", "autopath"]
+summary: "Devsplate argues vibe coding fails horribly in C++ because the language has no runtime safety net. The directional claim is right. The percentages are unsourced. And the question the video never asks is the most important one for working C++ engineers: is the AI even checking for these issues?"
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/GLrmplzhOfk" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [C++ Exposed the Limits of AI Coding](https://www.youtube.com/watch?v=GLrmplzhOfk) by devsplate
+
+---
+## Executive Summary
+
+Devsplate's three-minute argument is that vibe coding works in higher-level languages because the runtime catches your mistakes, but fails horribly in C++ because there is no safety net. The video lands four numbers (31% faster development, 34.8% more vulnerabilities in C++, 89% more critical vulnerabilities, 76% reviewer miss rate) and points the finger at AI's training data: decades of unsafe C++ on Stack Overflow and tutorials, faithfully reproduced. The conceptual chain is real and well-supported by peer-reviewed work. The specific percentages are unsourced and should not be quoted without verification.
+
+The more interesting omission is what the video does not address. Its prescription is one sentence at the end: "memory-safe approaches, stronger static analysis, formal methods matter." That treats AI as a generation-only loop. The harder question for any working C++ engineer is upstream of that: when an AI assistant generates a buffer overflow in your codebase, is the AI itself running clang-tidy? ASAN? UBSan? Valgrind? In most default setups, no. The agentic loop stops at "compile + happy path test" and ships the rest of the work to a human reviewer who, per the video's own number, will miss roughly three-quarters of the vulnerabilities.
+
+The path forward is to close that loop inside the agent's harness. Generate, run sanitizers, parse the scalar metric, keep the diff if memory safety improves, revert if it does not. That is Karpathy's AutoResearch pattern applied to C++ memory safety with valgrind's `definitely_lost_bytes` or ASAN's error count as the bits-per-byte equivalent. It is also a 1-day spike worth running on any C++ codebase that ships AI-generated code, including the AutoPath embedded codebase I work on at John Deere.
+
+---
+## Key Takeaways
+
+- **The directional argument is true.** AI in memory-unsafe languages introduces more vulnerabilities than human-written code, and reviewers miss a disproportionate share. Backed by Perry et al (Stanford, 2023) and Pearce et al (NYU, 2022), not just by devsplate.
+- **The specific percentages are unsourced.** 31%, 34.8%, 76%, 23.7%, 89%. Treat them as marketing-grade illustrative numbers until a peer-reviewed study or named industry report (Apiiro, Veracode, Snyk) is identified.
+- **Four defect classes show up reliably in AI-generated C++.** Uninitialized variables. Use-before-init or use-after-free. Silent numeric overflows. Buffer overflows from missing bounds checks.
+- **Each defect class has a tool that catches it.** UBSan, MSAN, ASAN, Valgrind, Clang Static Analyzer, clang-tidy, fuzzers. None of them are in the default loop of mainstream AI coding assistants.
+- **The training data is the mechanism, not the symptom.** Decades of C++ tutorials and Stack Overflow answers reflect patterns that "usually worked" on the author's machine. The model reproduces them accurately. In a higher-level language those patterns are smells. In C++ they are CVEs.
+- **Close the loop in the harness.** Karpathy's AutoResearch pattern applies cleanly: agent generates, sanitizer runs, scalar metric (`definitely_lost_bytes`) is parsed, diff is kept or reverted. This is the layer the devsplate video does not engage with.
+- **C++ engineers have the rare leverage.** "AI doesn't reason about memory lifetimes" is a categorical claim, not a moat. Pattern prediction does fail at lifetime, ownership, and threading. A disciplined harness with sanitizers and comprehension gates closes most of the gap. The engineers who build that harness are the ones who get the AI bounty without the vulnerability tax.
+
+---
+## Detailed Analysis
+
+### What the video gets right
+
+The conceptual chain holds. Models reproduce their training distribution. C++'s training distribution is full of patterns that worked on the original author's machine but fail under undefined behavior, or under different alignment, or under a different optimization level, or under a different threading model. In Python or TypeScript those patterns are slow code, awkward abstractions, dropped exceptions. The runtime catches them. In C++ the runtime catches nothing. Manual memory management, optional bounds checking, real undefined behavior. The same multiplication that produces sluggish Python produces use-after-free in C++.
+
+Two peer-reviewed studies anchor this. Perry, Srivastava, Kumar, and Boneh's *Do Users Write More Insecure Code with AI Assistants?* (Stanford, 2023) found AI-assisted users wrote significantly more insecure code and were more confident their code was secure. The misplaced confidence is the same psychological mechanism the devsplate video gestures at with its 76% miss-rate number. Pearce, Ahmad, Tan, Dolan-Gavitt, and Karri's *Asleep at the Keyboard?* (NYU, 2022) found roughly 40% of GitHub Copilot's completions in security-relevant contexts were vulnerable. Different study, different number, same direction.
+
+The video's training-data thesis lines up with Karpathy's mechanism for why agent code looks bloaty. From his AI Ascent 2026 talk: simplicity, taste, and clean abstraction are not in the RL reward function, so they are not in the capability surface. The corresponding C++ version is that memory safety is not in the RL reward function either. The labs have not done it yet. There is nothing fundamental preventing it. The capability gap is closeable. It is just not closed.
+
+### What the video gets wrong, or rather leaves unsourced
+
+The percentages. None of the four numbers in the video are attributed. Some of them are in the same range as published industry reports (the 31% productivity gain matches GitHub's own Copilot studies). Others are too specific to be made up but too unsourced to quote in a serious post. If I were drafting this for a peer-reviewed audience I would lead with Perry et al and Pearce et al and treat the devsplate numbers as illustrative.
+
+The bigger gap is what the video does not say. There is no engagement with static analysis tooling beyond a single throwaway sentence. No mention of Coverity, clang-tidy, Clang Static Analyzer, PVS-Studio, Cppcheck, or sanitizers (ASAN, MSAN, UBSan). No mention of modern C++ ergonomics that mitigate exactly the failure modes listed: smart pointers, RAII, `std::span`, `std::array::at()`, the C++ Core Guidelines and the GSL. No mention of fuzz testing. The video defines the problem and then steps back from the solution.
+
+### The question the video does not ask
+
+If AI is generating vulnerable C++ at the rates devsplate cites, the obvious question is: what is the AI itself doing about it? Is it running the sanitizers? Is it parsing the static analyzer output? Is it iterating on the fix until the metric goes to zero?
+
+The honest answer for default setups in mainstream tools (Copilot, Cursor, Claude Code without custom skills) is no. The agentic loop terminates at "compiles cleanly and the happy-path test passes." Sanitizers, valgrind, fuzzers, and static analyzers are not in the loop. They are in CI, on a different timeline, ideally caught before merge but often surfacing weeks later in a different engineer's context. That is the "compiles cleanly and passes initial checks, surfaces later as a security issue" pattern the video describes, and it is structural to the harness, not to the model.
+
+This is the frame the working C++ engineer can act on. The model is not going to wake up next week with a memory-safety reward function. The harness around the model can be improved this week.
+
+### Closing the loop with AutoResearch
+
+Karpathy's AutoResearch project runs an autonomous loop: an agent modifies `train.py`, trains for five minutes, evaluates a scalar metric (bits per byte), keeps the change if the metric improved, reverts if it did not, repeats. About 700 experiments overnight on a single H100 found 20 compounding optimizations. The human's job is the strategic brief and the choice of metric, not running experiments.
+
+That loop maps cleanly onto C++ memory safety:
+
+| AutoResearch | C++ memory equivalent |
+|---|---|
+| `train.py` | C++ source files under investigation |
+| Strategic brief | System description, scope of allowed changes, known false positives |
+| 5-minute training run | Build + sanitizer run within a fixed budget (2 to 5 min) |
+| Bits-per-byte | `definitely_lost_bytes` (Valgrind) or error count (ASAN) |
+| Keep change | `git commit` |
+| Discard change | `git checkout -- .` |
+
+The agent proposes a fix, builds with `-fsanitize=address`, runs the test harness, parses ASAN's error summary, keeps the change if errors decreased, reverts otherwise. Each experiment is self-contained and revertible. Determinism is the hard part: a leak that triggers under specific timing in a multithreaded path may be hard to reproduce. The fix is a single-threaded, fixed-input, fixed-seed test harness wherever the production code allows it.
+
+Build time is the friction. A five-minute ML run is pure compute. C++ build plus link plus valgrind on a large codebase can hit five minutes just for the build step, which severely constrains overnight experiment volume. For an embedded C++ codebase like AutoPath, this means scoping the agent's working surface tightly: one subsystem at a time, one allocation pattern at a time, with a build cache warmed for incremental rebuilds.
+
+### Defect class to tool mapping
+
+The four defect classes the video lists each have a tool that catches them. The blog post version of this argument needs the matrix.
+
+| Defect class | Caught by |
+|---|---|
+| Uninitialized variables | MSAN, Clang Static Analyzer, clang-tidy `cppcoreguidelines-init-variables` |
+| Use-before-init / use-after-free | ASAN, Valgrind memcheck, Clang Static Analyzer |
+| Silent numeric overflow | UBSan (`-fsanitize=signed-integer-overflow`), clang-tidy `bugprone-narrowing-conversions` |
+| Buffer overflow / missing bounds check | ASAN (heap), `-fstack-protector-strong` (stack), fuzzers, `std::span` and `at()` at the source |
+
+None of these are exotic. Most are one compiler flag or one clang-tidy check away. The reason they are not caught by AI assistants today is not capability. It is harness scope. The fix is to add them to the loop.
+
+### Applying this at work
+
+I work on AutoPath at John Deere. Qt5/C++14, embedded, multithreaded, lifecycle-sensitive. A recent investigation in our automation engine planner turned up five confirmed threading bugs, two of them critical use-after-free, all from cross-thread direct calls that compiled cleanly and passed initial checks. The video's claim that "appearances are deceptive in C++" is a literal description of how those bugs survived review.
+
+The 1-day spike I would actually run, in priority order:
+
+1. Add `clang-tidy --checks=cppcoreguidelines-*,bugprone-*,clang-analyzer-*` to the build, with `-Werror` on new code paths only. Existing warnings get triaged, not blocked.
+2. Add a CI job that runs the unit test suite under ASAN. The build slowdown is real; the bug yield more than pays for it.
+3. Wire one of those signals (ASAN error count, most likely) as the scalar metric for an AutoResearch-style fix loop on a single subsystem with known leak symptoms.
+
+Step 3 is where the blog post becomes a portfolio piece: "the video motivated us, we measured our own AI-generated code, we added the gate, here is the before-and-after." That is a Grade 7 evidence piece and a ktncodes.com write-up in one move.
+
+### The honest take on "AI does not reason about systems"
+
+The video says AI predicts patterns, does not reason about systems, and that this is the foundational reason vibe coding fails in C++. Half right. Pattern prediction does fail at memory lifetime, ownership, and threading invariants in a way it does not fail at syntax. But the leap from "pattern prediction is insufficient" to "vibe coding fails horribly" assumes the only available loop is the unsupervised one. A disciplined harness with sanitizers, static analyzers, and comprehension gates closes most of the gap. The model's job becomes "propose a fix that makes the metric go down," which is exactly the regime where pattern prediction works.
+
+The right framing is not "AI cannot do C++." It is "AI cannot do C++ alone." That is also the right framing for the engineer's career. The position that compounds is the engineer who designs the harness, not the engineer who prompts well. Stripe's blueprint engine is the same idea applied to payment processing. The agentic loop is the deliverable. The model is just the engine that runs in it.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://www.youtube.com/watch?v=GLrmplzhOfk&t=0s) | Hook: 31% faster, 34.8% more vulnerabilities, 76% miss rate |
+| [0:14](https://www.youtube.com/watch?v=GLrmplzhOfk&t=14s) | Vibe coding defined: prompt, accept, ship |
+| [0:24](https://www.youtube.com/watch?v=GLrmplzhOfk&t=24s) | Why C++ has no safety net: manual memory, optional bounds checking, real UB |
+| [0:42](https://www.youtube.com/watch?v=GLrmplzhOfk&t=42s) | AI predicts patterns, does not reason about lifetimes / ownership / edge cases |
+| [0:55](https://www.youtube.com/watch?v=GLrmplzhOfk&t=55s) | Training data: decades of unsafe C++ tutorials and Stack Overflow |
+| [1:28](https://www.youtube.com/watch?v=GLrmplzhOfk&t=88s) | Four common AI-generated C++ defects |
+| [1:50](https://www.youtube.com/watch?v=GLrmplzhOfk&t=110s) | Productivity vs vulnerability tradeoff numbers |
+| [2:13](https://www.youtube.com/watch?v=GLrmplzhOfk&t=133s) | Bugs that compile cleanly, surface later in production |
+| [2:27](https://www.youtube.com/watch?v=GLrmplzhOfk&t=147s) | Junior developers accept most suggestions, the worst regime for C++ |
+| [2:55](https://www.youtube.com/watch?v=GLrmplzhOfk&t=175s) | Prescription: memory-safe approaches, static analysis, formal methods |
+
+---
+## Sources & Further Reading
+
+- **Perry, N., Srivastava, M., Kumar, D., Boneh, D.** *Do Users Write More Insecure Code with AI Assistants?* Stanford, 2023. The peer-reviewed anchor for "AI users produce more vulnerabilities and are more confident the code is secure."
+- **Pearce, H., Ahmad, B., Tan, B., Dolan-Gavitt, B., Karri, R.** *Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code Contributions.* IEEE S&P 2022. ~40% of Copilot completions in security-relevant contexts were vulnerable.
+- **METR.** *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity.* Experienced engineers were 19% slower with AI on real-world codebases.
+- **Karpathy, A.** *AutoResearch* / AI Ascent 2026 talk. The autonomous loop pattern that closes generation against a scalar metric. Source for "aesthetics is not in the RL reward function" mechanism.
+- **C++ Core Guidelines, Stroustrup and Sutter.** Modern C++ ergonomic patterns (RAII, smart pointers, span, GSL) that mitigate the four defect classes at the language level.
+- **Sanitizers and tooling.** ASAN, MSAN, UBSan (Clang/GCC), Valgrind memcheck, Clang Static Analyzer, clang-tidy, libFuzzer/AFL++.

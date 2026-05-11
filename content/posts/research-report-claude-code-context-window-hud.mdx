@@ -1,0 +1,101 @@
+---
+title: "Research Report: Your Claude Code Terminal Could Look Like This"
+date: 2026-04-04
+tags: ["research", "youtube", "claude-code", "developer-tools"]
+summary: "Research report based on 'Your Claude Code Terminal Could Look Like This' by Eric Tech."
+showToc: true
+---Qwen AI
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/Jvl_MOBPRXI" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [Your Claude Code Terminal Could Look Like This](https://youtu.be/Jvl_MOBPRXI) by Eric Tech
+
+---
+## Executive Summary
+
+Most developers using Claude Code have no idea how much of their context window they've consumed at any given moment. The only way to check is to manually type `/context` — a step that is easy to skip and easy to misread. Flying blind on context usage is not a minor inconvenience. Once a session crosses a certain consumption threshold, AI generation accuracy drops measurably, and developers often don't realize it until the output degrades.
+
+Eric, a senior software engineer with experience at Amazon, AWS, and Microsoft, demonstrates how to transform the plain Claude Code terminal into an instrumented working environment. By setting up a persistent status bar — a HUD showing the active model, a live context-usage progress bar, and current token count — developers get continuous, ambient visibility into session health without ever running a slash command. The setup takes under five minutes and survives session restarts.
+
+The broader argument in the video is that context visibility is an optimization lever, not just a cosmetic feature. When you can see exactly how much of your 200K token window a fresh session consumes before you type a single prompt, you can audit what's driving that overhead — system prompts, MCP tool definitions, CLAUDE.md files — and trim the fat. A leaner initial footprint means more room for actual work and higher accuracy throughout the session.
+
+---
+## Key Takeaways
+
+- **Visibility prevents accuracy degradation:** Exceeding a certain context threshold lowers Claude's generation accuracy. A live status bar makes this threshold visible so you can act before quality drops, instead of noticing after.
+- **The status bar shows model, progress bar, and token count:** Three values are displayed inline: which model is active, a percentage bar of context consumed, and the raw token number. All three update with every interaction.
+- **Setup is a one-prompt operation:** Using Claude Code's built-in `statusline-setup` agent, you describe your OS and preference (global install, separate script file) and the agent generates the shell script and wires it into settings automatically.
+- **Token calculation includes cache tokens:** Accurate context usage is `cache_read_input_tokens + cache_creation_input_tokens + input_tokens + output_tokens`. The naive display (input tokens only) understates actual consumption significantly.
+- **The HUD persists across session restarts:** Once configured, the status bar reappears every time you open a new Claude Code session — no manual re-run required.
+- **Initial context overhead is auditable:** A fresh Claude Code session can consume 20–25% of a 200K context window before any user prompt. The culprits are typically the system prompt, MCP tool definitions, and CLAUDE.md content. The HUD makes this visible; Claude can then investigate and generate an optimization plan.
+- **Conservative cleanup removes 8–12K tokens:** Disabling redundant plugins (e.g. duplicate front-end design skills, unused LSP tools) in global settings trims the initial footprint without touching the rules and conventions in CLAUDE.md.
+
+---Qwen AI
+## Detailed Analysis
+
+### Why Context Visibility Matters
+
+The core problem the video addresses is invisible degradation. Claude Code sessions use a rolling context window — typically 200K tokens. As a conversation grows, older context is displaced and the model's effective working memory narrows. Developer awareness of this process is usually zero; the only signal is a gradual decline in output quality that can easily be attributed to prompt phrasing rather than the real cause.
+
+The status bar converts this invisible process into a visible one. A percentage bar that ticks up with each interaction creates a feedback loop: you notice when a task is expensive, when clearing context resets the meter, and when your initial footprint is higher than expected. This is the same principle behind memory profilers in traditional software development — instrumentation doesn't change the behavior, but it makes the behavior legible.
+
+### Setting Up the Status Bar
+
+The setup workflow is straightforward. The prerequisite is `jq`, a command-line JSON processor used to parse Claude Code's session output. On macOS this is a `brew install jq`; on Linux, a package manager equivalent.
+
+Once `jq` is available, the `statusline-setup` agent handles the rest. The agent accepts a plain-language prompt describing the target environment: operating system, whether the install should be global or project-scoped, and whether to use a separate script file. It generates a shell script that reads Claude Code's session JSON and formats the three status values, then writes the `statusCommand` path into Claude Code's settings file. Running the generated shell command once activates it; from that point forward the bar appears automatically on every session start.
+
+The agent can also be re-prompted to add or remove fields. Beyond the three defaults, the status bar supports displaying the Claude Code version, the full model ID string, the current working directory, the git branch, and the project name. The status bar is also theme-aware — color schemes like Solarized Light can be applied to the bar independently of the terminal theme.
+
+### Token Accuracy: The Naive vs. Correct Calculation
+
+An important correction the video makes explicit: the default token display in naive implementations shows only `input_tokens`, which significantly understates actual context usage. The correct formula is:
+
+```
+actual_usage = cache_read_input_tokens
+             + cache_creation_input_tokens
+             + input_tokens
+             + output_tokens
+```
+
+Claude Code caches parts of its context (system prompt, tool definitions) between interactions to reduce latency and cost. Those cached tokens still occupy the context window. A session that shows 47K input tokens may actually be consuming 66K when cache tokens are included. The percentage bar should use the full sum to be accurate.
+
+### Using the HUD to Optimize Initial Context
+
+The most actionable section of the video demonstrates using the HUD not just as a passive monitor but as an optimization input. When a fresh Claude Code session consumes 23–25% of a 200K window before any user input, that overhead has a source. Common contributors:
+
+- **System prompt:** Claude Code's built-in instructions typically account for the largest share
+- **MCP tool definitions:** Every MCP server registered in the configuration adds tool schemas to the context at session start
+- **CLAUDE.md content:** Project and workspace instruction files are loaded in full at session start
+
+By prompting Claude to investigate which components are driving the initial consumption, a developer can get a detailed breakdown with token estimates per source. From there, Claude can generate a conservative, moderate, or aggressive optimization plan. In the example shown, a conservative plan targeted four redundant plugins — a duplicate front-end design skill, unused TypeScript LSP tools, and a code review plugin — reducing the initial footprint by 8–12K tokens and dropping the opening consumption from ~25% to ~23%. Small numbers, but the effect compounds across long sessions and multi-step agent runs.
+
+### Context Management as a Discipline
+
+The practical workflow the video implies is that context management should be active rather than reactive. Developers who can see their usage percentage can make deliberate decisions: compact the context before starting a new feature, clear context when switching domains, and restart sessions proactively rather than waiting for degradation. The plan mode in Claude Code already clears context on each run — the HUD makes that behavior visible by showing the percentage drop after each plan-mode interaction.
+
+This shifts context management from an occasional emergency (running `/context` when outputs start feeling wrong) to a continuous practice visible in the corner of the terminal at all times.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/Jvl_MOBPRXI&t=0s) | Introduction: what the context window HUD looks like and why it matters |
+| [1:44](https://youtu.be/Jvl_MOBPRXI&t=104s) | Installing jq — the prerequisite JSON processor |
+| [2:19](https://youtu.be/Jvl_MOBPRXI&t=139s) | Using the statusline-setup agent to configure the status bar globally |
+| [3:08](https://youtu.be/Jvl_MOBPRXI&t=188s) | Status bar live: model name, context %, and token count |
+| [3:54](https://youtu.be/Jvl_MOBPRXI&t=234s) | Fixing token accuracy — adding cache tokens to the calculation |
+| [5:55](https://youtu.be/Jvl_MOBPRXI&t=355s) | Installing via markdown doc: pass the setup guide to Claude Code |
+| [7:18](https://youtu.be/Jvl_MOBPRXI&t=438s) | Practical demo: monitoring context during a live coding task |
+| [8:41](https://youtu.be/Jvl_MOBPRXI&t=521s) | Sponsor: TestSprite MCP for AI-driven test coverage |
+| [12:21](https://youtu.be/Jvl_MOBPRXI&t=741s) | Using context data to audit and reduce initial context overhead |
+| [13:35](https://youtu.be/Jvl_MOBPRXI&t=815s) | Conservative optimization plan: removing 4 redundant plugins |
+| [15:01](https://youtu.be/Jvl_MOBPRXI&t=901s) | Results: fresh session now opens at 23% vs 25% before |
+
+---
+## Sources & Further Reading
+
+- **jq (command-line JSON processor):** The prerequisite tool for parsing Claude Code's session output. Available at [jqlang.github.io/jq](https://jqlang.github.io/jq/) — install via `brew install jq` on macOS or equivalent package managers on Linux/Windows.
+- **TestSprite MCP:** AI testing agent mentioned as the video sponsor. Generates test plans from PRDs, creates test cases, and validates AI agent output — available via MCP configuration in Cursor, Windsurf, Claude Code, and other IDEs.
+- **Claude Code `/context` command:** Built-in slash command that displays current context window consumption as a percentage and raw token count. The status bar automates what this command shows manually.

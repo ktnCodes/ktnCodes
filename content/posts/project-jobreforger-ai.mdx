@@ -1,0 +1,45 @@
+---
+title: "Project: JobReforgerAI"
+date: 2026-03-29
+tags: ["portfolio", "python", "ai-agents", "mcp"]
+summary: "Built a fully local AI resume toolkit with dual ATS + HR scoring, automated job discovery, and DOCX generation."
+showToc: false
+---
+
+## Overview
+
+Most resume tools optimize for one thing: keyword density. Pass the ATS filter, and you're done. The problem is that ATS and HR scorers evaluate resumes very differently — what makes a resume rank high in an automated filter (keyword stuffing, repetition) often reads as robotic and unnatural to a human recruiter.
+
+JobReforgerAI is a fully local resume toolkit that tailors resumes against both evaluation models simultaneously. It takes a job description, scores your master resume against it using two separate engines, auto-iterates until both scores hit their targets, and generates a clean ATS/Workday-compliant DOCX — all without touching a SaaS subscription or sending your data anywhere.
+
+## How It Works
+
+The core is a dual scoring pipeline exposed as a local FastMCP server:
+
+**ATS Scorer (8 components)** — simulates automated filter systems using phrase matching, keyword matching with synonym expansion, semantic similarity via sentence-transformers, BM25 probabilistic ranking, NetworkX skill graph inference, and a recency decay model (`e^(-λΔt)`) that discounts older skills the same way a recruiter mentally does.
+
+**HR Scorer (6 factors)** — simulates a human recruiter evaluating experience fit, career trajectory (regression slope of title progression), impact signals (Bloom's Taxonomy verb classification, metric density), company/university prestige signals, and F-pattern visual compliance based on eye-tracking research.
+
+The tailoring workflow runs in 6 parallel phases — scoring in the background while the resume draft is being written — cutting execution time by roughly 50% versus sequential processing. If either score misses its target (ATS: 75–85%, HR: 70%+), the tool auto-iterates up to two more rounds before producing final output.
+
+## Key Features
+
+- Dual-engine scoring with explainable weights per component
+- Auto-iteration until score targets are met
+- Multi-source job discovery across Indeed, LinkedIn, ZipRecruiter, Glassdoor, and Remotive — no API keys required
+- ATS/Workday-compliant DOCX output (no tables, no text boxes, safe fonts)
+- Application tracker auto-updated in Excel after every generation
+- Domain auto-detection across 6 verticals (clinical, healthcare, finance, tech, consulting, embedded)
+- Two interfaces: Claude Code slash commands (`/resume`, `/find-jobs`) and a Claude Cowork skill for natural language use
+
+## What I Learned
+
+- Building and serving a local **MCP server** with FastMCP 3.0 — exposing scoring tools as callable endpoints for Claude to invoke mid-workflow
+- **Embedding caching**: SHA-256 hashing input text → disk-backed `.npy` files + LRU in-memory cache, reducing repeated scoring latency from ~5s to under 100ms
+- **Lazy-loading ML models**: deferring SBERT initialization until first call dropped server startup from 45–90s to ~5s
+- **Parallel agent orchestration** in Claude Code — running scoring, writing, and DOCX generation in overlapping phases
+- Why dual optimization matters: targeting 75% ATS + authentic phrasing outperforms 90% ATS + keyword stuffing because HR scores collapse on the second case
+
+## Tech Stack
+
+Python, FastMCP 3.0, sentence-transformers, rank-bm25, NetworkX, python-jobspy, python-docx, openpyxl, Claude Code

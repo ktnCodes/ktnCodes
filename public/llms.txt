@@ -1,0 +1,37 @@
+# Kevin Trinh Nguyen
+
+> Software Engineer specializing in embedded systems (C++/Qt) and AI/agentic engineering. 4+ years at John Deere building production embedded systems and driving team-wide adoption of agentic developer tools.
+
+This site is an engineering notebook — what I build, what I write about, and how to reach me. Source: https://github.com/ktnCodes/ktnCodes
+
+## About
+
+- [About Kevin](https://ktncodes.com/about): Background, experience, education, and the tech I work with day to day
+- [Resume (PDF)](https://ktncodes.com/resume.pdf): Detailed work history
+
+## Writing
+
+- [All Posts](https://ktncodes.com/posts): Engineering notes
+- [Browse by Tag](https://ktncodes.com/tags): Posts grouped by topic
+- [Archives](https://ktncodes.com/archives): Posts by date
+- [Search](https://ktncodes.com/search): Find a post
+
+## Featured Projects
+
+- [AutoPath Guidance](https://www.deere.com/en/technology-products/precision-ag-technology/guidance/autopath/): John Deere's GPS guidance system for tractors. Day-job product. C++14, Qt5, Embedded Linux, CAN. Feature development across Boundaries, Rows, Zones, and Pro product lines.
+- Team LLM Knowledge Base: 6 custom Claude Code / GitHub Copilot skills + MkDocs knowledge base adopted across the AutoPath team. Drove team Copilot usage from 0 to daily.
+- LLM-Powered Wiki Template: Hackathon project. Forkable team wiki built on Karpathy's 3-layer architecture (raw -> compiled -> operating instructions), LLM-maintained through 6 pipeline skills.
+- [ICM Template](https://github.com/ktnCodes/icm-template): Open-source model-agnostic template framework implementing the Interpretable Context Methodology for organizing AI-assisted workflows.
+- YouTube Research Report Tool: FastMCP server tool that extracts YouTube transcripts and generates structured Markdown research reports with timestamped topic outlines.
+
+## Other Projects
+
+- [AI Portfolio Site (this site)](https://github.com/ktnCodes/ktnCodes): Next.js + React 19 + Tailwind v4 with an agentic chatbot using Vercel AI SDK and multi-model fallback (Gemini -> OpenAI).
+- [JobReforgerAI](https://github.com/ktnCodes/JobReforgerAI): AI resume toolkit. 13k+ lines of Python, dual scoring (8-component ATS + 6-factor HR simulation), multi-agent orchestration via FastMCP.
+- [Arkive](https://github.com/ktnCodes/arkive): Privacy-first desktop personal-data wiki. C++17, Qt 6/QML, CMake/Ninja, llama.cpp local inference + Claude/OpenAI API behind a swappable provider interface.
+
+## Contact
+
+- GitHub: https://github.com/ktnCodes
+- LinkedIn: https://www.linkedin.com/in/itskevtrinh/
+- Site: https://ktncodes.com

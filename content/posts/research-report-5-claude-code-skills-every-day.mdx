@@ -1,0 +1,117 @@
+---
+title: "Research Report: 5 Claude Code Skills I Use Every Single Day"
+date: 2026-03-29
+tags: ["research", "youtube", "claude-code", "developer-tools"]
+summary: "Research report based on '5 Claude Code skills I use every single day' by Matt Pocock."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/EJyuu6zlQCg" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [5 Claude Code skills I use every single day](https://youtu.be/EJyuu6zlQCg) by Matt Pocock
+
+---
+## Executive Summary
+
+AI agents have no memory. They emerge from each session with no recollection of prior decisions, no knowledge of established conventions, and no awareness of why the codebase looks the way it does. This constraint is not going away — and it means that the developer's job has fundamentally shifted. The code quality an agent produces is a direct function of the process you use to steer it. Without explicit, well-designed processes encoded as skills, agents drift, make inconsistent decisions, and produce work that compounds into technical debt rather than reducing it.
+
+Matt Pocock, a developer with nearly a decade of engineering experience, has built a library of Claude Code skills — short, precisely-worded prompt files that give agents a strict path to walk down for specific tasks. Five of these skills form the backbone of his daily workflow: Grill Me (deep requirement elicitation through structured questioning), Write a PRD (converting a fleshed-out idea into a GitHub issue document), PRD to Issues (breaking a PRD into independent, properly sequenced implementation tasks), TDD (enforcing test-driven development with a red-green-refactor loop), and Improve Codebase Architecture (identifying shallow modules and designing deeper interfaces through parallel sub-agent comparison).
+
+The through-line across all five is that they encode what a good senior engineer would naturally do — and then make it repeatable, context-independent, and agent-executable. Treating agents like humans with weird constraints (no memory, highly literal, reluctant to refactor their own code) turns out to be the most reliable path to high-quality AI-assisted development.
+
+---
+## Key Takeaways
+
+- **Agents have no memory — process is the substitute.** Without strictly defined skills, each agent session starts from scratch and makes inconsistent decisions. Skills encode the developer's process so the agent has a reliable path through every task type.
+- **Skill 1 — Grill Me:** Forces the agent to interview you relentlessly about every aspect of a plan before any code is written. Walks the design tree (from Frederick P. Brooks' *The Design of Design*), resolving dependencies between decisions one branch at a time. Prevents the agent from producing a plan prematurely.
+- **Skill 2 — Write a PRD:** Converts a grilled-out idea into a formal Product Requirements Document submitted as a GitHub issue. Includes user stories in structured language that can drive later implementation. The destination, not the journey.
+- **Skill 3 — PRD to Issues:** Breaks a PRD into vertical slices — thin cuts through all integration layers that flush out unknown unknowns early. Establishes blocking relationships between tasks. Enables parallel agent execution where subtasks are independent.
+- **Skill 4 — TDD:** Enforces a red-green-refactor loop with agents. Confirms interface changes before writing tests. Writing one test at a time, making it pass, then looking for refactor candidates. TDD is the most consistent method Pocock has found for improving agent output quality.
+- **Skill 5 — Improve Codebase Architecture:** Explores the codebase for confusing structures, presents deepening opportunities, spawns multiple parallel sub-agents to design radically different interfaces for a chosen module, and creates a refactor RFC as a GitHub issue. Makes TDD easier by improving module boundary clarity.
+- **Skills don't have to be long to be powerful.** The Grill Me skill is three sentences. Choosing the right words at the right moment is the craft.
+
+---
+## Detailed Analysis
+
+### Why Skills Are Not Optional
+
+The fundamental constraint of AI coding agents is amnesia. Every session starts with the agent knowing only what is in its context window. It has no memory of the decisions made in prior sessions, no knowledge of why a certain architectural choice was made six months ago, and no internalized sense of the team's conventions or preferences. It will make locally reasonable decisions that are globally inconsistent with an established system.
+
+Skills solve this by encoding process as a reproducible instruction set. When the agent runs a skill, it follows a strict path. The same path, every time, for that task type. Pocock's GitHub repository of skills is not a prompt library — it is his engineering process, externalized. Each skill represents something a thoughtful senior engineer would naturally do when approaching that category of work. The skills make that behavior agent-accessible and consistent across sessions.
+
+The practical consequence of investing in skills shows up in output quality. As the codebase improves and skills improve together, the code agents produce measurably gets better. Garbage codebase → garbage agent output. Well-structured codebase + well-designed skills → reliable, high-quality agent output.
+
+### Skill 1: Grill Me
+
+The Grill Me skill is three sentences: "Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one by one. If a question can be answered by exploring the codebase, explore the codebase instead."
+
+The design tree concept — from Frederick P. Brooks' *The Design of Design* — captures what the skill is doing. A design has branches: if you choose advanced search over a text box, you then need to resolve all the filter and sort decisions for advanced search before committing to code. The tree must be walked completely before implementation begins. Without the Grill Me skill, Claude Code in plan mode tends to produce a plan quickly — before a genuine shared understanding has been reached. The skill prevents that. It forces the agent to keep asking questions until the developer has answered every branch.
+
+In practice, a Grill Me session for a complex feature will generate 16 to 50 questions. Pocock has had sessions that ran 30 to 45 minutes. The questions span UI layout, data lifecycle, interface design, edge cases, and integration dependencies. All from three sentences.
+
+### Skill 2: Write a PRD
+
+Once the developer and agent have reached shared understanding through Grill Me, the Write a PRD skill converts that understanding into a formal Product Requirements Document submitted as a GitHub issue.
+
+The skill walks a structured process: ask for a detailed description, explore the repo to verify assertions, interview the user if a shared understanding hasn't already been reached (it skips this step if Grill Me was just run), sketch the major modules to build or modify, and then write the PRD against a template. The output is a GitHub issue containing a problem statement, a solution description, and detailed user stories in structured language — the destination without the journey.
+
+The distinction between PRD and implementation plan is deliberate. The PRD describes where you are going without prescribing exactly how to get there. Implementation decisions in the PRD are intentionally not overprescriptive, because code that gets out of date with the PRD creates friction when the PRD is later used to drive implementation.
+
+### Skill 3: PRD to Issues
+
+A PRD describes a destination. PRD to Issues creates the journey. The skill takes a PRD and breaks it into a Kanban board of independently-actionable GitHub issues.
+
+The key principle is vertical slices, drawn from the tracer bullet analogy. Each issue is a thin cut through all integration layers — not a horizontal slice of one layer. A horizontal slice might be "implement all database models." A vertical slice might be "build the editing engine with tests that cover the core acceptance criteria." The vertical slice flushes out unknown unknowns early: if the editing engine approach isn't feasible, you discover that in issue one rather than after four horizontal layers have been built on a faulty foundation.
+
+PRD to Issues also establishes blocking relationships between tasks. Some issues can be picked up independently and worked in parallel — important for multi-agent setups where two agents can run simultaneously. Others are blocked by dependencies (the Monaco editor toggle is blocked by the editing engine; the UI is blocked by both). The result is a proper dependency graph, not just a flat list of tasks.
+
+After the skill runs, Pocock confirms the issue breakdown and the agent creates all GitHub issues, each referencing the parent PRD so the implementation agent can fetch it during execution. The Ralph loop — Pocock's autonomous agent loop — then picks up issues, implements them, comments on them, closes them, and unblocks the next in sequence.
+
+### Skill 4: TDD
+
+TDD (Test-Driven Development) with agents enforces the red-green-refactor loop that is standard in professional software engineering. The skill is notably longer than the others — it includes philosophy around testing, guidelines on mocking, and notes on what "deep modules" means in practice.
+
+The workflow: confirm with the user what interface changes are needed → confirm which behaviors to test → design interfaces for testability → write one failing test → write the minimum code to make it pass → look for refactor candidates → repeat until complete.
+
+The interface confirmation step is the most important. When an AI encounters a poorly structured codebase — many tiny, undifferentiated modules with unclear relationships — it struggles to understand what is responsible for what. It has to do significant inferential work just to navigate the codebase. When the codebase is structured as a smaller number of larger modules with thin, clearly-defined interfaces (only the exported functions that callers actually use), the AI can navigate easily and the test boundaries are obvious.
+
+The refactor step in the loop is acknowledged as imperfect: LLMs are reluctant to refactor code that is still in their context window. They are more willing to change code they encounter fresh. This is the known limitation; the TDD skill drives the process despite it.
+
+### Skill 5: Improve Codebase Architecture
+
+The Improve Codebase Architecture skill exists because TDD demands a well-structured codebase to work well, and most codebases are not well-structured. It is a periodic maintenance tool for identifying where shallow modules should be deepened.
+
+The process: explore the codebase looking for confusions — where understanding one concept requires bouncing across many small files, where pure functions have been extracted only for testability while real bugs hide in how they're called, where tightly coupled modules create integration risk at their seams. Present numbered deepening opportunities. The developer picks one.
+
+Then: spawn three or more parallel sub-agents, each tasked with designing a radically different interface for the chosen module. Compare the designs. Recommend which is strongest and why, noting whether a hybrid might combine the best elements. Create a refactor RFC as a GitHub issue.
+
+This is human-in-the-loop work — the architecture decisions require taste and judgment that the agent cannot supply independently. But the agent can generate the option space and frame the tradeoffs. Pocock recommends running it periodically (roughly weekly) or after a surge of development that has introduced a new cluster of features, to keep the codebase in a state where TDD remains tractable.
+
+### The System as a Whole
+
+The five skills form a pipeline: Grill Me builds shared understanding → Write a PRD crystallizes that understanding into a document → PRD to Issues maps the document into an executable task sequence → TDD drives high-quality implementation of each task → Improve Codebase Architecture maintains the structural conditions that make TDD tractable.
+
+Each skill reinforces the others. Good architecture makes TDD easier. TDD produces well-tested code that PRDs can make requirements-verifiable. PRDs grounded in Grill Me sessions contain accurate user stories rather than assumptions. The compound effect over time is that the gap between developer intent and agent output narrows — not because the agent gets smarter, but because the process for communicating intent improves.
+
+---
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://youtu.be/EJyuu6zlQCg&t=0s) | Introduction: agents have no memory — process is the substitute |
+| [1:20](https://youtu.be/EJyuu6zlQCg&t=80s) | Skill 1: Grill Me — interview relentlessly, walk the design tree |
+| [3:57](https://youtu.be/EJyuu6zlQCg&t=237s) | Skill 2: Write a PRD — destination document as a GitHub issue |
+| [6:28](https://youtu.be/EJyuu6zlQCg&t=388s) | Skill 3: PRD to Issues — vertical slices, blocking relationships, GitHub issue creation |
+| [9:23](https://youtu.be/EJyuu6zlQCg&t=563s) | Skill 4: TDD — red-green-refactor loop with agents, interface design first |
+| [11:38](https://youtu.be/EJyuu6zlQCg&t=698s) | Why TDD demands good architecture: module boundaries and testability |
+| [11:40](https://youtu.be/EJyuu6zlQCg&t=700s) | Skill 5: Improve Codebase Architecture — explore, deepen, design interfaces in parallel |
+| [14:25](https://youtu.be/EJyuu6zlQCg&t=865s) | How the five skills connect into a complete engineering pipeline |
+| [15:44](https://youtu.be/EJyuu6zlQCg&t=944s) | Course: Claude Code for Real Engineers (cohort, March 30) |
+
+---
+## Sources & Further Reading
+
+- **Frederick P. Brooks — *The Design of Design*:** The source of the design tree concept used in the Grill Me skill. Referenced as the intellectual foundation for walking all branches of a design before committing to implementation.
+- **Matt Pocock's skills repository:** Available via link in the video description. Contains the Grill Me, Write a PRD, PRD to Issues, TDD, and Improve Codebase Architecture skills along with others.
+- **Ralph loop:** Pocock's autonomous agent loop that processes GitHub issues sequentially, implementing, commenting, and closing each before unblocking the next. Referenced throughout as the execution layer that consumes the output of his skills pipeline.
+- **Claude Code for Real Engineers:** A two-week cohort course by Matt Pocock covering sub-agents, LLM constraints, steering techniques, tracer bullets, feedback loops, and autonomous agent setup.

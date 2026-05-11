@@ -1,0 +1,115 @@
+---
+title: "Research Report: Building a Content Workspace with Claude's Co-Work Mode"
+date: "2026-03-25"
+tags: ["meta", "agentic-engineering", "ai"]
+summary: "Jake Van Clee walks through building a content creation workspace from scratch using Claude's desktop co-work mode — without VS Code. He builds a four-pillar content system with modular brand voice markdown files and makes the case for subscription-based AI workflows over API-heavy custom frameworks."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/0fCQ-4J_jzk" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [Building a Content Workspace with Claude's Co-Work Mode](https://www.youtube.com/watch?v=0fCQ-4J_jzk) by Jake Van Clee
+
+---
+## Key Takeaways
+
+1. **Break down your process mentally before instructing Claude** — Think of every word you give Claude as a coordinate in a vector space. Order matters; giving context in the wrong sequence lands you in the wrong place.
+
+2. **Subscription > API calls for most use cases** — Running agentic workflows inside the Claude subscription costs a fixed monthly fee. The equivalent API token spend for the same agents in this video would have been $5–$100+ in minutes.
+
+3. **Read Claude's thought process** — Every output Claude generates gives you a map of where it's navigating. Catching misalignment early prevents compounding drift across future interactions.
+
+4. **Voice documents should give direction, not a straight jacket** — Overly rigid voice files produce pattern-locked AI writing across all content. Break the voice doc into three focused files: tone/style, format patterns (IG vs. YouTube vs. animation), and hard constraints.
+
+5. **Don't build agents; build companies that use agents better** — The Coca-Cola model: refrigeration (AI) didn't make Coke, but Coke wouldn't exist without it. Compete on what you deliver, not on out-engineering Anthropic.
+
+6. **Custom skills beat downloaded skills** — Pre-built skills are a starting point. Tailoring them to your workflow gives you a tighter feedback loop and less token waste.
+
+---
+
+## Detailed Analysis
+
+### The Workspace Setup Philosophy
+
+Jake opens a blank folder on his desktop called "writing and scripting" — intentionally starting fresh from his more complex existing setup. The goal is to figure out the minimal structure that works, then apply it back to his main workspace. This is the same principle behind his folder architecture thesis: start with what the job requires, not with what frameworks are available.
+
+He logs into the Claude desktop app's co-work mode and immediately emphasizes the framing problem most users miss — you don't tell Claude tasks, you conceptualize the working space first. The first prompt describes the purpose and shape of the folder, not a list of things to do.
+
+### Transcript Ingestion and Voice Analysis
+
+Jake pastes three transcripts: two from Instagram short-form videos and one from his highest-performing YouTube video (which he later discovers broke 1.4M views and helped him reach 10K subscribers). Claude absorbs these, infers his voice characteristics, and surfaces a two-mode content framework:
+
+- **Practical/Tactical**: Step-by-step tutorial, screen sharing, live folder walkthroughs
+- **Narrative/Conceptual**: Animated voice-over pulling historical computing threads (200+ years) into modern AI concepts
+
+Claude's summary — "you teach through layers, start with what people think they understand and peel it back" — earns his approval. His one correction: the voice file shouldn't *describe* his voice to future Claude instances; it should give future Claude enough orientation to *find* his voice without sounding like an AI describing a human.
+
+### Comment Mining as Audience Research
+
+150+ YouTube comments get pasted in raw — no Excel, no scraping tool, no cleanup. Claude's agents parse and organize them, identifying eight recurring audience needs:
+
+1. How do I structure this for my workflow?
+2. How do I make this persistent / stop re-explaining?
+3. What's the difference between skills and MCPs?
+4. Obsidian integration
+5. Team/Git usage
+6. A deep-dive on why folder routing works technically
+7. Non-technical translations of the framework
+8. Repeatable systems that don't require Python
+
+### The Four-Pillar Content System
+
+Claude proposes a four-pillar architecture derived from the transcripts and comment analysis:
+
+| Pillar | Focus |
+|--------|-------|
+| 1 — Architecture | Folder system, routing, CLAUDE.md, naming conventions |
+| 2 — Foundations | Tokens, context windows, computing history, why this works |
+| 3 — Applied Workflows | Content creation, school intros, Claude ecosystem |
+| 4 — Ecosystem | Skills vs. MCPs, semantic frameworks, agent tools comparison |
+
+### Modular Brand Voice Documents
+
+The existing voice file was too long and too rigid. Jake restructures it into three separate markdown files:
+
+- **`voice-tone.md`** — Style, teaching instincts, directional guidance. Not prescriptive.
+- **`voice-formats.md`** — How an IG script differs from a YouTube tutorial differs from an animation voiceover.
+- **`voice-constraints.md`** — The "never do this" list. Injected at any time.
+
+The separation enables modular usage: a new chat instance can load only the constraints file when editing a draft, without burning tokens on tone guidance it doesn't need.
+
+### The Subscription vs. API Argument
+
+Jake returns to this point twice in the video:
+
+> "I don't have to spend any money, any effort, any work other than my monthly subscription to get an entire team of people building a better agent for me."
+
+For solo operators and small consultancies, the math is straightforward: Claude subscription = fixed cost + automatic model improvements. Building your own agentic layer in Python means paying API costs, maintaining infrastructure, and running to keep up with Anthropic's release cadence.
+
+---
+
+## Timestamped Topic Outline
+
+| Timestamp | Topic |
+|-----------|-------|
+| [0:00](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=0) | Cold open — subscription vs. API cost argument |
+| [0:35](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=35) | Intro — using Claude co-work instead of VS Code |
+| [1:18](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=78) | Key principle: conceptualize the workspace before tasking Claude |
+| [2:00](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=120) | Prompt order matters — words as coordinates in vector space |
+| [3:33](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=213) | First folder structure created live |
+| [6:06](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=366) | Custom skills vs. downloaded skills — brand voice skill critique |
+| [7:14](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=434) | Transcript ingestion begins |
+| [9:11](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=551) | Hits 10K subscribers on camera |
+| [19:25](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=1165) | YouTube comment mining — 150+ comments pasted raw |
+| [21:19](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=1279) | Subscription vs. API cost — full argument |
+| [28:04](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=1684) | Coca-Cola analogy — use AI as infrastructure |
+| [31:54](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=1914) | Four-pillar content architecture revealed |
+| [43:01](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=2581) | Voice doc broken into three modular markdown files |
+| [47:55](https://www.youtube.com/watch?v=0fCQ-4J_jzk&t=2875) | Live test: generating a new video idea from the workspace |
+
+---
+
+## Sources
+
+- **Video**: [Building a Content Workspace with Claude Co-Work](https://www.youtube.com/watch?v=0fCQ-4J_jzk) — Jake Van Clee
+- **Referenced tools**: Claude Code, Claude Desktop co-work mode, Obsidian, N8N, Crew AI, Semantic Kernel, LangChain, LangGraph, DSPy

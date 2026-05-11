@@ -1,0 +1,143 @@
+---
+title: "AI Agent SDKs vs Frameworks: The New Decision Framework"
+date: 2026-03-25
+tags: ["research", "youtube", "ai", "agentic-engineering"]
+summary: "A breakdown of when to use coding agent SDKs (Claude Agent SDK, Codex SDK) vs traditional frameworks (Pydantic AI, LangGraph) for building AI agents — plus the current state of RAG and why it's not dead."
+showToc: true
+---
+
+## Video
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/gmaHRwijOXs" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+**Source:** [AI Agent SDKs vs Frameworks: The New Decision Framework](https://www.youtube.com/watch?v=gmaHRwijOXs)
+
+---
+
+## Full Summary
+
+The video addresses a major shift in the AI agent ecosystem: the rise of **"batteries-included" coding agent SDKs** (Claude Agent SDK, Codex SDK) as foundations for building non-coding AI agents, and whether they replace traditional agent frameworks (Pydantic AI, LangChain, LangGraph, n8n, OpenAI Agents SDK).
+
+**Core thesis:** It depends on your use case. The SDKs are powerful rapid-development platforms for personal/small-scale agents, but traditional frameworks still dominate production deployments where speed, cost, scale, and control matter.
+
+The video also covers the "Is RAG dead?" debate, concluding that RAG is very much alive — file search (grep-style) works better for small knowledge bases, but semantic search / vector-based RAG remains superior and cheaper for large-scale document retrieval.
+
+---
+
+## Detailed Notes
+
+### 1. The Old Way of Building AI Agents (2024–2025)
+
+Every agent followed the same pattern:
+
+1. **Pick a framework** — Pydantic AI, LangChain, LangGraph, n8n, OpenAI Agents SDK, etc.
+2. **Define tools** — File system access, inbox, APIs, whatever capabilities the agent needs.
+3. **Set up RAG** — Chunking strategy, embedding model, retrieval pipeline, vector database.
+4. **Wire up the agent loop** — State management, memory (short-term/long-term), conversation history stored in your own database.
+
+**Characteristics:**
+- Lots of glue code and infrastructure to manage
+- Full control over every component
+- You own the conversation history, observability, and data pipeline
+- Example: Pydantic AI agent with Neon (Postgres) for document chunks, sessions, and messages
+
+### 2. The New Way: Building on Coding Agent SDKs
+
+Instead of building from scratch, you build **on top of** a coding agent's foundation:
+
+- **Claude Agent SDK** or **Codex SDK** as the base
+- These come with a massive amount of built-in tooling, prompting, and agent infrastructure
+
+**What you get out of the box:**
+- Built-in tools (file search, grep, bash, etc.)
+- Conversation history management (no need to store it yourself)
+- Support for **sub-agents**
+- Support for **MCP servers** (reusable tool definitions)
+- Support for **skills** (capability modules via .md files)
+- **Hooks** and **permissions** system
+- Custom system prompts
+
+**Key benefit:** An entire agent can live in a single TypeScript file. Less code, more capability. You skip building the RAG pipeline entirely for many use cases because file search is built in.
+
+**Real-world example:** The creator built a "Second Brain" system using Claude Agent SDK — handles integrations, builds memories over time, does daily reflection/learning. The entire system runs on the SDK.
+
+### 3. Three Key Limitations of the SDK Approach
+
+| Limitation | Details |
+|---|---|
+| **Speed** | Significantly slower than framework-built agents due to reasoning overhead from all the built-in tooling. What takes sub-second on Pydantic AI takes 10+ seconds on Claude Agent SDK. |
+| **Cost / Token Usage** | Very token-heavy. Using your subscription is fine for personal use, but deploying to multiple users requires API keys = expensive at scale. |
+| **Non-determinism / Less Control** | You don't control exactly how the agent operates. Less flexibility in managing conversation history, observability, and agent behavior. Can't store message history yourself. |
+
+**Critical licensing point:** If multiple people use your agent, you **must** use API keys (not your personal subscription) — it's a ToS violation otherwise for both Anthropic and OpenAI.
+
+### 4. The Decision Framework
+
+Two questions to ask yourself:
+
+| Question | SDK (Claude Agent SDK / Codex) | Framework (Pydantic AI / LangGraph) |
+|---|---|---|
+| **Who uses the agent?** | Just you (personal use) | Multiple users / production deployment |
+| **Speed & scale tolerance?** | Some delay is acceptable, no need to scale | Needs to be fast, scalable, cost-effective |
+
+**Practical tip:** You can prototype with the SDK to test tooling via skills/MCP, then transition to a framework (e.g., Pydantic AI) when you need to scale.
+
+### 5. What Happened to RAG?
+
+**2024:** RAG was unquestioned — every agent used semantic search with vector databases.
+
+**2025:** Coding agents proved that **file search (grep-style)** outperforms RAG for smaller knowledge bases. LlamaIndex published a study confirming this. Coding agents moved away from vector databases entirely.
+
+**2026 (now):** We've reached a middle ground — **Agentic RAG**:
+
+- Give the agent **both** semantic search AND file/keyword/grep search
+- Let the agent decide which retrieval method to use
+- **Graph RAG** is gaining traction for massive codebases and multi-repo enterprises
+
+**When RAG is still essential:**
+- Large knowledge bases (thousands of documents)
+- Enterprise-scale AI coding across many codebases
+- Any agent that needs external knowledge beyond what file search can handle
+- Semantic search is more accurate AND cheaper at scale
+
+**When file search is enough:**
+- Smaller corpora
+- Single-repo or personal-scale projects
+- When documents are well-organized and searchable by keyword
+
+---
+
+## Key Takeaways
+
+1. **SDK-based agents** (Claude Agent SDK) are the fastest way to build powerful personal agents — less code, more built-in capability.
+2. **Framework-based agents** (Pydantic AI, LangGraph) are still the right choice for production, multi-user, or performance-critical deployments.
+3. **Skills** are the modern way to add capabilities to agents (replacing some tool definitions). They work in both SDK and framework contexts.
+4. **MCP servers** make tools reusable across agents and frameworks.
+5. **RAG is not dead** — it's evolving. Agentic RAG (semantic + file search) is the current best practice.
+6. Start with the simplest implementation, then scale up when needed.
+
+---
+
+## Enterprise Codebase Impact Assessment
+
+### How impactful is this shift for large enterprise codebases?
+
+**Impact Rating: HIGH — but nuanced.**
+
+**Where SDKs shine for enterprise:**
+- **Internal developer tooling** — Building personal productivity agents for individual developers (Second Brain, code review assistants, documentation helpers). These are low-risk, high-value, and the SDK's built-in file search handles single-repo contexts well.
+- **Rapid prototyping** — Testing agent ideas before committing to a full framework buildout. SDKs let teams validate concepts in hours instead of weeks.
+- **Skills/MCP standardization** — The skills and MCP patterns are genuinely useful abstractions that enterprises should adopt regardless of SDK vs framework choice. They make tooling portable and reusable across teams.
+
+**Where SDKs fall short for enterprise:**
+- **Multi-user production agents** — The ToS and cost constraints make SDKs a non-starter for customer-facing or team-wide agents. Enterprises will continue using frameworks + API keys with cost controls.
+- **Speed-critical pipelines** — CI/CD integrations, real-time code review bots, or any agent in a latency-sensitive workflow can't afford the 10x slowdown of SDK overhead.
+- **Observability & compliance** — Enterprises need to own their data, audit conversation history, and have full control over agent behavior. SDKs abstract too much away.
+- **Multi-repo / massive codebase navigation** — File search (grep) breaks down at enterprise scale. This is exactly where Graph RAG and semantic search remain essential. Enterprises with hundreds of microservices, shared libraries, and cross-team dependencies need vector-based retrieval.
+
+**The real enterprise play:**
+The most impactful takeaway for enterprise is the **Agentic RAG** pattern — combining semantic search with file/keyword search and letting the agent choose. Enterprises should be investing in:
+1. **Graph RAG** for cross-codebase understanding
+2. **Skills as a standard** for portable agent capabilities
+3. **MCP servers** for reusable, team-sharable tool definitions
+4. **Framework-based agents** (Pydantic AI, LangGraph) for production workloads, with SDK prototyping as a discovery phase
+
+**Bottom line:** The SDK vs Framework distinction matters less than the patterns they're popularizing (skills, MCP, agentic RAG). Enterprises should adopt the patterns while staying on frameworks for production.
