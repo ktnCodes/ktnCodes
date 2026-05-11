@@ -1,5 +1,6 @@
 import { Section } from './Section';
 import { formatSkillCategory } from '@/lib/skills';
+import { getSkillIcon } from '@/lib/skill-icons';
 import portfolioConfig from '../../../portfolio-config.json';
 
 interface SkillsMap {
@@ -28,14 +29,27 @@ export function TechStackSection() {
               {formatSkillCategory(category)}
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {items.map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2 py-1 text-xs rounded-md bg-(--surface-alt) border border-hairline text-foreground"
-                >
-                  {skill}
-                </span>
-              ))}
+              {items.map((skill) => {
+                const icon = getSkillIcon(skill);
+                return (
+                  <span
+                    key={skill}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-md bg-(--surface-alt) border border-hairline text-foreground"
+                  >
+                    {icon && (
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-3.5 h-3.5 shrink-0"
+                        fill="currentColor"
+                        aria-hidden
+                      >
+                        <path d={icon.path} />
+                      </svg>
+                    )}
+                    {skill}
+                  </span>
+                );
+              })}
             </div>
           </div>
         ))}

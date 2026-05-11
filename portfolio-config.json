@@ -74,8 +74,8 @@
   "skills": {
     "languages": ["C++14", "C", "Python", "JavaScript", "TypeScript", "Java", "SQL"],
     "ai_agentic": ["Agent Instruction Authoring", "MCP Integration", "Prompt Engineering", "LLM-Assisted Workflows", "Claude Code", "GitHub Copilot", "ICM Methodology", "Vercel AI SDK", "FastMCP", "SBERT", "Obsidian/PKM"],
-    "embedded_systems": ["Gen4OS", "Embedded Linux", "CAN Protocol", "Qt5", "CMake", "JDX Build System", "MATLAB Simulink", "Pumba (Vehicle Simulator)"],
-    "web_cloud": ["React", "Next.js", "Tailwind CSS", "Node.js", "AWS", "Hugo"],
+    "embedded_systems": ["Gen4OS", "Embedded Linux", "CAN Protocol", "Qt5", "XML", "CMake", "JDX Build System", "MATLAB Simulink", "Pumba (Vehicle Simulator)"],
+    "web_cloud": ["HTML", "React", "Next.js", "Tailwind CSS", "Node.js", "AWS", "Hugo"],
     "debugging_testing": ["GDB", "Valgrind", "ASAN", "Google Test/Mock", "Froglogic Squish", "SiL/HiL Testing", "cppcheck", "clang-static-analyzer", "TDD"],
     "devops_tools": ["Git", "GitHub Actions", "Jenkins", "Docker", "MkDocs", "Ubuntu Linux"]
   },
