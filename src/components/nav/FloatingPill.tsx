@@ -22,9 +22,15 @@ export function FloatingPill() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [hideOnSubdomain, setHideOnSubdomain] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Hide on ideaverse-os.ktncodes.com (and any future product subdomain).
+    // The marketing surfaces there have their own navigation; the main-site
+    // nav links (/posts, /#contact) point at routes that don't exist on the
+    // subdomain after the host-based rewrite.
+    setHideOnSubdomain(window.location.host.startsWith('ideaverse-os.'));
     const onScroll = () => setScrolled(window.scrollY > 200);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -32,6 +38,8 @@ export function FloatingPill() {
   }, []);
 
   const isDark = mounted && (resolvedTheme ?? theme) === 'dark';
+
+  if (mounted && hideOnSubdomain) return null;
 
   return (
     <nav
