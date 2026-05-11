@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useChatContext } from './chat-context';
+import { ToolRenderer } from './tool-renderer';
 
 const PRESETS = [
   'Show me your projects',
@@ -141,12 +142,12 @@ function Message({
   message: ReturnType<typeof useChatContext>['messages'][number];
 }) {
   const isUser = message.role === 'user';
-  const text = message.parts
-    .filter((p) => p.type === 'text')
-    .map((p) => (p as { text: string }).text)
-    .join('');
 
   if (isUser) {
+    const text = message.parts
+      .filter((p) => p.type === 'text')
+      .map((p) => (p as { text: string }).text)
+      .join('');
     return (
       <div className="self-end max-w-[75%]">
         <div className="bg-foreground text-background px-(--space-sm) py-2.5 rounded-[22px_22px_6px_22px] text-[14px] leading-snug font-medium">
@@ -155,7 +156,30 @@ function Message({
       </div>
     );
   }
-  return <AiBubble>{text}</AiBubble>;
+
+  // Assistant: render each part. Tool parts render as a Resume/Projects/etc.
+  // card via ToolRenderer. Earlier implementation only joined text parts,
+  // which silently dropped tool output (no Resume card after "Can I see your
+  // resume?").
+  return (
+    <>
+      {message.parts.map((part, i) => {
+        if (part.type === 'text') {
+          const text = (part as { text: string }).text;
+          if (!text.trim()) return null;
+          return <AiBubble key={i}>{text}</AiBubble>;
+        }
+        if (part.type.startsWith('tool-')) {
+          return (
+            <div key={i} className="self-start max-w-[90%] w-full">
+              <ToolRenderer part={part as never} />
+            </div>
+          );
+        }
+        return null;
+      })}
+    </>
+  );
 }
 
 /** AI response styled as a soft glass bubble card (Pawel-inspired). */
