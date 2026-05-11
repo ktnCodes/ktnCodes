@@ -23,16 +23,41 @@ function isQuotaError(error: unknown): boolean {
   return msg.includes("quota") || msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED");
 }
 
+// Detect resume-adjacent queries so we can force the getResume tool call.
+// Small models (Gemini 2.5 Flash Lite) sometimes answer "yes" in text without
+// calling the tool, leaving the user with no download button. Force the tool
+// call instead of relying on prompt instructions alone.
+function lastUserText(messages: UIMessage[]): string {
+  const lastUser = [...messages].reverse().find((m) => m.role === "user");
+  if (!lastUser) return "";
+  return lastUser.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join(" ")
+    .toLowerCase();
+}
+
+function isResumeQuery(messages: UIMessage[]): boolean {
+  const text = lastUserText(messages);
+  if (!text) return false;
+  return /\b(resume|cv|work history|curriculum vitae)\b/.test(text);
+}
+
 export async function POST(req: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await req.json();
     const config = getConfig();
     const allPosts = getAllPostMeta();
 
+    const forceResumeTool = isResumeQuery(messages);
+
     const sharedParams = {
       system: generateSystemPrompt(),
       messages: await convertToModelMessages(messages),
       stopWhen: stepCountIs(3),
+      ...(forceResumeTool && {
+        toolChoice: { type: "tool" as const, toolName: "getResume" as const },
+      }),
       tools: {
         getPresentation: {
           description:
