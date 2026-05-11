@@ -6,6 +6,7 @@ import { z } from "zod";
 import { generateSystemPrompt } from "./prompt";
 import { getConfig } from "@/lib/config";
 import { getAllPostMeta, getPostBySlug } from "@/lib/posts";
+import { isResumeQuery } from "@/lib/chat-routing";
 
 // Persists for the lifetime of the server instance.
 // Once Google hits its quota, all subsequent requests in this session use OpenAI.
@@ -23,26 +24,6 @@ function isQuotaError(error: unknown): boolean {
   return msg.includes("quota") || msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED");
 }
 
-// Detect resume-adjacent queries so we can force the getResume tool call.
-// Small models (Gemini 2.5 Flash Lite) sometimes answer "yes" in text without
-// calling the tool, leaving the user with no download button. Force the tool
-// call instead of relying on prompt instructions alone.
-function lastUserText(messages: UIMessage[]): string {
-  const lastUser = [...messages].reverse().find((m) => m.role === "user");
-  if (!lastUser) return "";
-  return lastUser.parts
-    .filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join(" ")
-    .toLowerCase();
-}
-
-function isResumeQuery(messages: UIMessage[]): boolean {
-  const text = lastUserText(messages);
-  if (!text) return false;
-  return /\b(resume|cv|work history|curriculum vitae)\b/.test(text);
-}
-
 export async function POST(req: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await req.json();
@@ -55,8 +36,22 @@ export async function POST(req: Request) {
       system: generateSystemPrompt(),
       messages: await convertToModelMessages(messages),
       stopWhen: stepCountIs(3),
+      // Force getResume on step 0 only. On subsequent steps, fall back to auto
+      // so the model generates the text reply using the tool result. Without
+      // this, toolChoice applies to every step and the model loops calling
+      // getResume until it hits the step cap (3 tool calls, zero text).
       ...(forceResumeTool && {
-        toolChoice: { type: "tool" as const, toolName: "getResume" as const },
+        prepareStep: ({ stepNumber }: { stepNumber: number }) => {
+          if (stepNumber === 0) {
+            return {
+              toolChoice: {
+                type: "tool" as const,
+                toolName: "getResume" as const,
+              },
+            };
+          }
+          return undefined;
+        },
       }),
       tools: {
         getPresentation: {
