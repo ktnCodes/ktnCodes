@@ -56,7 +56,7 @@ export function FloatingChat() {
             />
             <span className="relative block w-14 h-14 rounded-full overflow-hidden border border-[var(--hairline)] bg-[var(--surface)] shadow-lg group-hover:border-accent transition-colors">
               <Image
-                src="/avatarwithWinnie.jpg"
+                src="/avatars/avatar-with-winnie.jpg"
                 alt=""
                 fill
                 sizes="56px"
@@ -93,7 +93,7 @@ export function FloatingChat() {
             <div className="flex items-center gap-3 border-b border-[var(--hairline)] bg-background px-4 py-3 flex-shrink-0">
               <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-accent/40">
                 <Image
-                  src="/avatarwithWinnie.jpg"
+                  src="/avatars/avatar-with-winnie.jpg"
                   alt="Kevin"
                   fill
                   sizes="36px"

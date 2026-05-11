@@ -5,7 +5,7 @@
     "email": "",
     "location": "Austin, TX",
     "bio": "Software Engineer with 4+ years building production embedded systems and AI-powered developer tools at John Deere. Architected an AI-integrated knowledge system with custom agents, specialized SKILLS, Hooks, and Python tooling, then drove team-wide agentic tooling adoption from zero to general use. Experience in deep C++ systems debugging across 100+ production defects with end-to-end feature delivery. Bridged embedded systems engineering and agentic AI with hands-on experience in agent orchestration, Model Context Protocol integration, Spec Precision and Context architecture workflows.",
-    "avatar": "/avatar.png"
+    "avatar": "/avatars/avatar.png"
   },
   "education": {
     "degree": "B.S. Computer Engineering",

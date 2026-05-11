@@ -40,7 +40,7 @@ const personJsonLd = {
   "@type": "Person",
   name: "Kevin Trinh Nguyen",
   url: "https://ktncodes.com",
-  image: "https://ktncodes.com/avatarwithWinnie.jpg",
+  image: "https://ktncodes.com/avatars/avatar-with-winnie.jpg",
   jobTitle: "Software Engineer — Embedded Systems & AI/Agentic Engineering",
   worksFor: {
     "@type": "Organization",

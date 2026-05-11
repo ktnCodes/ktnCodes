@@ -93,5 +93,18 @@ export function ToolRenderer({ part }: { part: ToolPart }) {
       return null;
   }
 
-  return <ToolDisclosure label={label}>{content}</ToolDisclosure>;
+  // Action-oriented tools the user explicitly asked for default to open so
+  // their content (download links, contact info, etc.) is immediately visible.
+  // Long-list tools stay collapsed so they don't dominate the chat.
+  const openByDefault =
+    toolName === "getResume" ||
+    toolName === "getContact" ||
+    toolName === "getPresentation" ||
+    toolName === "getSkills";
+
+  return (
+    <ToolDisclosure label={label} defaultOpen={openByDefault}>
+      {content}
+    </ToolDisclosure>
+  );
 }
