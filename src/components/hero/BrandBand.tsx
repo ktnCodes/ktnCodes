@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MetalWrap } from '@/components/fx/MetalWrap';
 import { Memoji } from './Memoji';
 import { useChatContext } from '@/components/chat/chat-context';
 import { ChatPanel } from '@/components/chat/ChatPanel';
@@ -21,24 +20,41 @@ const HERO_PATH = 'content/hero.json';
 export function BrandBand() {
   const hero = heroData as HeroContent;
   const { layout, openWith } = useChatContext();
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  const isDark = mounted && resolvedTheme === 'dark';
-  const lines = isDark ? hero.darkThesis : hero.thesis;
-  const lineKey: 'thesis' | 'darkThesis' = isDark ? 'darkThesis' : 'thesis';
   const chatActive = layout === 'chat-active';
 
-  const writeLine = (idx: number) => (next: string) => {
-    const updated = { ...hero };
-    updated[lineKey] = [...updated[lineKey]] as [string, string, string];
-    updated[lineKey][idx] = next;
-    return JSON.stringify(updated, null, 2) + '\n';
-  };
+  const writeLineFor =
+    (key: 'thesis' | 'darkThesis', idx: number) => (next: string) => {
+      const updated = { ...hero };
+      updated[key] = [...updated[key]] as [string, string, string];
+      updated[key][idx] = next;
+      return JSON.stringify(updated, null, 2) + '\n';
+    };
 
   const writeEyebrow = (next: string) =>
     JSON.stringify({ ...hero, eyebrow: next }, null, 2) + '\n';
+
+  const renderThesis = (sizeClasses: string) => (
+    <>
+      <h1
+        className={`${sizeClasses} hero-thesis-light font-semibold text-foreground leading-[1.05] tracking-tight`}
+      >
+        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[0]} serialize={writeLineFor('thesis', 0)} />
+        <br />
+        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[1]} serialize={writeLineFor('thesis', 1)} />
+        <br />
+        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[2]} serialize={writeLineFor('thesis', 2)} />
+      </h1>
+      <h1
+        className={`${sizeClasses} hero-thesis-dark font-semibold text-foreground leading-[1.05] tracking-tight`}
+      >
+        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[0]} serialize={writeLineFor('darkThesis', 0)} />
+        <br />
+        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[1]} serialize={writeLineFor('darkThesis', 1)} />
+        <br />
+        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[2]} serialize={writeLineFor('darkThesis', 2)} />
+      </h1>
+    </>
+  );
 
   return (
     <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] md:gap-(--space-xl) gap-(--space-lg) items-center py-(--space-2xl)">
@@ -90,31 +106,7 @@ export function BrandBand() {
                 serialize={writeEyebrow}
                 className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted mb-(--space-md)"
               />
-              <h1
-                className="text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight"
-                suppressHydrationWarning
-              >
-                <EditableText
-                  as="span"
-                  filePath={HERO_PATH}
-                  value={lines[0]}
-                  serialize={writeLine(0)}
-                />
-                <br />
-                <EditableText
-                  as="span"
-                  filePath={HERO_PATH}
-                  value={lines[1]}
-                  serialize={writeLine(1)}
-                />
-                <br />
-                <EditableText
-                  as="span"
-                  filePath={HERO_PATH}
-                  value={lines[2]}
-                  serialize={writeLine(2)}
-                />
-              </h1>
+              {renderThesis('text-4xl md:text-6xl')}
             </motion.div>
           )}
         </AnimatePresence>
@@ -129,31 +121,7 @@ export function BrandBand() {
           serialize={writeEyebrow}
           className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted mb-(--space-md)"
         />
-        <h1
-          className="text-4xl font-semibold text-foreground leading-[1.05] tracking-tight"
-          suppressHydrationWarning
-        >
-          <EditableText
-            as="span"
-            filePath={HERO_PATH}
-            value={lines[0]}
-            serialize={writeLine(0)}
-          />
-          <br />
-          <EditableText
-            as="span"
-            filePath={HERO_PATH}
-            value={lines[1]}
-            serialize={writeLine(1)}
-          />
-          <br />
-          <EditableText
-            as="span"
-            filePath={HERO_PATH}
-            value={lines[2]}
-            serialize={writeLine(2)}
-          />
-        </h1>
+        {renderThesis('text-4xl')}
       </div>
 
       {/* Memoji + clickable affordance — both trigger chat */}
@@ -177,9 +145,13 @@ export function BrandBand() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
-              className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-foreground text-background group-hover:opacity-90"
+              className="inline-block"
             >
-              💬 Click to chat
+              <MetalWrap>
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full text-foreground group-hover:opacity-90">
+                  💬 Click to chat
+                </span>
+              </MetalWrap>
             </motion.span>
           )}
         </AnimatePresence>

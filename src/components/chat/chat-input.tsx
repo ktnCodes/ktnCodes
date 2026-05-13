@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type KeyboardEvent, type FormEvent } from "react";
+import { MetalWrap } from "@/components/fx/MetalWrap";
 
 interface Props {
   input: string;
@@ -57,14 +58,16 @@ export function ChatInput({ input, setInput, onSubmit, isLoading, stop }: Props)
           STOP
         </button>
       ) : (
-        <button
-          type="submit"
-          disabled={!input.trim()}
-          className="shrink-0 small-caps text-xs tracking-widest border border-accent text-accent hover:bg-accent hover:text-background disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2.5 transition-colors"
-          aria-label="Send message"
-        >
-          SEND
-        </button>
+        <MetalWrap>
+          <button
+            type="submit"
+            disabled={!input.trim()}
+            className="shrink-0 small-caps text-xs tracking-widest border border-accent text-accent hover:bg-accent hover:text-background disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2.5 transition-colors"
+            aria-label="Send message"
+          >
+            SEND
+          </button>
+        </MetalWrap>
       )}
     </form>
   );

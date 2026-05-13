@@ -1,8 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { Section } from './Section';
 import { EditableText } from '@/components/dev/EditableText';
+import { ShowcaseCard } from '@/components/fx/ShowcaseCard';
+import { SpotlightCard } from '@/components/fx/SpotlightCard';
 import beliefsData from '../../../content/beliefs.json';
 
 interface Belief {
@@ -24,11 +25,6 @@ const BELIEFS_PATH = 'content/beliefs.json';
 export function BeliefsSection() {
   const beliefs = beliefsData as BeliefsContent;
 
-  function writeFeatured<K extends keyof Belief>(key: K) {
-    return (next: string) =>
-      JSON.stringify({ ...beliefs, featured: { ...beliefs.featured, [key]: next } }, null, 2) +
-      '\n';
-  }
   function writeSupporting<K extends keyof Belief>(idx: number, key: K) {
     return (next: string) => {
       const updated = {
@@ -39,8 +35,6 @@ export function BeliefsSection() {
     };
   }
 
-  const bgImage = beliefs.featured.bgImage;
-
   return (
     <Section number="05" name="Beliefs" tone="light-50">
       <div className="mb-(--space-lg)">
@@ -50,65 +44,20 @@ export function BeliefsSection() {
         <p className="text-base text-muted">Four principles. Earned the hard way.</p>
       </div>
       <div className="grid md:grid-cols-[1.6fr_1fr] gap-(--space-md)">
-        {/* Featured — moon image background + dark gradient scrim for text legibility */}
-        <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end min-h-[320px] md:min-h-[400px] p-(--space-lg) bg-foreground text-background">
-          {bgImage && (
-            <>
-              <Image
-                src={bgImage}
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 60vw"
-                className="object-cover object-center"
-                aria-hidden
-              />
-              {/* Dark scrim — keeps body copy legible against the moon's bright midband */}
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.85) 100%)',
-                }}
-              />
-            </>
-          )}
-          <div className="relative">
-            <div className="text-[28px] mb-(--space-md) drop-shadow-md">{beliefs.featured.icon}</div>
-            <EditableText
-              as="div"
-              filePath={BELIEFS_PATH}
-              value={beliefs.featured.tag}
-              serialize={writeFeatured('tag')}
-              className="text-[11px] font-mono font-bold tracking-[0.18em] text-white/70 mb-(--space-sm)"
-            />
-            {beliefs.featured.headline && (
-              <EditableText
-                as="h3"
-                filePath={BELIEFS_PATH}
-                value={beliefs.featured.headline}
-                serialize={writeFeatured('headline')}
-                className="text-2xl md:text-3xl font-semibold tracking-tight leading-tight mb-(--space-sm) text-white drop-shadow"
-              />
-            )}
-            <EditableText
-              as="p"
-              filePath={BELIEFS_PATH}
-              value={beliefs.featured.body}
-              serialize={writeFeatured('body')}
-              multiline
-              className="text-sm leading-relaxed text-white/85"
-            />
-          </div>
-        </div>
-        {/* Supporting */}
+        {/* Featured — ShowcaseCard with tilt + parallax */}
+        <ShowcaseCard
+          tagline={`${beliefs.featured.icon} ${beliefs.featured.tag}`}
+          heading={beliefs.featured.headline ?? ''}
+          description={beliefs.featured.body}
+          imageUrl={beliefs.featured.bgImage ?? ''}
+          imageAlt=""
+          className="max-w-none"
+        />
+
+        {/* Supporting — SpotlightCard with cursor-follow spotlight */}
         <div className="flex flex-col gap-(--space-sm)">
           {beliefs.supporting.map((b, idx) => (
-            <div
-              key={b.tag}
-              className="bg-surface border border-hairline rounded-2xl p-(--space-md) flex-1"
-            >
+            <SpotlightCard key={b.tag} className="flex-1 p-(--space-md)" borderRadius={16}>
               <div className="text-[18px] mb-2">{b.icon}</div>
               <EditableText
                 as="div"
@@ -125,7 +74,7 @@ export function BeliefsSection() {
                 multiline
                 className="text-[13px] leading-relaxed text-foreground/85"
               />
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </div>

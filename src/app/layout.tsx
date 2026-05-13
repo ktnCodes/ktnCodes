@@ -7,6 +7,7 @@ import { Wordmark } from "@/components/nav/Wordmark";
 import { FloatingPill } from "@/components/nav/FloatingPill";
 import { StickyMemoji } from "@/components/nav/StickyMemoji";
 import { DevModeBadge } from "@/components/dev/DevModeBadge";
+import { PixelCanvas } from "@/components/fx/PixelCanvas";
 import "./globals.css";
 
 const inter = Inter({
@@ -90,6 +91,12 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <ChatProvider>
+            <PixelCanvas
+              variant="trail"
+              gap={8}
+              colors={["#7c3aed", "#a78bfa", "#ddd6fe"]}
+              className="fixed inset-0 -z-10 pointer-events-none"
+            />
             <Wordmark />
             <FloatingPill />
             <main className="flex-1 flex flex-col">{children}</main>

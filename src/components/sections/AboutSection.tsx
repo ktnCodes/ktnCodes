@@ -3,6 +3,7 @@
 import { Section } from './Section';
 import { EditableText } from '@/components/dev/EditableText';
 import { EditableImage } from '@/components/dev/EditableImage';
+import { SpotlightCard } from '@/components/fx/SpotlightCard';
 import aboutData from '../../../content/about.json';
 
 interface AboutContent {
@@ -84,11 +85,11 @@ export function AboutSection() {
 
 function MicroCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="bg-surface border border-hairline rounded-2xl p-(--space-md)">
+    <SpotlightCard className="p-(--space-md)" borderRadius={16}>
       <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted font-bold mb-1.5">
         {label}
       </div>
       <p className="text-sm leading-relaxed text-foreground/85">{children}</p>
-    </div>
+    </SpotlightCard>
   );
 }

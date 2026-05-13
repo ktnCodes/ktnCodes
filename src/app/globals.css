@@ -136,6 +136,12 @@
   --finder-titlebar: linear-gradient(180deg, #2c2c2c, #1f1f1f);
 }
 
+/* Hero thesis: both light + dark variants render in HTML; CSS toggles which is shown.
+   Avoids the JS-mount flicker where dark-mode users briefly see the light thesis. */
+.hero-thesis-dark { display: none; }
+[data-theme="dark"] .hero-thesis-light { display: none; }
+[data-theme="dark"] .hero-thesis-dark { display: block; }
+
 /* ideaverse-os route theme. Untouched. Scoped to /ideaverse-os/* surface. */
 [data-theme="ideaverse-os"] {
   --iv-cream: oklch(0.95 0.01 80);

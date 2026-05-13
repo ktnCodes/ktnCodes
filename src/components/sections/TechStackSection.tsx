@@ -1,6 +1,7 @@
 import { Section } from './Section';
 import { formatSkillCategory } from '@/lib/skills';
 import { getSkillIcon } from '@/lib/skill-icons';
+import { SpotlightCard } from '@/components/fx/SpotlightCard';
 import portfolioConfig from '../../../portfolio-config.json';
 
 interface SkillsMap {
@@ -20,10 +21,7 @@ export function TechStackSection() {
       </p>
       <div className="grid gap-(--space-md) md:grid-cols-2">
         {Object.entries(skills).map(([category, items]) => (
-          <div
-            key={category}
-            className="bg-surface border border-hairline rounded-2xl p-(--space-md)"
-          >
+          <SpotlightCard key={category} className="p-(--space-md)" borderRadius={16}>
             <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted font-bold mb-(--space-sm)">
               {formatSkillCategory(category)}
             </div>
@@ -50,7 +48,7 @@ export function TechStackSection() {
                 );
               })}
             </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
     </Section>

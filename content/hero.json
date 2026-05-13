@@ -1,13 +1,13 @@
 {
   "eyebrow": "Currently @ John Deere",
   "thesis": [
-    "Read the source.",
-    "Document the why.",
-    "Ship before perfect."
-  ],
-  "darkThesis": [
     "Embedded engineer.",
     "AI workflow builder.",
     "Workshop tinkerer."
+  ],
+  "darkThesis": [
+    "I design systems.",
+    "Human and LLM",
+    "Readable."
   ]
 }

@@ -6,6 +6,7 @@ import { IDEAVERSE_GRADIENT_TEXT_STYLE } from "./_components/IdeaverseLogo";
 import { HarnessSnippets } from "./_components/HarnessSnippets";
 import { InlineInstallBar } from "./_components/InlineInstallBar";
 import { InterviewTimeline } from "./_components/InterviewTimeline";
+import { MemoryFlowDiagram } from "./_components/MemoryFlowDiagram";
 import { PositionGrid } from "./_components/PositionGrid";
 import { SectionLabel } from "./_components/SectionLabel";
 import { TemplateGallery } from "./_components/TemplateGallery";
@@ -267,6 +268,20 @@ export default function IdeaverseOSPage() {
 
         <div className="mx-auto mt-12 max-w-5xl">
           <PositionGrid />
+        </div>
+
+        <div className="mx-auto mt-20 max-w-3xl">
+          <h3 className="font-iv-display text-[clamp(1.25rem,2.5vw,1.625rem)] font-semibold leading-[1.2] tracking-[-0.01em] text-iv-wine">
+            How the LLM moves through it.
+          </h3>
+          <p className="mt-4 max-w-[42rem] text-[1.0625rem] leading-[1.6] text-iv-ink">
+            Every query lands at <code className="font-mono text-[15px] text-iv-wine">00-agentic-OS</code> first — soul, identity, conventions. Then{" "}
+            <code className="font-mono text-[15px] text-iv-wine">10-cortex</code> routes by position into a domain (<code className="font-mono text-[15px]">20-</code> or <code className="font-mono text-[15px]">30-</code>). <code className="font-mono text-[15px] text-iv-wine">40-raw</code> feeds back upward via wiki-compile. Positions are addresses; no guessing.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-10 max-w-5xl px-6">
+          <MemoryFlowDiagram />
         </div>
 
         <div className="mx-auto mt-20 max-w-3xl">
