@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MetalWrap } from '@/components/fx/MetalWrap';
 import { Memoji } from './Memoji';
 import { useChatContext } from '@/components/chat/chat-context';
-import { ChatPanel } from '@/components/chat/ChatPanel';
+import { TerminalChat } from '@/components/chat/TerminalChat';
 import { EditableText } from '@/components/dev/EditableText';
 import heroData from '../../../content/hero.json';
 
@@ -57,7 +57,7 @@ export function BrandBand() {
   );
 
   return (
-    <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] md:gap-(--space-xl) gap-(--space-lg) items-center py-(--space-2xl)">
+    <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] md:gap-(--space-xl) gap-(--space-lg) items-center pt-(--space-md) pb-(--space-2xl)">
       {/* Mobile: chat as full-screen sheet */}
       <AnimatePresence>
         {chatActive && (
@@ -70,13 +70,13 @@ export function BrandBand() {
             transition={{ duration: 0.35, ease: EASE }}
             style={{ transformOrigin: '100% 0%' }}
           >
-            <ChatPanel />
+            <TerminalChat />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Desktop: thesis ↔ chat panel grow-from-Memoji. Fixed height. */}
-      <div className="hidden md:block relative h-[460px]">
+      <div className="hidden md:block relative h-[600px]">
         <AnimatePresence mode="wait">
           {chatActive ? (
             <motion.div
@@ -88,7 +88,7 @@ export function BrandBand() {
               style={{ transformOrigin: '100% 0%' }}
               className="absolute inset-0"
             >
-              <ChatPanel />
+              <TerminalChat />
             </motion.div>
           ) : (
             <motion.div

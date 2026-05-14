@@ -31,7 +31,10 @@ function loadProjectsFromMarkdown(): LegacyProject[] {
       } as LegacyProject & { _order: number };
     })
     .sort((a, b) => (a as { _order: number })._order - (b as { _order: number })._order)
-    .map(({ _order: _drop, ...rest }) => rest as LegacyProject);
+    .map(({ _order, ...rest }) => {
+      void _order; // discard the helper sort key; keeps it out of the public type
+      return rest as LegacyProject;
+    });
 }
 
 export function getConfig(): PortfolioConfig {

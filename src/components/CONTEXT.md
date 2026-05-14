@@ -22,7 +22,7 @@ React components grouped by domain. Each subfolder owns one feature area.
 
 ## Naming Convention
 
-- PascalCase filenames for components: `FinderWindow.tsx`, `ChatPanel.tsx`.
+- PascalCase filenames for components: `FinderWindow.tsx`, `TerminalChat.tsx`.
 - kebab-case for utilities adjacent to components: `chat-context.tsx`, `tool-renderer.tsx`.
 
 ## Rules

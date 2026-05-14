@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Props = {
   command?: string;
@@ -13,19 +14,13 @@ export function InlineInstallBar({
   command = "npx ideaverse-os init ~/my-vault",
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [typed, setTyped] = useState(0);
+  const [typedAnim, setTypedAnim] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  // Derive at render time so the reduced-motion branch doesn't need to
+  // setState synchronously from an effect.
+  const typed = started && reducedMotion ? command.length : typedAnim;
 
   useEffect(() => {
     const el = ref.current;
@@ -44,19 +39,15 @@ export function InlineInstallBar({
   }, [started]);
 
   useEffect(() => {
-    if (!started) return;
-    if (reducedMotion) {
-      setTyped(command.length);
-      return;
-    }
+    if (!started || reducedMotion) return;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / TYPE_DURATION_MS);
       const eased = 1 - Math.pow(1 - t, 4);
-      setTyped(Math.floor(eased * command.length));
+      setTypedAnim(Math.floor(eased * command.length));
       if (t < 1) raf = requestAnimationFrame(tick);
-      else setTyped(command.length);
+      else setTypedAnim(command.length);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);

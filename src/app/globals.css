@@ -108,6 +108,27 @@
 
   /* Finder window title bar gradient (light = brushed metal). */
   --finder-titlebar: linear-gradient(180deg, #ebebeb, #dcdcdc);
+
+  /* TerminalChat -- light palette. Soft lavender-tinted off-white with
+     a deeper purple accent so the block-ASCII art still reads as "purple"
+     against a pale background. */
+  --term-bg: #fbf8ff;
+  --term-titlebar-bg: linear-gradient(180deg, #ece4f5, #dccff0);
+  --term-titlebar-fg: #4a3d6b;
+  --term-fg: #2d2440;
+  --term-fg-strong: #1a1228;
+  --term-muted: #6b5d8a;
+  --term-accent: #6d34d9;
+  --term-welcome-border: rgba(109, 52, 217, 0.32);
+  --term-welcome-bg: rgba(109, 52, 217, 0.05);
+  --term-welcome-strong: #4a1fa3;
+  --term-preset-hover-bg: rgba(109, 52, 217, 0.10);
+  --term-preset-hover-fg: #1a1228;
+  --term-hairline: rgba(0, 0, 0, 0.08);
+  --term-kbd-border: rgba(0, 0, 0, 0.10);
+  --term-kbd-bg: rgba(0, 0, 0, 0.03);
+  --term-art-glow-near: rgba(109, 52, 217, 0.12);
+  --term-art-glow-far:  rgba(109, 52, 217, 0.18);
 }
 
 /* MAIN APP — dark theme (= hidden fun mode) — Adil v8 palette */
@@ -134,6 +155,26 @@
   --pill-bg-scrolled: rgba(20, 20, 20, 0.8);
 
   --finder-titlebar: linear-gradient(180deg, #2c2c2c, #1f1f1f);
+
+  /* TerminalChat -- dark palette. Near-black background with a violet
+     undertone so the purple accent feels native. */
+  --term-bg: #0a040e;
+  --term-titlebar-bg: linear-gradient(180deg, #2a1f33, #1a1220);
+  --term-titlebar-fg: rgba(220, 200, 255, 0.85);
+  --term-fg: rgba(220, 215, 235, 0.92);
+  --term-fg-strong: rgba(230, 225, 245, 0.95);
+  --term-muted: rgba(200, 195, 220, 0.7);
+  --term-accent: #b48dff;
+  --term-welcome-border: rgba(180, 141, 255, 0.35);
+  --term-welcome-bg: rgba(180, 141, 255, 0.04);
+  --term-welcome-strong: #d6b8ff;
+  --term-preset-hover-bg: rgba(180, 141, 255, 0.08);
+  --term-preset-hover-fg: #ffffff;
+  --term-hairline: rgba(255, 255, 255, 0.06);
+  --term-kbd-border: rgba(255, 255, 255, 0.08);
+  --term-kbd-bg: rgba(255, 255, 255, 0.04);
+  --term-art-glow-near: rgba(180, 141, 255, 0.20);
+  --term-art-glow-far:  rgba(180, 141, 255, 0.45);
 }
 
 /* Hero thesis: both light + dark variants render in HTML; CSS toggles which is shown.
@@ -177,6 +218,578 @@ html {
 @keyframes chat-dot {
   0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
   40% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* ============================================================
+   Interactive macOS-style desktop (MacChrome).
+   Wraps the Finder window with wallpaper, menu bar, dock,
+   affordance hint, and the Mail modal.
+   ============================================================ */
+
+.finder-desktop {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  min-height: 720px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.22), transparent 38%),
+    radial-gradient(circle at 78% 78%, rgba(125,75,200,0.5), transparent 55%),
+    linear-gradient(135deg, #ff8c4a 0%, #ff5a8a 35%, #7a5af8 70%, #3aa9ff 100%);
+  box-shadow:
+    0 40px 80px -20px rgba(0, 0, 0, 0.55),
+    0 24px 60px -30px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  user-select: none;
+}
+.finder-desktop::before,
+.finder-desktop::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.finder-desktop::before {
+  width: 38%; height: 38%;
+  left: -6%; top: 10%;
+  background: radial-gradient(circle, #ffd28a, transparent 70%);
+}
+.finder-desktop::after {
+  width: 50%; height: 50%;
+  right: -10%; bottom: -10%;
+  background: radial-gradient(circle, #9b6dff, transparent 70%);
+}
+
+/* Menu bar */
+.finder-menubar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: rgba(0, 0, 0, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  font-size: 12.5px;
+  z-index: 30;
+}
+.finder-menubar-apple { margin-right: 14px; display: inline-flex; }
+.finder-menubar-app { font-weight: 700; margin-right: 18px; }
+.finder-menubar-item { margin-right: 14px; opacity: 0.85; }
+.finder-menubar-spacer { flex: 1; }
+.finder-menubar-status {
+  margin-left: 14px;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.92;
+}
+.finder-menubar-clock {
+  margin-left: 14px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.92;
+}
+
+/* Finder window inside the desktop. State drives position + animation. */
+.finder-desktop-window {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  width: min(94%, 1080px);
+  height: calc(100% - 170px);
+  transform: translateX(-50%);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  box-shadow:
+    0 40px 80px -20px rgba(0, 0, 0, 0.45),
+    0 20px 40px -20px rgba(0, 0, 0, 0.4),
+    0 0 0 0.5px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  transform-origin: 50% calc(100% + 60px);
+  transition:
+    opacity 280ms ease,
+    transform 320ms cubic-bezier(0.32, 0.72, 0.32, 1),
+    top 320ms cubic-bezier(0.32, 0.72, 0.32, 1),
+    left 320ms cubic-bezier(0.32, 0.72, 0.32, 1),
+    width 320ms cubic-bezier(0.32, 0.72, 0.32, 1),
+    height 320ms cubic-bezier(0.32, 0.72, 0.32, 1),
+    border-radius 320ms cubic-bezier(0.32, 0.72, 0.32, 1);
+}
+.finder-desktop-window.is-dimmed { opacity: 0.85; }
+.finder-desktop-window[data-state="closed"] {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.6);
+  pointer-events: none;
+}
+.finder-desktop-window[data-state="minimized"] {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.08) translateY(40vh);
+  pointer-events: none;
+}
+.finder-desktop-window[data-state="fullscreen"] {
+  top: 28px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 28px);
+  transform: none;
+  border-radius: 0;
+}
+/* Inner body of the Finder fills the window when in the desktop -- the
+   inline min-h-[460px] is fine as a floor; flex:1 ensures it grows. */
+.finder-desktop-window .finder-body { flex: 1; }
+
+/* Titlebar: 3-column grid -- traffic lights left, title center, actions right */
+.finder-titlebar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+
+/* Toolbar row: back/forward + view-mode segmented + search */
+.finder-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+.finder-icon-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.finder-icon-btn:hover:not([disabled]) {
+  background: var(--surface);
+  color: var(--foreground);
+}
+.finder-icon-btn[disabled] { opacity: 0.4; cursor: default; }
+
+.finder-segmented {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.finder-segmented button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.finder-segmented button.active {
+  background: var(--surface-alt);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.finder-segmented button:hover:not(.active) { color: var(--foreground); }
+
+.finder-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  padding: 4px 10px;
+  color: var(--muted);
+  width: 200px;
+  transition: border-color 120ms ease;
+}
+.finder-search:focus-within {
+  border-color: #2f6df0;
+  color: var(--foreground);
+}
+.finder-search input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 12.5px;
+  width: 100%;
+}
+
+/* Sectioned sidebar: Favorites / Locations / Tags */
+.finder-sidebar {
+  background: var(--surface-alt);
+  border-right: 1px solid var(--hairline);
+  padding: 14px 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.finder-sidebar h4 {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 14px 8px 6px;
+}
+.finder-sidebar h4:first-child { margin-top: 0; }
+.finder-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 13px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+}
+.finder-sidebar-item:hover { background: var(--surface); }
+.finder-sidebar-item.active {
+  background: #2f6df0;
+  color: white;
+}
+.finder-sidebar-decorative {
+  cursor: default;
+  color: var(--foreground);
+}
+.finder-sidebar-decorative:hover { background: var(--surface); }
+.finder-sidebar-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.finder-sidebar-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Resizable column dividers. Positioned absolutely on top of the column
+   borders. 6px wide hit area, centered on the boundary. */
+.finder-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  margin-left: -3px;
+  cursor: col-resize;
+  z-index: 5;
+  background: transparent;
+  transition: background 120ms ease;
+  touch-action: none;
+}
+.finder-resizer:hover,
+.finder-resizer:active {
+  background: rgba(47, 109, 240, 0.12);
+}
+
+/* Folder/leaf row icons -- inherit color so they flip on selected state */
+.finder-row-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Traffic lights: glyph appears on titlebar hover. */
+.finder-traffic-light .finder-traffic-glyph {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+}
+.finder-desktop-window:hover .finder-traffic-glyph { opacity: 1; }
+
+/* Affordance hint pill */
+.finder-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  z-index: 15;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.finder-hint.hidden {
+  opacity: 0;
+  transform: translate(-50%, 10px);
+}
+.finder-hint-pill {
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.45);
+}
+.finder-hint-arrow {
+  width: 18px;
+  height: 18px;
+  animation: hint-bob 1.4s ease-in-out infinite;
+}
+@keyframes hint-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* Dock */
+.finder-dock {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 20px;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 25;
+}
+.finder-dock-app {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 180ms cubic-bezier(0.32, 0.72, 0.32, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.finder-dock-app:hover { transform: translateY(-8px) scale(1.16); }
+.finder-dock-tile {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow:
+    0 6px 14px -4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.finder-dock-dot {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.finder-dock-app[data-running="true"] .finder-dock-dot { opacity: 1; }
+.finder-dock-app.attention .finder-dock-tile {
+  animation: dock-pulse 1.6s ease-in-out infinite;
+}
+@keyframes dock-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 14px -4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 10px 22px -4px rgba(10,132,255,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+}
+.finder-dock-sep {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.28);
+  margin: 0 4px;
+  align-self: center;
+}
+
+/* Mail modal */
+.finder-mail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.finder-mail-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.finder-mail {
+  width: min(88%, 360px);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  box-shadow:
+    0 40px 80px -20px rgba(0, 0, 0, 0.55),
+    0 0 0 0.5px rgba(0, 0, 0, 0.5);
+  transform: scale(0.92);
+  transition: transform 180ms cubic-bezier(0.32, 0.72, 0.32, 1);
+  overflow: hidden;
+}
+.finder-mail-backdrop.open .finder-mail { transform: scale(1); }
+.finder-mail-body { padding: 22px 22px 16px; text-align: center; }
+.finder-mail-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7a5af8, #3b2eb8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 8px 18px -4px rgba(122, 90, 248, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.finder-mail h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+.finder-mail p {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.finder-mail-email {
+  margin-top: 8px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  color: var(--foreground);
+  background: var(--surface-alt);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+.finder-mail-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--hairline);
+}
+.finder-mail-actions button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 12px 0;
+  font: inherit;
+  font-size: 13.5px;
+  color: #2f6df0;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.finder-mail-actions button:hover { background: var(--surface-alt); }
+.finder-mail-actions button + button { border-left: 1px solid var(--hairline); }
+.finder-mail-actions button.primary { font-weight: 600; }
+
+/* ============================================================
+   TerminalChat -- block-ASCII art rendered as a div grid (not text).
+   Each cell is a CSS square of size --term-cell. Fonts don't get a vote,
+   so the art looks the same in every browser and theme. */
+.term-art-grid {
+  --term-cell: 9px;
+  display: flex;
+  flex-direction: column;
+  line-height: 0;
+  filter:
+    drop-shadow(0 4px 0 var(--term-art-glow-near))
+    drop-shadow(0 0 12px var(--term-art-glow-far));
+}
+.term-art-grid + .term-art-grid { margin-top: calc(var(--term-cell) * 1.5); }
+.term-art-row { display: flex; height: var(--term-cell); }
+.term-art-row > span {
+  width: var(--term-cell);
+  height: var(--term-cell);
+  display: inline-block;
+}
+.term-art-on  { background: var(--term-accent); }
+.term-art-off { background: transparent; }
+
+/* TerminalChat -- preset row hover. Uses CSS vars so it adapts to theme. */
+.term-preset-button {
+  width: 100%;
+  text-align: left;
+  padding: 6px 4px;
+  border-radius: 4px;
+  color: var(--term-muted);
+  background: transparent;
+  transition: color 120ms ease, background 120ms ease;
+}
+.term-preset-button:hover:not(:disabled) {
+  color: var(--term-preset-hover-fg);
+  background: var(--term-preset-hover-bg);
+}
+.term-preset-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 body {

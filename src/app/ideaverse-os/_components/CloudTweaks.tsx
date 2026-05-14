@@ -48,26 +48,31 @@ function isEnabled(): boolean {
 }
 
 export function CloudTweaks() {
-  const [enabled, setEnabled] = useState(false);
+  // Lazy init so we don't need a setState in useEffect just to enable
+  // OR to load the saved tweaks. SSR returns DEFAULTS; client returns the
+  // parsed localStorage payload on first paint.
+  const [enabled] = useState(() => isEnabled());
   const [open, setOpen] = useState(true);
-  const [t, setT] = useState<Tweaks>(DEFAULTS);
-
-  useEffect(() => {
-    if (!isEnabled()) return;
-    setEnabled(true);
+  const [t, setT] = useState<Tweaks>(() => {
+    if (typeof window === "undefined" || !isEnabled()) return DEFAULTS;
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = { ...DEFAULTS, ...JSON.parse(saved) };
-        setT(parsed);
-        applyToRoot(parsed);
-        return;
-      } catch {
-        // fall through
-      }
+    if (!saved) return DEFAULTS;
+    try {
+      return { ...DEFAULTS, ...JSON.parse(saved) };
+    } catch {
+      return DEFAULTS;
     }
-    applyToRoot(DEFAULTS);
-  }, []);
+  });
+
+  // Apply once on mount. Subsequent updates go through update()/reset()
+  // which already call applyToRoot.
+  useEffect(() => {
+    if (!enabled) return;
+    applyToRoot(t);
+    // We intentionally apply only on mount-or-enable; tracking `t` here
+    // would re-fire every update on top of update()'s own applyToRoot call.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
 
   function update<K extends keyof Tweaks>(key: K, value: Tweaks[K]) {
     const next = { ...t, [key]: value };

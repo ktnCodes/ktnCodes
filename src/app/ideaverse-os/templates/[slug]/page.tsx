@@ -159,7 +159,7 @@ export default async function TemplateDetailPage({ params }: Props) {
         <div className="mx-auto max-w-3xl">
           <SectionLabel number="20" label="Sample compass" />
           <h2 className="mt-5 font-iv-display text-[clamp(1.375rem,3vw,2rem)] font-bold leading-[1.08] tracking-[-0.012em] text-iv-wine">
-            How this template's domains tend to appear in compass.md
+            How this template&apos;s domains tend to appear in compass.md
           </h2>
           <p className="mt-3 max-w-[36rem] text-[15px] leading-[1.55] text-iv-ink-soft">
             This is a reference example, not auto-written to your vault. The

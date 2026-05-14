@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Props = {
   command: string;
@@ -22,22 +23,18 @@ export function TypingTerminal({
   ariaLabel = "Install command. Click to copy.",
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [typed, setTyped] = useState(0);
-  const [scaffoldRevealed, setScaffoldRevealed] = useState(0);
+  const [typedAnim, setTypedAnim] = useState(0);
+  const [scaffoldRevealedAnim, setScaffoldRevealedAnim] = useState(0);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">(
     "idle",
   );
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  // Derive at render time so the reduced-motion branch doesn't need to
+  // setState synchronously from an effect.
+  const typed = started && reducedMotion ? command.length : typedAnim;
+  const scaffoldRevealed =
+    started && reducedMotion ? scaffoldLines.length : scaffoldRevealedAnim;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -56,22 +53,17 @@ export function TypingTerminal({
   }, [started]);
 
   useEffect(() => {
-    if (!started) return;
-    if (reducedMotion) {
-      setTyped(command.length);
-      setScaffoldRevealed(scaffoldLines.length);
-      return;
-    }
+    if (!started || reducedMotion) return;
     let raf = 0;
     const startTime = performance.now();
     const tick = (now: number) => {
       const t = Math.min(1, (now - startTime) / TYPE_DURATION_MS);
       const eased = 1 - Math.pow(1 - t, 4);
-      setTyped(Math.floor(eased * command.length));
+      setTypedAnim(Math.floor(eased * command.length));
       if (t < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        setTyped(command.length);
+        setTypedAnim(command.length);
       }
     };
     raf = requestAnimationFrame(tick);
@@ -83,7 +75,7 @@ export function TypingTerminal({
     if (typed < command.length) return;
     const timers = scaffoldLines.map((_, i) =>
       window.setTimeout(() => {
-        setScaffoldRevealed((prev) => Math.max(prev, i + 1));
+        setScaffoldRevealedAnim((prev) => Math.max(prev, i + 1));
       }, SCAFFOLD_DELAY_MS + i * SCAFFOLD_STAGGER_MS),
     );
     return () => timers.forEach((t) => window.clearTimeout(t));

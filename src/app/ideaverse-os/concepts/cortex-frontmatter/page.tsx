@@ -196,7 +196,7 @@ export default function CortexFrontmatterPage() {
                     scope="col"
                     className="border-b border-iv-wine/15 bg-iv-cream-pale px-4 py-2.5 text-left font-sans text-[10.5px] font-medium uppercase tracking-[0.14em] text-iv-ink-soft"
                   >
-                    Why it's there
+                    Why it&apos;s there
                   </th>
                 </tr>
               </thead>

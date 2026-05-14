@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Folder = {
   num: string;
@@ -132,22 +133,16 @@ function FolderRow({
 
 export function VaultDemo() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [activeIdx, setActiveIdx] = useState(-1);
+  const [animActiveIdx, setAnimActiveIdx] = useState(-1);
   const [pulseTarget, setPulseTarget] = useState(false);
   const [pulseCortex, setPulseCortex] = useState(false);
   const [cortexFiles, setCortexFiles] = useState<CortexFile[]>(initialCortexFiles);
   const articleCounterRef = useRef<number>(initialCortexFiles.length);
   const [inView, setInView] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  const reducedMotion = useReducedMotion();
+  // Derive active index: when the section is off-screen or the user prefers
+  // reduced motion, force -1 (no row highlighted) without a setState-in-effect.
+  const activeIdx = !inView || reducedMotion ? -1 : animActiveIdx;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -163,10 +158,7 @@ export function VaultDemo() {
   }, []);
 
   useEffect(() => {
-    if (!inView || reducedMotion) {
-      setActiveIdx(-1);
-      return;
-    }
+    if (!inView || reducedMotion) return;
 
     let cancelled = false;
     let idx = 0;
@@ -175,7 +167,7 @@ export function VaultDemo() {
     const runCycle = () => {
       if (cancelled) return;
       const event = events[idx];
-      setActiveIdx(idx);
+      setAnimActiveIdx(idx);
       setPulseTarget(false);
       setPulseCortex(false);
 

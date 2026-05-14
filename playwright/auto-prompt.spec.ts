@@ -12,12 +12,22 @@ test('clicking a Finder leaf in chat-active mode auto-prompts the AI', async ({ 
   });
   await page.goto('/');
   // Open chat
-  await page.getByRole('button', { name: /click to chat with kevin/i }).first().click();
-  await expect(page.getByText('Chat with Kevin')).toBeVisible();
-  // Click a leaf in the Finder (still visible while chat-active, just dimmed)
-  // The auto-prompt sends "Tell me about <name>." as a user message
-  const leaf = page.locator('button:has-text("arkive.md")').first();
-  await leaf.click();
-  // The user-message bubble should contain "Tell me about"
-  await expect(page.locator('text=/Tell me about/').first()).toBeVisible({ timeout: 4000 });
+  await page.getByRole('button', { name: /open chat with kevin/i }).first().click();
+  // Both desktop slot + mobile sheet mount TerminalChat on chat-active.
+  await expect(
+    page.getByText('Initializing terminal...').filter({ visible: true })
+  ).toBeVisible();
+  // Click a leaf that is visible in the default state (DEFAULT_OPEN points
+  // at shipped/ideaverse-os; arkive lives in inflight and would need a
+  // folder navigation first).
+  await page
+    .locator('button:has-text("ideaverse-os.md")')
+    .filter({ visible: true })
+    .first()
+    .click();
+  // The user-message bubble should contain "Tell me about". TerminalChat
+  // renders in both the mobile sheet and the desktop slot; filter visible.
+  await expect(
+    page.locator('text=/Tell me about/').filter({ visible: true }).first()
+  ).toBeVisible({ timeout: 4000 });
 });

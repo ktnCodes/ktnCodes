@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useTheme } from "next-themes";
 import { MetalFx } from "metal-fx";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 interface Props {
   children: ReactNode;
@@ -12,8 +13,7 @@ interface Props {
 
 export function MetalWrap({ children, variant = "button", preset = "chromatic" }: Props) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsMounted();
 
   const theme: "light" | "dark" = mounted && resolvedTheme === "dark" ? "dark" : "light";
 

@@ -98,7 +98,7 @@ export default async function Home({
         <BrandBand />
         <section className="mt-(--space-xl) mb-(--space-2xl)">
           <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted mb-(--space-sm)">
-            Position-addressed memory
+            Position-addressed memory -- interactive desktop
           </p>
           <Suspense fallback={null}>
             <MacChrome>

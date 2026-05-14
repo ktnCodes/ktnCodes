@@ -2,21 +2,17 @@
 
 Route: `src/components/chat/`
 
-Persona-led AI chatbot. Floating button bottom-right opens a chat panel. Vercel AI SDK + Gemini (primary) / OpenAI (fallback). Tool-using agent that can pull project pages, posts, and contact info from the site.
+Persona-led AI chatbot rendered as a macOS-style terminal in the homepage hero (`BrandBand`). Vercel AI SDK + Gemini (primary) / OpenAI (fallback). Tool-using agent that can pull project pages, posts, and contact info from the site.
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `floating-chat.tsx` | Bottom-right entry button + panel mount |
-| `ChatPanel.tsx` | Side panel: header, message list, input, glass styling |
-| `chat-landing.tsx` | First-open state: suggestion pills before any user input |
-| `chat-message.tsx` | Individual message bubble (user, assistant, tool calls) |
-| `chat-input.tsx` | Textarea + send button with submit-on-enter |
-| `chat-context.tsx` | React context: layout state, auto-prompt-on-leaf-click integration with Finder |
-| `chat.tsx` | Top-level Chat wrapper (`useChat` hook from AI SDK) |
-| `tool-disclosure.tsx` | Collapsible UI for showing tool calls in transcript |
-| `tool-renderer.tsx` | Maps tool name -> renderer component (see `src/components/tools/`) |
+| `TerminalChat.tsx` | Terminal-styled chat panel: boot lines, HELLO/IM KEVIN block-ASCII, welcome box, preset chips, prompt input. Mounted in `BrandBand`. |
+| `BlockArt.tsx` | Pure-CSS-grid renderer for the block-ASCII art. Exports `BlockArt` component + `composeLine` helper + `LETTERS` map. |
+| `chat-context.tsx` | React context: layout state, auto-prompt-on-leaf-click integration with Finder, hash-based open/close. |
+| `tool-disclosure.tsx` | Collapsible UI for showing tool calls in transcript. |
+| `tool-renderer.tsx` | Maps tool name -> renderer component (see `src/components/tools/`). |
 
 ## Tools Available to the Agent
 
@@ -36,7 +32,7 @@ Source: `src/app/api/chat/route.ts`
 - Streaming required. Use `streamText` from AI SDK.
 - Tool execution should be visible to the user via `tool-disclosure.tsx`.
 - Persona prompt lives in `src/app/api/chat/route.ts`. Don't duplicate it client-side.
-- Glass styling uses CSS vars (`--glass-bg`, `--glass-bg-strong`) for dark-mode compatibility.
+- Terminal palette uses `--term-*` CSS vars in `globals.css` for theme-aware light/dark.
 
 ## For LLMs
 

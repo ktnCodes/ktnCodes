@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Phase = {
   num: number;
@@ -119,7 +120,7 @@ export function InterviewTimeline() {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [containerReady, setContainerReady] = useState(false);
 
   useEffect(() => {
@@ -127,12 +128,11 @@ export function InterviewTimeline() {
     scrollContainerRef.current = document.querySelector(
       "[data-iv-scroll]",
     ) as HTMLElement | null;
+    // One-time sync from DOM to React: the scroll container is now resolved
+    // and useScroll below should switch to it. This is the canonical
+    // "external system -> React" use case the lint rule allows.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setContainerReady(true);
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
   }, []);
 
   const { scrollYProgress } = useScroll({

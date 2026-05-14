@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { MetalWrap } from '@/components/fx/MetalWrap';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
@@ -20,17 +20,14 @@ const NAV_LINKS = [
 export function FloatingPill() {
   const pathname = usePathname();
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [hideOnSubdomain, setHideOnSubdomain] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    // Hide on ideaverse-os.ktncodes.com (and any future product subdomain).
-    // The marketing surfaces there have their own navigation; the main-site
-    // nav links (/posts, /#contact) point at routes that don't exist on the
-    // subdomain after the host-based rewrite.
-    setHideOnSubdomain(window.location.host.startsWith('ideaverse-os.'));
-  }, []);
+  const mounted = useIsMounted();
+  // Derive at render time: SSR returns false (no window) so the pill
+  // renders, then on hydration it computes against the real host.
+  // Hides on ideaverse-os.ktncodes.com (and any future product subdomain)
+  // where the marketing surface has its own navigation.
+  const hideOnSubdomain =
+    mounted && typeof window !== 'undefined' &&
+    window.location.host.startsWith('ideaverse-os.');
 
   const isDark = mounted && (resolvedTheme ?? theme) === 'dark';
 

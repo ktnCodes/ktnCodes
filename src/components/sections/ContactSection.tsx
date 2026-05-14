@@ -23,7 +23,7 @@ export function ContactSection({ email, github, linkedin }: ContactSectionProps)
     <Section number="06" name="Contact" tone="light-100">
       <div className="text-center max-w-2xl mx-auto py-(--space-lg)">
         <h2 className="text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight mb-(--space-sm)">
-          Let's talk.
+          Let&apos;s talk.
         </h2>
         <p className="text-base text-muted mb-(--space-lg) leading-relaxed">
           Hiring, collaborating, or just want to nerd out about embedded systems and AI workflows?
