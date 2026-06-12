@@ -45,18 +45,21 @@ function drawSection(doc: InstanceType<typeof PDFDocument>, title: string) {
   doc.moveDown(0.25);
 }
 
-// Write left text (bold) and right text (muted) on the same y baseline
+// Write left text (bold) and right text (muted) on the same y baseline.
+// Left is written FIRST so the PDF content stream reads company-then-date:
+// naive ATS extractors consume text in stream order, not visual order.
 function entryHeader(
   doc: InstanceType<typeof PDFDocument>,
   left: string,
   right: string,
 ) {
   const y = doc.y;
-  // Right first (smaller font) so the left write (taller line-height) determines cursor
-  doc.font('Helvetica').fontSize(8.5).fillColor(C.muted)
-    .text(right, LEFT, y, { align: 'right', width: W });
   doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.strong)
     .text(left, LEFT, y);
+  const afterLeft = doc.y; // taller line-height; this sets the final cursor
+  doc.font('Helvetica').fontSize(8.5).fillColor(C.muted)
+    .text(right, LEFT, y, { align: 'right', width: W });
+  doc.y = afterLeft;
 }
 
 async function buildPDF(data: ResumeData): Promise<Buffer> {
