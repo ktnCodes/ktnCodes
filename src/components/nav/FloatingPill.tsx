@@ -72,7 +72,8 @@ export function FloatingPill() {
             );
           })}
           <a
-            href="/resume.pdf"
+            href="/api/resume"
+            download="Kevin_Nguyen_Resume.pdf"
             className="inline-block px-2.5 sm:px-3 py-1.5 rounded-full transition-colors text-muted hover:text-foreground"
           >
             Resume

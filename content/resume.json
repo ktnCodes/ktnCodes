@@ -1,0 +1,141 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "meta": {
+    "tailoredFor": "portfolio - ktncodes.com public resume",
+    "variant": "one-page",
+    "lastUpdated": "2026-06-12",
+    "note": "General AI-workflow-engineering resume for the portfolio site. Based on resume.rvohealth-1page.json."
+  },
+  "basics": {
+    "name": "Kevin Trinh Nguyen",
+    "label": "AI Workflow Engineer | Agentic Systems & Developer Tooling",
+    "email": "kevtrinhnguyen@gmail.com",
+    "phone": "(563) 639-6946",
+    "url": "https://ktncodes.com",
+    "summary": "Software engineer with five years at John Deere who built the team's AI-ops workflow from scratch: a position-addressed LLM knowledge system that 12 engineers route through, 40+ agentic skills automating Azure DevOps and development workflows, driven from zero to daily use through multiple presentations and demos. Daily GitHub Copilot CLI & Claude Code user with production LLM-API experience (multi-model fallback, retry, server-side quota tracking) and backend/MCP integration, grounded in shipping production C++/Qt on safety-critical systems.",
+    "location": {
+      "city": "Austin",
+      "region": "TX",
+      "countryCode": "US"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "itskevtrinh",
+        "url": "https://linkedin.com/in/itskevtrinh/"
+      },
+      {
+        "network": "GitHub",
+        "username": "ktnCodes",
+        "url": "https://github.com/ktnCodes"
+      }
+    ]
+  },
+  "skills": [
+    {
+      "name": "AI & Agentic Engineering",
+      "keywords": [
+        "Claude Code",
+        "Copilot",
+        "Codex",
+        "Agent & skill authoring (AGENTS.md, SKILL.md)",
+        "Model Context Protocol (MCP)",
+        "Prompt engineering & evaluation",
+        "Multi-agent orchestration",
+        "LLM-as-judge / QA"
+      ]
+    },
+    {
+      "name": "LLM APIs & Backend",
+      "keywords": [
+        "Anthropic Claude",
+        "OpenAI",
+        "Gemini",
+        "Vercel AI SDK",
+        "Python",
+        "Node.js",
+        "FastMCP servers",
+        "REST & third-party API integration (Azure DevOps)",
+        "Next.js",
+        "XML",
+        "TypeScript",
+        "JavaScript",
+        "HTML"
+      ]
+    },
+    {
+      "name": "Software Engineering",
+      "keywords": [
+        "C++14 / C",
+        "Git",
+        "CI/CD (Jenkins, GitHub Actions)",
+        "Google Test / Mock",
+        "TDD",
+        "Code review",
+        "Systematic root-cause debugging"
+      ]
+    }
+  ],
+  "work": [
+    {
+      "name": "John Deere",
+      "position": "Software Developer",
+      "location": "AutoPath Team, Austin, TX",
+      "startDate": "2024-06",
+      "endDate": "",
+      "highlights": [
+        "Built the team's AI-ops workflow from scratch on position-addressing principles: an LLM knowledge system that 12 engineers and 40+ agentic skills route through with file:line provenance.",
+        "Authored AI assistants automating Azure DevOps workflows end to end (stale-bug alerts, overdue code-review notifications) plus a composite autopath-test-engineer agent for autonomous test workflows.",
+        "Standardized prompt and evaluation practices (350+ line copilot-instructions.md, AGENTS.md, MCP integration) and drove AI-tooling adoption from zero to daily across the team.",
+        "Shipped production C++/Qt features end to end on AutoPath autosteer (AB-Curves, Guidance Zones multi-heading path plans), owning database schema changes, service architecture, and UI."
+      ]
+    },
+    {
+      "name": "John Deere",
+      "position": "QA/QI Software Engineer",
+      "location": "Guidance QI Team, Austin, TX",
+      "startDate": "2023-02",
+      "endDate": "2024-06",
+      "highlights": [
+        "Resolved 38 major and 60+ minor defects across Gen4OS 4060/4600 displays; earned the Guidance Department Star Award (1 of 6).",
+        "Root-caused SIGSEGV/SIGABRT crashes and threading defects (race conditions, deadlocks, priority inversion) in real-time embedded Linux using GDB, valgrind, and ASAN."
+      ]
+    },
+    {
+      "name": "John Deere",
+      "position": "Part-Time Software Engineer",
+      "location": "Guidance QI Team, Ames, IA",
+      "startDate": "2021-07",
+      "endDate": "2022-12",
+      "highlights": [
+        "Resolved 24 embedded C++/Qt defects for Gen4OS displays using Google Test and Froglogic Squish while a full-time student at Iowa State University."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "ktncodes.com - Agentic Portfolio",
+      "url": "https://ktncodes.com",
+      "highlights": [
+        "Next.js portfolio with macOS Finder-metaphor workspace, agentic chatbot (Vercel AI SDK, 6 tools), multi-model fallback (Gemini -> OpenAI), per-IP rate limiting, and Zod-validated content pipeline.",
+        "Redesigned June 2026 to position AI workflow engineering capabilities: pipeline diagram, SYS-NN case studies, and capabilities spec table."
+      ]
+    },
+    {
+      "name": "ideaverse-os - LLM-Agnostic Knowledge Vault CLI",
+      "url": "https://github.com/ktnCodes/ideaverse-os",
+      "highlights": [
+        "Published npm CLI (Node, TypeScript) that bootstraps a personalized position-addressed, LLM-agnostic knowledge vault.",
+        "Bundled skills work across Claude Code, Cursor, Aider, Codex, and Gemini from one harness-agnostic source."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Iowa State University",
+      "studyType": "B.S.",
+      "area": "Computer Engineering",
+      "endDate": "2022-12"
+    }
+  ]
+}

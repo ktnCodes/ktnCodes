@@ -132,7 +132,7 @@ export async function POST(req: Request) {
           execute: async () => ({
             experience: config.experience,
             education: config.education,
-            resumeUrl: "/resume.pdf",
+            resumeUrl: "/api/resume",
           }),
         },
         getContact: {

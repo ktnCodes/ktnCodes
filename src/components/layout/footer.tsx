@@ -43,7 +43,8 @@ export function Footer() {
             </a>
           )}
           <a
-            href="/resume.pdf"
+            href="/api/resume"
+            download="Kevin_Nguyen_Resume.pdf"
             className="small-caps text-xs text-muted hover:text-accent block"
           >
             RESUME (PDF)

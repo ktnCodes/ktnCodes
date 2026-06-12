@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keep pdfkit out of the webpack bundle; it relies on __dirname for font assets.
+  serverExternalPackages: ['pdfkit'],
   async headers() {
     return [
       {

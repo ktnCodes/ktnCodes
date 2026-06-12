@@ -137,6 +137,41 @@ export const CaseStudiesFileSchema = z.object({
     .min(1),
 });
 
+export const ResumeSchema = z.object({
+  basics: z.object({
+    name: z.string().min(1),
+    label: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    url: z.string(),
+    summary: z.string(),
+    location: z.object({ city: z.string(), region: z.string(), countryCode: z.string() }).optional(),
+    profiles: z.array(z.object({ network: z.string(), username: z.string(), url: z.string() })).optional(),
+  }),
+  skills: z.array(z.object({ name: z.string(), keywords: z.array(z.string()) })),
+  work: z.array(z.object({
+    name: z.string(),
+    position: z.string(),
+    location: z.string(),
+    startDate: z.string(),
+    endDate: z.string().optional(),
+    highlights: z.array(z.string()),
+  })),
+  projects: z.array(z.object({
+    name: z.string(),
+    url: z.string().optional(),
+    highlights: z.array(z.string()),
+  })),
+  education: z.array(z.object({
+    institution: z.string(),
+    studyType: z.string(),
+    area: z.string(),
+    endDate: z.string(),
+  })),
+});
+
+export type ResumeData = z.infer<typeof ResumeSchema>;
+
 /** Format a ZodError into a one-line, file-prefixed message. */
 export function formatContentError(
   file: string,

@@ -18,7 +18,8 @@ export function CtaRow({ github, linkedin }: CtaRowProps) {
   return (
     <div className="flex flex-wrap items-center gap-x-(--space-sm) gap-y-3">
       <a
-        href="/resume.pdf"
+        href="/api/resume"
+        download="Kevin_Nguyen_Resume.pdf"
         className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
       >
         <span aria-hidden>&#8595;</span>

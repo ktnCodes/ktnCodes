@@ -13,8 +13,7 @@ export function Resume({ experience, education, resumeUrl }: Props) {
         <h3 className="font-semibold">Experience</h3>
         <a
           href={resumeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          download="Kevin_Nguyen_Resume.pdf"
           className="text-xs px-3 py-1.5 rounded-md bg-accent text-background font-medium hover:bg-accent-hover transition-colors"
         >
           Download Resume
