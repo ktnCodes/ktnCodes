@@ -7,10 +7,13 @@ import { useTheme } from 'next-themes';
 import { MetalWrap } from '@/components/fx/MetalWrap';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
+// `mobile: false` hides a link below sm; the Memoji itself links home, so
+// Home is the only one that can afford to collapse. Posts/Contact/Resume must
+// stay reachable on phones.
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/posts', label: 'Posts' },
-  { href: '/#contact', label: 'Contact' },
+  { href: '/', label: 'Home', mobile: false },
+  { href: '/posts', label: 'Posts', mobile: true },
+  { href: '/#contact', label: 'Contact', mobile: true },
 ];
 
 /**
@@ -42,21 +45,25 @@ export function FloatingPill() {
         <div
           className="flex items-center gap-0 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors text-[13px] p-1.5"
         >
-          <Image
-            src="/memoji/idle.png"
-            alt=""
-            width={32}
-            height={32}
-            priority
-            className="rounded-full mr-1.5"
-          />
+          <Link href="/" aria-label="Home" className="mr-1.5 shrink-0">
+            <Image
+              src="/memoji/idle.png"
+              alt=""
+              width={32}
+              height={32}
+              priority
+              className="rounded-full"
+            />
+          </Link>
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href || (link.href === '/' && pathname === '/');
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`hidden sm:inline-block px-3 py-1.5 rounded-full transition-colors ${
+                className={`${
+                  link.mobile ? 'inline-block' : 'hidden sm:inline-block'
+                } px-2.5 sm:px-3 py-1.5 rounded-full transition-colors ${
                   active ? 'text-foreground font-medium' : 'text-muted hover:text-foreground'
                 }`}
               >
@@ -64,6 +71,12 @@ export function FloatingPill() {
               </Link>
             );
           })}
+          <a
+            href="/resume.pdf"
+            className="inline-block px-2.5 sm:px-3 py-1.5 rounded-full transition-colors text-muted hover:text-foreground"
+          >
+            Resume
+          </a>
           <button
             type="button"
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}

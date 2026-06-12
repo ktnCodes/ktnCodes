@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "num": "01",
+      "name": "Agentic Workflow Design",
+      "blurb": "Multi-step LLM pipelines with tool use, triage cascades, and human-in-the-loop gates -- built to run unattended and fail loudly."
+    },
+    {
+      "num": "02",
+      "name": "Context & Knowledge Architecture",
+      "blurb": "Position-addressed knowledge bases, retrieval indexes, and CLAUDE.md/CONTEXT.md routing that any LLM harness can navigate cold."
+    },
+    {
+      "num": "03",
+      "name": "Eval Gates & Safety Nets",
+      "blurb": "Hard verification gates, automated test generation, requirement-to-test mapping, and refactoring pipelines that cannot ship silent breakage."
+    },
+    {
+      "num": "04",
+      "name": "AI Enablement & Adoption",
+      "blurb": "Took a production C++ team from 0% to daily AI use: workshops, live demos, custom skills, and SOPs that survive after the champion leaves the room."
+    },
+    {
+      "num": "05",
+      "name": "Developer Tooling & MCP",
+      "blurb": "Custom agents, skills, hooks, and MCP integrations; Python pipeline tooling that turns one-off AI wins into repeatable team infrastructure."
+    },
+    {
+      "num": "06",
+      "name": "Embedded Systems Foundation",
+      "blurb": "4+ years of production C++/Qt on John Deere displays, 100+ defects resolved -- the engineering rigor underneath the AI work."
+    }
+  ]
+}

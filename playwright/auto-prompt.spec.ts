@@ -10,7 +10,9 @@ test('clicking a Finder leaf in chat-active mode auto-prompts the AI', async ({ 
       body: 'data: [DONE]\n\n',
     });
   });
-  await page.goto('/');
+  // DEFAULT_OPEN now points at _root/readme, so open the shipped folder
+  // explicitly to make the ideaverse-os leaf visible for the click below.
+  await page.goto('/?open=shipped/ideaverse-os');
   // Open chat
   await page.getByRole('button', { name: /open chat with kevin/i }).first().click();
   // Both desktop slot + mobile sheet mount TerminalChat on chat-active.

@@ -2,9 +2,18 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { calculateReadingTime } from "./utils";
+import { PostFrontmatterSchema, formatContentError } from "./content-schemas";
 import type { Post, PostMeta } from "@/types/posts";
 
 const postsDirectory = path.join(process.cwd(), "content", "posts");
+
+function parseFrontmatter(data: Record<string, unknown>, file: string) {
+  const result = PostFrontmatterSchema.safeParse(data);
+  if (!result.success) {
+    throw new Error(formatContentError(`Post ${file}`, result.error));
+  }
+  return result.data;
+}
 
 export function getAllPostMeta(): PostMeta[] {
   const fileNames = fs.readdirSync(postsDirectory).filter((f) => f.endsWith(".mdx") || f.endsWith(".md"));
@@ -14,14 +23,11 @@ export function getAllPostMeta(): PostMeta[] {
     const fullPath = path.join(postsDirectory, fileName);
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
+    const fm = parseFrontmatter(data, fileName);
 
     return {
       slug,
-      title: data.title ?? slug,
-      date: data.date ?? "",
-      tags: data.tags ?? [],
-      summary: data.summary ?? "",
-      showToc: data.showToc ?? false,
+      ...fm,
       readingTime: calculateReadingTime(content),
     } satisfies PostMeta;
   });
@@ -30,6 +36,10 @@ export function getAllPostMeta(): PostMeta[] {
 }
 
 export function getPostBySlug(slug: string): Post | null {
+  // Slugs come from untrusted input (URL params, LLM tool calls). Reject
+  // anything that isn't a plain slug before touching the filesystem.
+  if (!/^[a-z0-9_-]+$/i.test(slug)) return null;
+
   const mdxPath = path.join(postsDirectory, `${slug}.mdx`);
   const mdPath = path.join(postsDirectory, `${slug}.md`);
   const fullPath = fs.existsSync(mdxPath) ? mdxPath : fs.existsSync(mdPath) ? mdPath : null;
@@ -38,14 +48,11 @@ export function getPostBySlug(slug: string): Post | null {
 
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
+  const fm = parseFrontmatter(data, path.basename(fullPath));
 
   return {
     slug,
-    title: data.title ?? slug,
-    date: data.date ?? "",
-    tags: data.tags ?? [],
-    summary: data.summary ?? "",
-    showToc: data.showToc ?? false,
+    ...fm,
     readingTime: calculateReadingTime(content),
     content,
   };

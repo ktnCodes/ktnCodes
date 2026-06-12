@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 
-test('landing renders thesis + Finder pre-loads ideaverse-os', async ({ page }) => {
+test('landing renders hero + Finder pre-loads the workspace README', async ({ page }) => {
   await page.goto('/');
-  // MDX project preview also renders h1s; scope to the first (hero) heading.
-  await expect(page.getByRole('heading', { level: 1 }).first()).toContainText('Embedded engineer.');
-  // Eyebrow renders for both desktop + mobile breakpoints; CSS hides one.
+  // MDX preview content also renders headings; scope to the first (hero) h1.
+  await expect(page.getByRole('heading', { level: 1 }).first()).toContainText(
+    'I build agentic workflow'
+  );
+  // Hero chips render for both desktop + mobile breakpoints; CSS hides one.
   await expect(page.getByText('Currently @ John Deere').first()).toBeVisible();
-  // Finder shows "ideaverse-os" pre-selected (in the leaf column)
-  await expect(page.locator('text=ideaverse-os.md').first()).toBeVisible();
-  // Preview header shows the project name -- desktop + mobile both render
+  // Finder shows README.md pre-selected (in the _root leaf column).
+  await expect(page.locator('text=README.md').first()).toBeVisible();
+  // Preview pane renders the pitch heading -- desktop + mobile both render
   // it in DOM (CSS hides one), so take the first match.
-  await expect(page.locator('h2', { hasText: 'ideaverse-OS' }).first()).toBeVisible();
+  await expect(
+    page.locator('h2', { hasText: 'AI workflow engineer' }).first()
+  ).toBeVisible();
 });
 
 test('deeplink ?open= round-trips', async ({ page }) => {

@@ -10,12 +10,14 @@ export function Contact({ email, social }: Props) {
     <div className="rounded-lg border border-border bg-surface p-5 space-y-3">
       <h3 className="font-semibold">Get in Touch</h3>
       <div className="space-y-2 text-sm">
-        <a
-          href={`mailto:${email}`}
-          className="flex items-center gap-2 text-accent hover:text-accent-hover transition-colors"
-        >
-          {email}
-        </a>
+        {email && (
+          <a
+            href={`mailto:${email}`}
+            className="flex items-center gap-2 text-accent hover:text-accent-hover transition-colors"
+          >
+            {email}
+          </a>
+        )}
         <a
           href={social.github}
           target="_blank"

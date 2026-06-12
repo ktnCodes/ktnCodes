@@ -6,16 +6,19 @@ import { MacChrome } from '@/components/finder/MacChrome';
 import { MobileFinder } from '@/components/finder/MobileFinder';
 import { BrandBand } from '@/components/hero/BrandBand';
 import { MdxContent } from '@/components/posts/mdx-content';
-import { AboutSection } from '@/components/sections/AboutSection';
-import { TechStackSection } from '@/components/sections/TechStackSection';
-import { ExperienceSection } from '@/components/sections/ExperienceSection';
-import { BeliefsSection } from '@/components/sections/BeliefsSection';
+import { Section } from '@/components/sections/Section';
+import { CapabilitiesSection } from '@/components/sections/CapabilitiesSection';
+import { PipelineSection } from '@/components/sections/PipelineSection';
+import { SystemsSection } from '@/components/sections/SystemsSection';
+import { HumanSection } from '@/components/sections/HumanSection';
 import { ContactSection } from '@/components/sections/ContactSection';
 import { getTree, type Tree } from '@/lib/tree';
 import { getAllProjects } from '@/lib/projects';
 import { getConfig } from '@/lib/config';
 
-const DEFAULT_OPEN = 'shipped/ideaverse-os';
+// The workspace README leads: visitors land on the 30-second pitch inside
+// the Finder metaphor instead of a project file.
+const DEFAULT_OPEN = '_root/readme';
 const PROJECTS_DIR = path.join(process.cwd(), 'content/projects');
 
 interface ContextEntry {
@@ -93,44 +96,58 @@ export default async function Home({
   }
 
   return (
-    <div className="px-(--space-lg) py-(--space-xl)">
-      <div className="max-w-6xl mx-auto">
-        <BrandBand />
-        <section className="mt-(--space-xl) mb-(--space-2xl)">
-          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted mb-(--space-sm)">
-            Position-addressed memory -- interactive desktop
-          </p>
-          <Suspense fallback={null}>
-            <MacChrome>
-              <FinderWindow
-                tree={tree}
-                projects={projects}
-                defaultOpen={DEFAULT_OPEN}
-                previewSlot={previewSlot}
-                previewRaw={previewRaw}
-                contextSlots={contextSlots}
-              />
-            </MacChrome>
-          </Suspense>
-          {/* Mobile: iOS Files pattern (drill-in / back nav) */}
-          <div className="md:hidden mt-4">
-            <Suspense fallback={null}>
-              <MobileFinder
-                tree={tree}
-                projects={projects}
-                defaultOpen={DEFAULT_OPEN}
-                previewSlot={previewSlot}
-                previewRaw={previewRaw}
-                contextSlots={contextSlots}
-              />
-            </Suspense>
-          </div>
-        </section>
+    <div>
+      {/* Hero: positioning + Memoji chat affordance */}
+      <div className="px-(--space-lg) pt-(--space-md)">
+        <div className="max-w-6xl mx-auto">
+          <BrandBand
+            github={config.social.github}
+            linkedin={config.social.linkedin}
+          />
+        </div>
       </div>
-      <AboutSection />
-      <TechStackSection />
-      <ExperienceSection />
-      <BeliefsSection />
+
+      {/* 01 -- The workspace, README.md pre-opened */}
+      <Section number="01" name="Workspace" tone="light-50" className="anim-reveal">
+        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+          This is my actual workspace.
+        </h2>
+        <p className="mt-2 mb-(--space-md) max-w-prose text-sm leading-relaxed text-muted">
+          Position-addressed, harness-agnostic -- the knowledge architecture I
+          build for teams, running my own life. Browse it. README.md is open
+          for you.
+        </p>
+        <Suspense fallback={null}>
+          <MacChrome>
+            <FinderWindow
+              tree={tree}
+              projects={projects}
+              defaultOpen={DEFAULT_OPEN}
+              previewSlot={previewSlot}
+              previewRaw={previewRaw}
+              contextSlots={contextSlots}
+            />
+          </MacChrome>
+        </Suspense>
+        {/* Mobile: iOS Files pattern (drill-in / back nav) */}
+        <div className="md:hidden mt-4">
+          <Suspense fallback={null}>
+            <MobileFinder
+              tree={tree}
+              projects={projects}
+              defaultOpen={DEFAULT_OPEN}
+              previewSlot={previewSlot}
+              previewRaw={previewRaw}
+              contextSlots={contextSlots}
+            />
+          </Suspense>
+        </div>
+      </Section>
+
+      <CapabilitiesSection />
+      <PipelineSection />
+      <SystemsSection />
+      <HumanSection />
       <ContactSection
         email={config.personal.email}
         github={config.social.github}

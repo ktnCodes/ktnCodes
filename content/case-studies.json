@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "slug": "refactor-pipeline",
+      "title": "Legacy refactor pipeline",
+      "org": "John Deere",
+      "problem": "The most-modified service class in the AutoPath codebase needed refactoring no one could do safely by hand.",
+      "system": "A 7-layer Python + agentic pipeline with characterization-test safety nets, following Working Effectively with Legacy Code.",
+      "outcome": "Automated, reviewable refactors on shipped product code.",
+      "metrics": ["7-layer pipeline", "safety-net tests", "shipped C++"]
+    },
+    {
+      "slug": "knowledge-hub",
+      "title": "Team knowledge hub",
+      "org": "John Deere",
+      "problem": "Tribal knowledge across 4 product lines lived in heads and stale wikis; onboarding was slow and AI tools had nothing to read.",
+      "system": "A living PRD + onboarding hub + AI-consumable knowledge base, structured so both engineers and LLMs retrieve from it.",
+      "outcome": "One source of truth for humans and agents.",
+      "metrics": ["4 product lines", "30+ vehicle models", "26 features"]
+    },
+    {
+      "slug": "ai-adoption",
+      "title": "Zero to daily AI adoption",
+      "org": "John Deere",
+      "problem": "A skeptical embedded C++ team with 0% AI tooling use.",
+      "system": "Workshops, live demos, prompting playbooks, and 6 custom AI skills for test generation, requirement extraction, and refactoring.",
+      "outcome": "Daily Copilot use across the team.",
+      "metrics": ["0% -> daily use", "6 custom AI skills"]
+    },
+    {
+      "slug": "ideaverse-os",
+      "title": "ideaverse-os",
+      "org": "Open source",
+      "problem": "Personal knowledge vaults lock you into one AI tool and rot when conventions drift.",
+      "system": "An npx CLI that bootstraps a position-addressed, harness-agnostic vault: any LLM agent reads the same structure.",
+      "outcome": "Live product + template site; the system this portfolio runs on.",
+      "metrics": ["npx CLI", "harness-agnostic", "live: ideaverse-os.ktncodes.com"],
+      "link": {
+        "label": "ideaverse-os.ktncodes.com",
+        "href": "https://ideaverse-os.ktncodes.com"
+      }
+    },
+    {
+      "slug": "this-site",
+      "title": "This site",
+      "org": "ktncodes.com",
+      "problem": "A portfolio should demonstrate the work, not describe it.",
+      "system": "Dual-provider agentic chatbot (Gemini -> OpenAI fallback, 6 tools, rate-limited), zod-validated content pipeline, dev-mode inline editing.",
+      "outcome": "The proof is the page you are on.",
+      "metrics": ["6 chat tools", "provider fallback", "zod content gates"],
+      "link": {
+        "label": "Read: building this site",
+        "href": "/posts/project-building-this-site-v1"
+      }
+    }
+  ]
+}

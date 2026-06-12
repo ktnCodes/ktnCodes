@@ -245,6 +245,16 @@ function TrafficLight({
 }
 
 function FinderToolbar() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  function onSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    router.push(`/search?q=${encodeURIComponent(q)}`);
+  }
+
   return (
     <div className="finder-toolbar">
       <button type="button" className="finder-icon-btn" disabled title="back" aria-label="Navigate back">
@@ -257,8 +267,10 @@ function FinderToolbar() {
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
+      {/* Columns is the only implemented view; the others are disabled set
+          dressing, matching the disabled back/forward buttons. */}
       <div className="finder-segmented" role="group" aria-label="View mode">
-        <button type="button" title="icons" aria-label="Icons view">
+        <button type="button" title="icons" aria-label="Icons view" disabled>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="7" height="7" />
             <rect x="14" y="3" width="7" height="7" />
@@ -266,7 +278,7 @@ function FinderToolbar() {
             <rect x="14" y="14" width="7" height="7" />
           </svg>
         </button>
-        <button type="button" title="list" aria-label="List view">
+        <button type="button" title="list" aria-label="List view" disabled>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="8" y1="6" x2="21" y2="6" />
             <line x1="8" y1="12" x2="21" y2="12" />
@@ -283,7 +295,7 @@ function FinderToolbar() {
             <rect x="17" y="3" width="4" height="18" />
           </svg>
         </button>
-        <button type="button" title="gallery" aria-label="Gallery view">
+        <button type="button" title="gallery" aria-label="Gallery view" disabled>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="9" cy="9" r="2" />
@@ -292,13 +304,19 @@ function FinderToolbar() {
         </button>
       </div>
       <div className="flex-1" />
-      <div className="finder-search">
+      <form className="finder-search" onSubmit={onSearchSubmit}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <input type="text" placeholder="search workspace" aria-label="Search workspace" />
-      </div>
+        <input
+          type="text"
+          placeholder="search posts"
+          aria-label="Search posts"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </form>
     </div>
   );
 }
@@ -388,7 +406,7 @@ function FolderColumn({
             key={f.slug}
             onClick={() => onSelect(f.slug)}
             className={`block w-full text-left px-2 py-1 rounded-md text-[13px] transition-colors flex items-center gap-1.5 ${
-              f.slug === selectedSlug ? 'bg-blue-500 text-white' : 'text-foreground hover:bg-(--surface-alt)'
+              f.slug === selectedSlug ? 'bg-[#1d5bd6] text-white' : 'text-foreground hover:bg-(--surface-alt)'
             }`}
           >
             <span className="finder-row-icon" aria-hidden>
@@ -437,7 +455,7 @@ function LeafColumn({
           key={l.slug}
           onClick={() => onSelect(l.slug)}
           className={`block w-full text-left px-2 py-1 rounded-md text-[13px] transition-colors flex items-center gap-1.5 ${
-            l.slug === selectedSlug ? 'bg-blue-500 text-white' : 'text-foreground hover:bg-(--surface-alt)'
+            l.slug === selectedSlug ? 'bg-[#1d5bd6] text-white' : 'text-foreground hover:bg-(--surface-alt)'
           }`}
         >
           <span className="finder-row-icon" aria-hidden>

@@ -6,65 +6,87 @@ import { Memoji } from './Memoji';
 import { useChatContext } from '@/components/chat/chat-context';
 import { TerminalChat } from '@/components/chat/TerminalChat';
 import { EditableText } from '@/components/dev/EditableText';
+import { CtaRow } from '@/components/ui/cta-row';
 import heroData from '../../../content/hero.json';
 
 interface HeroContent {
   eyebrow: string;
-  thesis: [string, string, string];
-  darkThesis: [string, string, string];
+  headline: string;
+  subline: string;
+  chips: string[];
 }
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const HERO_PATH = 'content/hero.json';
 
-export function BrandBand() {
+interface BrandBandProps {
+  github: string;
+  linkedin: string;
+}
+
+/**
+ * Hero band: positioning statement left, Memoji chat affordance right.
+ * Opening the chat swaps the text column to the terminal in place
+ * (grow-from-memoji on desktop, full-screen sheet on mobile).
+ */
+export function BrandBand({ github, linkedin }: BrandBandProps) {
   const hero = heroData as HeroContent;
   const { layout, openWith } = useChatContext();
   const chatActive = layout === 'chat-active';
 
-  const writeLineFor =
-    (key: 'thesis' | 'darkThesis', idx: number) => (next: string) => {
-      const updated = { ...hero };
-      updated[key] = [...updated[key]] as [string, string, string];
-      updated[key][idx] = next;
-      return JSON.stringify(updated, null, 2) + '\n';
-    };
+  const writeField = (key: keyof HeroContent) => (next: string) =>
+    JSON.stringify({ ...hero, [key]: next }, null, 2) + '\n';
 
-  const writeEyebrow = (next: string) =>
-    JSON.stringify({ ...hero, eyebrow: next }, null, 2) + '\n';
-
-  const renderThesis = (sizeClasses: string) => (
-    <>
-      <h1
-        className={`${sizeClasses} hero-thesis-light font-semibold text-foreground leading-[1.05] tracking-tight`}
-      >
-        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[0]} serialize={writeLineFor('thesis', 0)} />
-        <br />
-        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[1]} serialize={writeLineFor('thesis', 1)} />
-        <br />
-        <EditableText as="span" filePath={HERO_PATH} value={hero.thesis[2]} serialize={writeLineFor('thesis', 2)} />
-      </h1>
-      <h1
-        className={`${sizeClasses} hero-thesis-dark font-semibold text-foreground leading-[1.05] tracking-tight`}
-      >
-        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[0]} serialize={writeLineFor('darkThesis', 0)} />
-        <br />
-        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[1]} serialize={writeLineFor('darkThesis', 1)} />
-        <br />
-        <EditableText as="span" filePath={HERO_PATH} value={hero.darkThesis[2]} serialize={writeLineFor('darkThesis', 2)} />
-      </h1>
-    </>
+  const renderHeroText = (headlineClasses: string) => (
+    <div>
+      <EditableText
+        as="p"
+        filePath={HERO_PATH}
+        value={hero.eyebrow}
+        serialize={writeField('eyebrow')}
+        className="anim-rise font-mono text-[11px] uppercase tracking-[0.18em] text-muted"
+      />
+      <EditableText
+        as="h1"
+        filePath={HERO_PATH}
+        value={hero.headline}
+        serialize={writeField('headline')}
+        multiline
+        className={`anim-rise anim-rise-1 mt-(--space-sm) max-w-3xl font-semibold tracking-tight leading-[1.05] text-foreground ${headlineClasses}`}
+      />
+      <EditableText
+        as="p"
+        filePath={HERO_PATH}
+        value={hero.subline}
+        serialize={writeField('subline')}
+        multiline
+        className="anim-rise anim-rise-2 mt-(--space-md) max-w-prose text-base leading-relaxed text-muted md:text-lg"
+      />
+      <div className="anim-rise anim-rise-3 mt-(--space-md) flex flex-wrap gap-2">
+        {hero.chips.map((chip) => (
+          <span
+            key={chip}
+            className="rounded-full border border-hairline px-3 py-1 font-mono text-[11px] text-muted"
+          >
+            {chip}
+          </span>
+        ))}
+      </div>
+      <div className="anim-rise anim-rise-4 mt-(--space-lg)">
+        <CtaRow github={github} linkedin={linkedin} />
+      </div>
+    </div>
   );
 
   return (
-    <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] md:gap-(--space-xl) gap-(--space-lg) items-center pt-(--space-md) pb-(--space-2xl)">
+    <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] md:gap-(--space-xl) gap-(--space-lg) items-center pt-(--space-md) pb-(--space-xl)">
       {/* Mobile: chat as full-screen sheet */}
       <AnimatePresence>
         {chatActive && (
           <motion.div
             key="mobile-sheet"
             className="md:hidden fixed inset-0 z-50 bg-background/95 backdrop-blur-md p-(--space-sm) flex items-stretch"
-            initial={{ opacity: 0, scale: 0.85, originX: 1, originY: 0 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ duration: 0.35, ease: EASE }}
@@ -75,7 +97,7 @@ export function BrandBand() {
         )}
       </AnimatePresence>
 
-      {/* Desktop: thesis ↔ chat panel grow-from-Memoji. Fixed height. */}
+      {/* Desktop: hero text <-> chat panel grow-from-Memoji. Fixed height. */}
       <div className="hidden md:block relative h-[600px]">
         <AnimatePresence mode="wait">
           {chatActive ? (
@@ -92,44 +114,28 @@ export function BrandBand() {
             </motion.div>
           ) : (
             <motion.div
-              key="thesis"
+              key="hero"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.3, ease: EASE }}
               className="h-full flex flex-col justify-center"
             >
-              <EditableText
-                as="p"
-                filePath={HERO_PATH}
-                value={hero.eyebrow}
-                serialize={writeEyebrow}
-                className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted mb-(--space-md)"
-              />
-              {renderThesis('text-4xl md:text-6xl')}
+              {renderHeroText('text-4xl md:text-5xl lg:text-6xl')}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Mobile thesis */}
-      <div className="md:hidden">
-        <EditableText
-          as="p"
-          filePath={HERO_PATH}
-          value={hero.eyebrow}
-          serialize={writeEyebrow}
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted mb-(--space-md)"
-        />
-        {renderThesis('text-4xl')}
-      </div>
+      {/* Mobile hero text (the chat sheet overlays it when open) */}
+      <div className="md:hidden">{renderHeroText('text-4xl')}</div>
 
-      {/* Memoji + clickable affordance — both trigger chat */}
+      {/* Memoji + clickable affordance -- both trigger chat */}
       <button
         type="button"
         onClick={() => openWith()}
-        aria-label={chatActive ? 'Chat is open — click to close' : 'Open chat with Kevin'}
-        className="flex flex-col items-center gap-(--space-sm) cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground rounded-3xl p-2"
+        aria-label={chatActive ? 'Chat is open -- click the red light to close' : 'Open chat with Kevin'}
+        className="flex flex-col items-center gap-(--space-sm) cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground rounded-3xl p-2 justify-self-center md:justify-self-auto"
       >
         <motion.div
           animate={{ scale: chatActive ? 0.8 : 1 }}
@@ -149,7 +155,7 @@ export function BrandBand() {
             >
               <MetalWrap>
                 <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full text-foreground group-hover:opacity-90">
-                  💬 Click to chat
+                  Click to chat
                 </span>
               </MetalWrap>
             </motion.span>

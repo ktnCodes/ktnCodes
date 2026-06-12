@@ -1,13 +1,26 @@
 import type { PortfolioConfig, Project as LegacyProject } from "@/types/portfolio";
 import configData from "../../portfolio-config.json";
 import { getAllProjects } from "./projects";
+import { PortfolioConfigSchema, formatContentError } from "./content-schemas";
+
+// Validate once at module load: a typo'd edit to portfolio-config.json
+// (including writes from the dev-mode inline editor) fails loudly here
+// instead of silently rendering broken sections.
+const validatedConfig = (() => {
+  const result = PortfolioConfigSchema.safeParse(configData);
+  if (!result.success) {
+    throw new Error(formatContentError("portfolio-config.json", result.error));
+  }
+  return result.data as Omit<PortfolioConfig, "projects">;
+})();
 
 /**
  * The portfolio-config.json `projects` array was migrated to
- * `content/projects/<slug>.md` files (see scripts/migrate-projects.ts and the
- * PRD content-model lock). To avoid touching every consumer of the legacy
- * shape (chat tool, system prompt, <Projects /> renderer), we synthesize an
- * array in the legacy shape from the .md frontmatter on each call.
+ * `content/projects/<slug>.md` files (one-time migration script retired to
+ * git history; see the PRD content-model lock). To avoid touching every
+ * consumer of the legacy shape (chat tool, system prompt, <Projects />
+ * renderer), we synthesize an array in the legacy shape from the .md
+ * frontmatter on each call.
  */
 function loadProjectsFromMarkdown(): LegacyProject[] {
   return getAllProjects()
@@ -15,7 +28,7 @@ function loadProjectsFromMarkdown(): LegacyProject[] {
       const fm = p.frontmatter;
       return {
         title: fm.name,
-        category: ((fm as unknown) as Record<string, unknown>).category as string ?? "",
+        category: fm.category ?? "",
         description: fm.tagline ?? "",
         techStack: fm.tech ?? [],
         date: fm.started ?? "",
@@ -38,7 +51,7 @@ function loadProjectsFromMarkdown(): LegacyProject[] {
 }
 
 export function getConfig(): PortfolioConfig {
-  const raw = configData as Omit<PortfolioConfig, "projects">;
+  const raw = validatedConfig;
   return {
     ...raw,
     personal: {

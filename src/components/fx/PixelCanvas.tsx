@@ -9,6 +9,8 @@ interface PixelCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
   colors?: string[];
   noFocus?: boolean;
   variant?: "default" | "trail" | "glow";
+  /** Pointer-effect radius in px. Defaults: 80 (trail/default), 120 (glow). */
+  radius?: number;
 }
 
 interface Pixel {
@@ -50,6 +52,7 @@ export function PixelCanvas({
   colors = ["#7c3aed", "#a78bfa", "#ddd6fe"],
   noFocus = false,
   variant = "trail",
+  radius: radiusProp,
   children,
   ...props
 }: PixelCanvasProps) {
@@ -59,6 +62,7 @@ export function PixelCanvas({
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
+  const runningRef = useRef(false);
 
   const getColorFromIntensity = useCallback(
     (intensity: number, phase: number) => {
@@ -88,6 +92,9 @@ export function PixelCanvas({
 
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
+
+    // Respect OS-level reduced motion: no loop, no listeners, empty canvas.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let cols = 0;
     let rows = 0;
@@ -135,8 +142,9 @@ export function PixelCanvas({
       const { x: mouseX, y: mouseY } = mouseRef.current;
       const pixels = pixelsRef.current;
 
-      const radius = variant === "glow" ? 120 : 80;
+      const radius = radiusProp ?? (variant === "glow" ? 120 : 80);
       const glowPasses = variant === "glow" ? 2 : 1;
+      let anyVisible = false;
 
       for (let i = 0; i < cols; i++) {
         const col = pixels[i];
@@ -167,6 +175,7 @@ export function PixelCanvas({
           pixel.colorPhase = (pixel.colorPhase + 0.001 * (deltaTime / 16)) % 1;
 
           if (pixel.intensity > 0.01) {
+            anyVisible = true;
             const color = getColorFromIntensity(pixel.intensity, pixel.colorPhase);
 
             if (variant === "glow" && pixel.intensity > 0.2) {
@@ -200,7 +209,25 @@ export function PixelCanvas({
       }
 
       ctx.globalAlpha = 1;
+      // Idle bail: nothing lit and the pointer is offscreen, so stop burning
+      // frames. The pointer/touch handlers restart the loop on activity.
+      if (!anyVisible && mouseRef.current.x === -1000) {
+        runningRef.current = false;
+        return;
+      }
       animationRef.current = requestAnimationFrame(draw);
+    };
+
+    const start = () => {
+      if (runningRef.current) return;
+      runningRef.current = true;
+      lastTimeRef.current = performance.now();
+      animationRef.current = requestAnimationFrame(draw);
+    };
+
+    const stopLoop = () => {
+      runningRef.current = false;
+      cancelAnimationFrame(animationRef.current);
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -209,6 +236,7 @@ export function PixelCanvas({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
       };
+      start();
     };
 
     const onMouseLeaveDoc = () => {
@@ -224,6 +252,7 @@ export function PixelCanvas({
             x: touch.clientX - rect.left,
             y: touch.clientY - rect.top,
           };
+          start();
         }
       }
     };
@@ -232,11 +261,19 @@ export function PixelCanvas({
       mouseRef.current = { x: -1000, y: -1000 };
     };
 
-    initPixels();
-    lastTimeRef.current = performance.now();
-    animationRef.current = requestAnimationFrame(draw);
+    const onVisibility = () => {
+      if (document.hidden) stopLoop();
+      else start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
-    const resizeObserver = new ResizeObserver(initPixels);
+    initPixels();
+    start();
+
+    const resizeObserver = new ResizeObserver(() => {
+      initPixels();
+      start();
+    });
     resizeObserver.observe(container);
 
     // Listen on window so the trail works even when the canvas sits behind
@@ -249,14 +286,15 @@ export function PixelCanvas({
     }
 
     return () => {
-      cancelAnimationFrame(animationRef.current);
+      stopLoop();
+      document.removeEventListener("visibilitychange", onVisibility);
       resizeObserver.disconnect();
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeaveDoc);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
     };
-  }, [gap, speed, noFocus, variant, getColorFromIntensity]);
+  }, [gap, speed, noFocus, variant, radiusProp, getColorFromIntensity]);
 
   return (
     <div

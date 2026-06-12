@@ -12,6 +12,10 @@ interface Props {
  * touch. Send-email fires a mailto: to Kevin's address. Esc, backdrop
  * click, and the Not-now button all dismiss.
  */
+// Address comes from NEXT_PUBLIC_CONTACT_EMAIL (build-time inlined), matching
+// the lib/config.ts policy of keeping it out of committed source.
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
 export function MailModal({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
@@ -23,8 +27,11 @@ export function MailModal({ open, onClose }: Props) {
   }, [open, onClose]);
 
   function send() {
-    window.location.href =
-      'mailto:kevtrinhnguyen@gmail.com?subject=Hello%20from%20ktncodes.com';
+    if (!CONTACT_EMAIL) {
+      onClose();
+      return;
+    }
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Hello%20from%20ktncodes.com`;
     onClose();
   }
 
@@ -57,7 +64,9 @@ export function MailModal({ open, onClose }: Props) {
           </div>
           <h2 id="finder-mail-title">Want to get in touch?</h2>
           <p>Send me a note about your project, a job opening, or just to say hi.</p>
-          <span className="finder-mail-email">kevtrinhnguyen@gmail.com</span>
+          {CONTACT_EMAIL && (
+            <span className="finder-mail-email">{CONTACT_EMAIL}</span>
+          )}
         </div>
         <div className="finder-mail-actions">
           <button type="button" onClick={onClose}>

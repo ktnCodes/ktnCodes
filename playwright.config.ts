@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 3000;
+// Overridable so local runs can dodge an occupied :3000 (reuseExistingServer
+// would otherwise happily test whatever foreign process answers there).
+const PORT = Number(process.env.PORT ?? 3000);
 
 export default defineConfig({
   testDir: './playwright',
@@ -24,7 +26,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    command: `npm run dev -- -p ${PORT}`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

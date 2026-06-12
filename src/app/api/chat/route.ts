@@ -1,12 +1,26 @@
 import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
-import { streamText, stepCountIs, convertToModelMessages } from "ai";
+import { streamText, stepCountIs, convertToModelMessages, APICallError } from "ai";
 import type { UIMessage } from "ai";
 import { z } from "zod";
 import { generateSystemPrompt } from "./prompt";
 import { getConfig } from "@/lib/config";
 import { getAllPostMeta, getPostBySlug } from "@/lib/posts";
 import { isResumeQuery } from "@/lib/chat-routing";
+import { rateLimit } from "@/lib/rate-limit";
+
+// Abuse guards for a public, unauthenticated endpoint fronting paid providers.
+// The client trims history too, but client-side limits don't count.
+const MAX_MESSAGES = 40;
+const MAX_BODY_CHARS = 32_000;
+const MAX_OUTPUT_TOKENS = 1000;
+
+function jsonError(message: string, status: number, headers?: HeadersInit) {
+  return new Response(JSON.stringify({ error: message }), {
+    status,
+    headers: { "Content-Type": "application/json", ...headers },
+  });
+}
 
 // Persists for the lifetime of the server instance.
 // Once Google hits its quota, all subsequent requests in this session use OpenAI.
@@ -20,13 +34,44 @@ function shouldUseGoogle(): boolean {
 }
 
 function isQuotaError(error: unknown): boolean {
+  // Prefer the structured status code over message sniffing.
+  if (APICallError.isInstance(error) && error.statusCode === 429) return true;
   const msg = error instanceof Error ? error.message : String(error);
   return msg.includes("quota") || msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED");
 }
 
 export async function POST(req: Request) {
   try {
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("x-real-ip") ??
+      "unknown";
+    if (!rateLimit(`chat:${ip}`)) {
+      return jsonError("Too many requests. Try again in a few minutes.", 429, {
+        "Retry-After": "300",
+      });
+    }
+
+    const raw = await req.text();
+    if (raw.length > MAX_BODY_CHARS) {
+      return jsonError("Conversation too long.", 413);
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return jsonError("Invalid JSON.", 400);
+    }
+    const maybeMessages = (parsed as { messages?: unknown })?.messages;
+    if (
+      !Array.isArray(maybeMessages) ||
+      maybeMessages.length === 0 ||
+      maybeMessages.length > MAX_MESSAGES
+    ) {
+      return jsonError("Bad request.", 400);
+    }
+    const messages = maybeMessages as UIMessage[];
+
     const config = getConfig();
     const allPosts = getAllPostMeta();
 
@@ -36,6 +81,7 @@ export async function POST(req: Request) {
       system: generateSystemPrompt(),
       messages: await convertToModelMessages(messages),
       stopWhen: stepCountIs(3),
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
       // Force getResume on step 0 only. On subsequent steps, fall back to auto
       // so the model generates the text reply using the tool result. Without
       // this, toolChoice applies to every step and the model loops calling
@@ -197,7 +243,8 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "An error occurred";
-    return new Response(JSON.stringify({ error: message }), { status: 500 });
+    // Log the detail server-side; never leak internals to the client.
+    console.error("[chat] Unhandled error:", error);
+    return jsonError("Something went wrong. Please try again.", 500);
   }
 }

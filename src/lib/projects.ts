@@ -15,6 +15,7 @@ export interface ProjectFrontmatter {
   featured?: boolean;
   screenshot?: string;
   cover_color?: string;
+  category?: string;
 }
 
 export interface Project {
@@ -25,6 +26,7 @@ export interface Project {
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import { ProjectFrontmatterSchema, formatContentError } from './content-schemas';
 
 const DEFAULT_DIR = path.join(process.cwd(), 'content/projects');
 
@@ -42,7 +44,13 @@ function validateFrontmatter(data: Record<string, unknown>, file: string): Proje
       throw new Error(`Project ${file}: missing required field "${key}"`);
     }
   }
-  return data as unknown as ProjectFrontmatter;
+  // Required fields exist; now validate the full shape (types of optional
+  // fields, enum values) so a frontmatter typo fails loudly at build time.
+  const result = ProjectFrontmatterSchema.safeParse(data);
+  if (!result.success) {
+    throw new Error(formatContentError(`Project ${file}`, result.error));
+  }
+  return result.data as ProjectFrontmatter;
 }
 
 export function getAllProjects(dir: string = DEFAULT_DIR): Project[] {

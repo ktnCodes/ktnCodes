@@ -1,40 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { PostCard } from "@/components/posts/post-card";
 import { SectionEyebrow } from "@/components/ui/section-eyebrow";
 import type { PostMeta } from "@/types/posts";
 
-export default function SearchPage() {
-  const [query, setQuery] = useState("");
+function filterPosts(all: PostMeta[], value: string): PostMeta[] {
+  const q = value.toLowerCase();
+  return all.filter(
+    (post) =>
+      post.title.toLowerCase().includes(q) ||
+      post.summary.toLowerCase().includes(q) ||
+      post.tags.some((tag) => tag.toLowerCase().includes(q))
+  );
+}
+
+function SearchPageInner() {
+  // Deep-linkable: /search?q=term (used by the Finder toolbar search).
+  const initialQuery = useSearchParams().get("q") ?? "";
+  const [query, setQuery] = useState(initialQuery);
   const [posts, setPosts] = useState<PostMeta[]>([]);
-  const [allPosts, setAllPosts] = useState<PostMeta[] | null>(null);
+  const allPostsRef = useRef<PostMeta[] | null>(null);
 
-  const loadPosts = async () => {
-    if (allPosts) return allPosts;
-    const res = await fetch("/api/posts");
-    const data = await res.json();
-    setAllPosts(data);
-    return data as PostMeta[];
-  };
+  // Run the initial search for a deep-linked query once posts are fetched.
+  useEffect(() => {
+    if (!initialQuery.trim()) return;
+    let cancelled = false;
+    (async () => {
+      const res = await fetch("/api/posts");
+      const all = (await res.json()) as PostMeta[];
+      if (cancelled) return;
+      allPostsRef.current = all;
+      setPosts(filterPosts(all, initialQuery));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [initialQuery]);
 
-  const handleSearch = async (value: string) => {
+  const handleSearch = useCallback(async (value: string) => {
     setQuery(value);
     if (!value.trim()) {
       setPosts([]);
       return;
     }
-    const all = await loadPosts();
-    const q = value.toLowerCase();
-    const filtered = all.filter(
-      (post: PostMeta) =>
-        post.title.toLowerCase().includes(q) ||
-        post.summary.toLowerCase().includes(q) ||
-        post.tags.some((tag: string) => tag.toLowerCase().includes(q))
-    );
-    setPosts(filtered);
-  };
+    if (!allPostsRef.current) {
+      const res = await fetch("/api/posts");
+      allPostsRef.current = (await res.json()) as PostMeta[];
+    }
+    setPosts(filterPosts(allPostsRef.current, value));
+  }, []);
 
   return (
     <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 py-16 overflow-y-auto">
@@ -68,5 +85,13 @@ export default function SearchPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense>
+      <SearchPageInner />
+    </Suspense>
   );
 }

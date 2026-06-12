@@ -8,6 +8,7 @@ import { FloatingPill } from "@/components/nav/FloatingPill";
 import { StickyMemoji } from "@/components/nav/StickyMemoji";
 import { DevModeBadge } from "@/components/dev/DevModeBadge";
 import { PixelCanvas } from "@/components/fx/PixelCanvas";
+import { getConfig } from "@/lib/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,32 +37,36 @@ export const metadata: Metadata = {
   },
 };
 
+// Identity fields derive from portfolio-config.json so a config edit (new
+// job, new title) updates the structured data Google reads, with no second
+// copy to remember. knowsAbout stays editorial.
+const config = getConfig();
+const [locality = "Austin", region = "TX"] = config.personal.location
+  .split(",")
+  .map((s) => s.trim());
+
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Kevin Trinh Nguyen",
+  name: config.personal.name,
   url: "https://ktncodes.com",
   image: "https://ktncodes.com/avatars/avatar-with-winnie.jpg",
-  jobTitle: "Software Engineer — Embedded Systems & AI/Agentic Engineering",
+  jobTitle: config.personal.title,
   worksFor: {
     "@type": "Organization",
-    name: "John Deere",
-    url: "https://www.deere.com",
+    name: config.experience[0]?.company ?? "",
   },
   alumniOf: {
     "@type": "CollegeOrUniversity",
-    name: "Iowa State University",
+    name: config.education.institution,
   },
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Austin",
-    addressRegion: "TX",
+    addressLocality: locality,
+    addressRegion: region,
     addressCountry: "US",
   },
-  sameAs: [
-    "https://github.com/ktnCodes",
-    "https://www.linkedin.com/in/itskevtrinh/",
-  ],
+  sameAs: [config.social.github, config.social.linkedin],
   knowsAbout: [
     "Embedded Systems",
     "C++",
@@ -94,6 +99,7 @@ export default function RootLayout({
             <PixelCanvas
               variant="trail"
               gap={8}
+              radius={40}
               colors={["#7c3aed", "#a78bfa", "#ddd6fe"]}
               className="fixed inset-0 -z-10 pointer-events-none"
             />

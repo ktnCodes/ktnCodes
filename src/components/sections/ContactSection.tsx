@@ -1,7 +1,5 @@
-'use client';
-
 import { Section } from './Section';
-import { useChatContext } from '@/components/chat/chat-context';
+import { CtaRow } from '@/components/ui/cta-row';
 
 interface ContactSectionProps {
   email?: string;
@@ -10,50 +8,29 @@ interface ContactSectionProps {
 }
 
 export function ContactSection({ email, github, linkedin }: ContactSectionProps) {
-  const { openWith } = useChatContext();
-
-  function openMemoji() {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    openWith();
-  }
-
   return (
-    <Section number="06" name="Contact" tone="light-100">
-      <div className="text-center max-w-2xl mx-auto py-(--space-lg)">
-        <h2 className="text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight mb-(--space-sm)">
-          Let&apos;s talk.
-        </h2>
-        <p className="text-base text-muted mb-(--space-lg) leading-relaxed">
-          Hiring, collaborating, or just want to nerd out about embedded systems and AI workflows?
-          Open to all of it.
-        </p>
-        <button
-          type="button"
-          onClick={openMemoji}
-          className="inline-flex items-center gap-2 bg-foreground text-background px-(--space-md) py-3 rounded-full text-[15px] font-medium hover:opacity-90 transition-opacity mb-(--space-lg)"
-        >
-          <span aria-hidden>💬</span> Talk to my Memoji
-        </button>
-        <div className="flex justify-center items-center gap-(--space-md) text-[13px] text-muted">
-          <a href={linkedin} className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors">
-            <span aria-hidden>↗</span> LinkedIn
-          </a>
-          <span aria-hidden className="text-hairline">·</span>
-          <a href={github} className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors">
-            <span aria-hidden>↗</span> GitHub
-          </a>
-          {email && (
-            <>
-              <span aria-hidden className="text-hairline">·</span>
-              <a href={`mailto:${email}`} className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors">
-                <span aria-hidden>✉</span> Email
-              </a>
-            </>
-          )}
-        </div>
+    <Section number="06" name="Contact" tone="light-100" className="anim-reveal">
+      <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+        Let&apos;s talk.
+      </h2>
+      <p className="mt-2 max-w-prose text-sm leading-relaxed text-muted">
+        If you are hiring for AI workflow or agentic-systems work, the resume is
+        the 30-second version and my agent can answer the rest.
+      </p>
+      <div className="mt-(--space-md)">
+        <CtaRow github={github} linkedin={linkedin} />
       </div>
+      {email && (
+        <p className="mt-(--space-sm) font-mono text-xs text-muted">
+          or email{' '}
+          <a
+            href={`mailto:${email}`}
+            className="underline underline-offset-4 transition-colors hover:text-foreground"
+          >
+            {email}
+          </a>
+        </p>
+      )}
     </Section>
   );
 }

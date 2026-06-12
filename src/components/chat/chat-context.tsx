@@ -23,6 +23,7 @@ type ChatContextValue = {
   status: ChatHook["status"];
   stop: ChatHook["stop"];
   error: ChatHook["error"];
+  regenerate: ChatHook["regenerate"];
   isOpen: boolean;
   openWith: (question?: string) => void;
   close: () => void;
@@ -38,7 +39,7 @@ type ChatContextValue = {
 const ChatContext = createContext<ChatContextValue | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { messages, sendMessage, status, stop, error } = useChat();
+  const { messages, sendMessage, status, stop, error, regenerate } = useChat();
   const [isOpen, setIsOpen] = useState(false);
   const [layout, setLayout] = useState<ChatLayout>("default");
   const lastSentRef = useRef<string | null>(null);
@@ -107,6 +108,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         status,
         stop,
         error,
+        regenerate,
         isOpen,
         openWith,
         close,

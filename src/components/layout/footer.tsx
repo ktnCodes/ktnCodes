@@ -16,6 +16,10 @@ function LinkedInIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+// Same policy as lib/config.ts: the address lives in NEXT_PUBLIC_CONTACT_EMAIL,
+// not in committed source, so the public repo stays scrape-free.
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
 export function Footer() {
   return (
     <footer className="border-t border-[var(--hairline)] py-10">
@@ -29,12 +33,20 @@ export function Footer() {
         </div>
         <div className="space-y-1">
           <div className="small-caps text-xs text-muted">CONTACT</div>
+          {CONTACT_EMAIL && (
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="text-xs text-foreground hover:text-accent flex items-center gap-2"
+            >
+              <Mail size={14} />
+              {CONTACT_EMAIL}
+            </a>
+          )}
           <a
-            href="mailto:kevtrinhnguyen@gmail.com"
-            className="text-xs text-foreground hover:text-accent flex items-center gap-2"
+            href="/resume.pdf"
+            className="small-caps text-xs text-muted hover:text-accent block"
           >
-            <Mail size={14} />
-            kevtrinhnguyen@gmail.com
+            RESUME (PDF)
           </a>
           <div className="small-caps text-xs text-muted">
             {`(c) ${new Date().getFullYear()}`}

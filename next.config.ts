@@ -1,6 +1,30 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // Full CSP intentionally omitted: Next's hydration scripts and the
+          // inline JSON-LD in layout.tsx would need nonce plumbing first.
+          // frame-ancestors alone is safe and covers clickjacking with XFO.
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
   async rewrites() {
     return {
       beforeFiles: [

@@ -1,13 +1,10 @@
 {
-  "eyebrow": "Currently @ John Deere",
-  "thesis": [
-    "Embedded engineer.",
-    "AI workflow builder.",
-    "Workshop tinkerer."
-  ],
-  "darkThesis": [
-    "I design systems.",
-    "Human and LLM",
-    "Readable."
+  "eyebrow": "AI WORKFLOW ENGINEERING -- AGENTIC SYSTEMS",
+  "headline": "I build agentic workflow systems engineering teams actually adopt.",
+  "subline": "Embedded systems engineer (C++/Qt) turned AI-workflow builder: multi-agent pipelines, MCP integrations, eval gates, and the enablement work that takes a team from zero to daily AI use.",
+  "chips": [
+    "Currently @ John Deere",
+    "ideaverse-os -- open source",
+    "Austin, TX / remote"
   ]
 }

@@ -1,9 +1,8 @@
 # ktnCodes
 
-My personal portfolio and engineering blog — **[ktncodes.com](https://ktncodes.com)**
+My personal portfolio and engineering blog -- **[ktncodes.com](https://ktncodes.com)**
 
-The homepage is an AI chatbot powered by Google Gemini. Ask it anything about my work: projects, experience, skills, or blog posts. The rest of the site is a full blog with posts, tags, archives, and search.
-
+The homepage is a macOS Finder-style desktop: my workspace rendered as a browsable folder tree, with projects and context files as documents you can open, preview, and read as raw markdown. A terminal-styled AI chatbot (Gemini with OpenAI fallback) answers questions about my work. The rest of the site is a full blog with posts, tags, archives, and search.
 
 ## What You'll Find
 
@@ -21,21 +20,53 @@ The homepage is an AI chatbot powered by Google Gemini. Ask it anything about my
 | Layer | Tech |
 |-------|------|
 | Framework | Next.js 16 + React 19 + TypeScript |
-| Styling | Tailwind CSS 4 (dark slate + cyan) |
-| AI | Google Gemini 2.5 Flash Lite via AI SDK v6 |
+| Styling | Tailwind CSS 4 |
+| AI | Gemini 2.5 Flash Lite (primary) + OpenAI gpt-4.1-nano (fallback) via AI SDK v6 |
 | Blog | MDX + next-mdx-remote + gray-matter |
+| Validation | zod schemas on every content loader |
+| Tests | vitest (unit) + Playwright (e2e) + Lighthouse CI |
 | Deployment | Vercel |
 
 ---
 
 ## Features
 
-- **AI Chatbot homepage** — Gemini-powered chat that answers questions about my work and surfaces blog posts as rich UI cards
-- **6 chat tools** — Presentation, Projects, Skills, Resume, Contact, Blog Posts
-- **Full blog** — 11 MDX posts with syntax highlighting, reading time, tags, and table of contents
-- **Posts / Tags / Archives / Search** — complete blog navigation
-- **Dark/light mode** — persisted with next-themes
-- **Responsive** — mobile-first layout
+- **Finder homepage** -- a macOS desktop metaphor with a browsable workspace tree, URL-addressable state (`?open=shipped/ideaverse-os`), preview/source toggle, and a dedicated mobile Files-style UI
+- **Terminal AI chat** -- streaming chat with 6 tools (Presentation, Projects, Skills, Resume, Contact, Blog Posts), rate-limited and capped server-side
+- **Full blog** -- MDX posts with syntax highlighting, reading time, tags, archives, and search
+- **Dev-mode inline editing** -- run `npm run dev` and click any hero/about/experience text to edit it in the browser; writes go back to the source file (prod returns 404)
+- **Dark/light mode** -- persisted with next-themes; dark mode swaps the hero thesis
+- **Responsive** -- dedicated mobile Finder instead of a squeezed desktop
+
+---
+
+## How to update this site
+
+The three common updates are all single-file edits:
+
+**Add a project** -- create `content/projects/<slug>.md`:
+
+```yaml
+---
+slug: my-project
+name: My Project
+folder: shipped        # which Finder folder it appears in
+tagline: One-line description
+status: active         # planned | in-progress | active | released | archived
+tech: [TypeScript, Next.js]
+github: https://github.com/ktnCodes/my-project
+order: 3
+---
+Body markdown shown in the Finder preview.
+```
+
+The Finder tree, chat `getProjects` tool, and system prompt all pick it up automatically. Only if you need a brand-new Finder folder: also edit `content/tree.json` and add `content/contexts/<slug>.md`.
+
+**Add a blog post** -- create `content/posts/<slug>.mdx` with `title`, `date`, `tags`, `summary` frontmatter. Index, tags, archives, search, sitemap, and the chat tools all derive from it. No code changes.
+
+**Update text / experience** -- `npm run dev`, then click-edit hero/about/experience text directly in the browser (dev-mode inline editor), or edit `portfolio-config.json` by hand. The resume PDF at `public/resume.pdf` is built by a separate pipeline -- remember to replace it when experience changes.
+
+All content is validated with zod at load time -- a typo'd frontmatter key fails the build with a field-level error instead of silently publishing a broken page.
 
 ---
 
@@ -51,14 +82,20 @@ npm install
 
 # 3. Add environment variables
 cp .env.example .env.local
-# Open .env.local and add your key:
-# GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
+# GOOGLE_GENERATIVE_AI_API_KEY=...   # primary chat provider (free at aistudio.google.com)
+# OPENAI_API_KEY=...                 # fallback provider (optional but recommended)
+# NEXT_PUBLIC_CONTACT_EMAIL=...      # contact email (kept out of committed source)
+# DISABLE_GOOGLE=true                # optional: skip Gemini entirely (e.g. quota exhausted)
 
 # 4. Run dev server
 npm run dev
 ```
 
-Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com).
+```bash
+npm test        # vitest unit tests
+npm run e2e     # Playwright end-to-end tests
+npm run lint    # eslint
+```
 
 ---
 
@@ -67,26 +104,43 @@ Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com).
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Homepage (chatbot)
-│   ├── about/                # About page
+│   ├── page.tsx              # Homepage (Finder desktop + sections)
 │   ├── posts/                # Blog posts + [slug]
 │   ├── tags/                 # Tag index + [tag] filter
 │   ├── archives/             # Chronological archive
-│   ├── search/               # Client-side search
-│   └── api/chat/             # Gemini streaming API route + 6 tools
+│   ├── search/               # Client-side search (?q= deep-linkable)
+│   ├── ideaverse-os/         # ideaverse-os.ktncodes.com marketing surface
+│   └── api/
+│       ├── chat/             # Streaming chat route + 6 tools (rate-limited)
+│       ├── posts/            # Post metadata for client search
+│       └── dev/save/         # Dev-mode inline editor write-back (prod: 404)
 ├── components/
-│   ├── chat/                 # Chat UI (chat, landing, input, message, tool-renderer)
-│   ├── tools/                # Tool UI components (presentation, projects, skills, resume, contact, blog-posts)
+│   ├── finder/               # FinderWindow, MobileFinder, Dock, MenuBar, MailModal
+│   ├── chat/                 # TerminalChat, chat-context, tool-renderer
+│   ├── tools/                # Tool result cards (projects, skills, resume, ...)
+│   ├── sections/             # About / TechStack / Experience / Beliefs / Contact
+│   ├── hero/                 # BrandBand + Memoji
+│   ├── fx/                   # PixelCanvas, SpotlightCard, ShowcaseCard, MetalWrap
 │   ├── posts/                # Blog post components (card, header, MDX, TOC)
-│   └── layout/               # Navbar, footer, theme toggle
+│   ├── nav/                  # FloatingPill, Wordmark, StickyMemoji
+│   └── dev/                  # Dev-mode inline editing (EditableText, EditableImage)
 ├── lib/
-│   ├── posts.ts              # MDX loading and filtering
-│   ├── config.ts             # Portfolio config loader
-│   └── utils.ts              # formatDate, readingTime
+│   ├── tree.ts               # Finder workspace tree from content/
+│   ├── projects.ts           # content/projects/*.md loader
+│   ├── posts.ts              # content/posts/*.mdx loader
+│   ├── config.ts             # portfolio-config.json loader (+ legacy shape adapter)
+│   ├── content-schemas.ts    # zod schemas for all content loaders
+│   └── rate-limit.ts         # in-memory per-IP limiter for /api/chat
 content/
-└── posts/                    # 9 MDX blog posts
-portfolio-config.json         # All portfolio data (single source of truth)
+├── projects/                 # One .md per project (auto-discovered)
+├── posts/                    # MDX blog posts
+├── contexts/                 # Finder CONTEXT.md leaves
+├── tree.json                 # Finder folder structure
+└── hero.json / about.json / beliefs.json
+portfolio-config.json         # Identity, experience, skills, chatbot persona
 ```
+
+Each `src/` folder has a `CONTEXT.md` with routing notes -- read those first when changing code.
 
 ---
 
@@ -94,15 +148,15 @@ portfolio-config.json         # All portfolio data (single source of truth)
 
 1. Fork this repo
 2. Connect to [Vercel](https://vercel.com) via GitHub
-3. Add `GOOGLE_GENERATIVE_AI_API_KEY` in Vercel environment variables
-4. Deploy — Vercel auto-deploys on every push to `main`
+3. Add `GOOGLE_GENERATIVE_AI_API_KEY` (and optionally `OPENAI_API_KEY`, `NEXT_PUBLIC_CONTACT_EMAIL`) in Vercel environment variables
+4. Deploy -- Vercel auto-deploys on every push to `main`
 
 ---
 
 ## Author
 
-**Kevin Trinh Nguyen**  
-Software Engineer — Embedded Systems & AI/Agentic Engineering
+**Kevin Trinh Nguyen**
+Software Engineer -- Embedded Systems & AI/Agentic Engineering
 
 - GitHub: [@ktnCodes](https://github.com/ktnCodes)
 - LinkedIn: [itskevtrinh](https://linkedin.com/in/itskevtrinh)

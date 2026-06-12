@@ -21,7 +21,7 @@ const PRESETS = [
  * surface flips with the site's [data-theme] attribute.
  */
 export function TerminalChat() {
-  const { messages, sendMessage, status, close } = useChatContext();
+  const { messages, sendMessage, status, close, error, regenerate } = useChatContext();
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +84,13 @@ export function TerminalChat() {
           className="w-3 h-3 rounded-full p-0 border-0 cursor-pointer"
           style={{ background: '#ff5f57' }}
         />
-        <span className="w-3 h-3 rounded-full" style={{ background: '#febc2e' }} aria-hidden />
+        <button
+          type="button"
+          onClick={close}
+          aria-label="Minimize chat"
+          className="w-3 h-3 rounded-full p-0 border-0 cursor-pointer"
+          style={{ background: '#febc2e' }}
+        />
         <span className="w-3 h-3 rounded-full" style={{ background: '#28c840' }} aria-hidden />
         <span
           className="mx-auto text-xs font-mono"
@@ -97,6 +103,8 @@ export function TerminalChat() {
       {/* Scrolling body: either the empty-state boot screen or the message log */}
       <div
         ref={scrollRef}
+        role="log"
+        aria-live="polite"
         className="flex-1 min-h-0 overflow-y-auto px-5 py-4 font-mono text-[13px]"
         style={{ color: 'var(--term-fg)' }}
       >
@@ -106,6 +114,23 @@ export function TerminalChat() {
           messages.map((m) => <TerminalMessage key={m.id} message={m} />)
         )}
         {isBusy && <TypingLine />}
+        {error && !isBusy && (
+          <div
+            role="alert"
+            className="py-1 text-[12.5px]"
+            style={{ color: 'var(--term-accent)' }}
+          >
+            ! connection error -- the model did not respond.{' '}
+            <button
+              type="button"
+              onClick={() => regenerate()}
+              className="underline underline-offset-2 cursor-pointer bg-transparent border-0 p-0 font-mono text-[12.5px]"
+              style={{ color: 'var(--term-fg-strong)' }}
+            >
+              retry
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Prompt row */}
@@ -187,10 +212,7 @@ function BootScreen({
           <code style={{ color: 'var(--term-accent)' }}>v1.0.0</code>
         </div>
         <ol className="ml-5 mt-1 list-decimal" style={{ color: 'var(--term-fg)' }}>
-          <li>
-            Type <code style={{ color: 'var(--term-accent)' }}>/help</code> for list of
-            commands
-          </li>
+          <li>Pick a prompt below, or type your own</li>
           <li>Ask me anything about Kevin&apos;s work, projects, or AI workflow</li>
         </ol>
       </div>
@@ -214,9 +236,6 @@ function BootScreen({
         ))}
       </ul>
 
-      <div className="text-[11px]" style={{ color: 'var(--term-muted)' }}>
-        ? for shortcuts
-      </div>
     </div>
   );
 }

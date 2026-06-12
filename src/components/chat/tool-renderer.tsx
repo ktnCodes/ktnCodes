@@ -16,11 +16,14 @@ function getLabel(toolName: string, data: Record<string, unknown>): string {
   switch (toolName) {
     case "getPresentation":
       return "About Kevin";
-    case "getProjects":
-      return `Projects (${(data.projects as unknown[]).length})`;
+    case "getProjects": {
+      // Tool outputs cross the wire untyped; never trust the shape.
+      const count = Array.isArray(data.projects) ? data.projects.length : 0;
+      return `Projects (${count})`;
+    }
     case "getBlogPosts": {
-      const posts = data.posts as unknown[];
-      const q = data.query as string;
+      const posts = Array.isArray(data.posts) ? data.posts : [];
+      const q = typeof data.query === "string" ? data.query : "recent";
       return q === "recent"
         ? `Recent posts (${posts.length})`
         : `Posts related to "${q}" (${posts.length})`;
